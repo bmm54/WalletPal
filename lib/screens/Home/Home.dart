@@ -1,8 +1,14 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, no_leading_underscores_for_local_identifiers
 
+import 'package:bstable/screens/Home/add.dart';
+import 'package:bstable/screens/Home/receiveMoney.dart';
+import 'package:bstable/screens/Home/senMoney.dart';
+import 'package:bstable/screens/Home/settings.dart';
 import 'package:bstable/ui/components/activity.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../ui/styles/icons.dart';
 
@@ -48,7 +54,9 @@ class _HomeState extends State<Home> {
                   ),
                   InkWell(
                     radius: buttonRadius,
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(() => Settings());
+                    },
                     child: Container(
                       height: 60,
                       width: 60,
@@ -113,8 +121,11 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  //Recive Money
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(ReceiveMoney());
+                    },
                     radius: buttonRadius,
                     child: SizedBox(
                       width: 60,
@@ -146,8 +157,11 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
+                  //Send Money
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(SendMoney());
+                    },
                     radius: buttonRadius,
                     child: SizedBox(
                       width: 60,
@@ -179,9 +193,10 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
+                  //ADD
                   InkWell(
                     onTap: () {
-                      print("add");
+                      Get.to(AddTransaction());
                     },
                     radius: buttonRadius,
                     child: SizedBox(
