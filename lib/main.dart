@@ -1,6 +1,8 @@
 // ignore_for_file: unused_import
 
 import 'package:bstable/screens/Home/Home.dart';
+import 'package:bstable/screens/Home/add.dart';
+import 'package:bstable/screens/Home/calculator.dart';
 import 'package:bstable/screens/Home/settings.dart';
 import 'package:bstable/ui/components/card.dart';
 import 'package:bstable/ui/styles/colors.dart';
@@ -36,10 +38,12 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      theme: ThemeData(fontFamily: 'Gilory',scaffoldBackgroundColor: Colors.white,iconTheme: IconThemeData(color: MyColors.iconColor,size: 30)),
-      debugShowCheckedModeBanner: false,
-      home: Home(),
+    return SafeArea(
+      child: GetMaterialApp(
+        theme: ThemeData(fontFamily: 'Gilory',scaffoldBackgroundColor: Colors.white,iconTheme: IconThemeData(color: MyColors.iconColor,size: 30)),
+        debugShowCheckedModeBanner: false,
+        home: Home(),
+      ),
     );
   }
 }

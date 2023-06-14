@@ -33,7 +33,7 @@ class MyCard extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.only(left: 30.0, top: 25.0),
+          padding: const EdgeInsets.symmetric(vertical:20,horizontal: 30),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(

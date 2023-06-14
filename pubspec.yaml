@@ -61,6 +61,10 @@ flutter:
        fonts:
          - asset: lib/assets/fonts/Gilroy-ExtraBold.ttf
          - asset: lib/assets/fonts/Gilroy-Light.ttf
+         - asset: lib/assets/fonts/Gilroy-Bold.ttf
+         - asset: lib/assets/fonts/Gilroy-Heavy.ttf
+         - asset: lib/assets/fonts/Gilroy-Medium.ttf
+         - asset: lib/assets/fonts/Gilroy-Regular.ttf
      - family: MyIcons
        fonts:
          - asset: lib/assets/fonts/MyIcons.ttf

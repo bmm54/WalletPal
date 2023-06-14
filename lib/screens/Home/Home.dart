@@ -124,7 +124,7 @@ class _HomeState extends State<Home> {
                   //Recive Money
                   InkWell(
                     onTap: () {
-                      Get.to(ReceiveMoney());
+                      Get.to(() => ReceiveMoney());
                     },
                     radius: buttonRadius,
                     child: SizedBox(
@@ -160,7 +160,7 @@ class _HomeState extends State<Home> {
                   //Send Money
                   InkWell(
                     onTap: () {
-                      Get.to(SendMoney());
+                      Get.to(() => SendMoney());
                     },
                     radius: buttonRadius,
                     child: SizedBox(
@@ -196,7 +196,7 @@ class _HomeState extends State<Home> {
                   //ADD
                   InkWell(
                     onTap: () {
-                      Get.to(AddTransaction());
+                      Get.to(() => AddTransaction());
                     },
                     radius: buttonRadius,
                     child: SizedBox(
@@ -249,16 +249,16 @@ class _HomeState extends State<Home> {
             ),
             //List of Activities
             Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  primary: false,
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return Activity();
-                  },
-                ))
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+              child: ListView.builder(
+                shrinkWrap: true,
+                primary: false,
+                itemCount: 5,
+                itemBuilder: (context, index) {
+                  return Activity();
+                },
+              ),
+            ),
           ],
         ),
       ]),
