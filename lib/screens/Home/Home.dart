@@ -4,6 +4,7 @@ import 'package:bstable/screens/Home/add.dart';
 import 'package:bstable/screens/Home/receiveMoney.dart';
 import 'package:bstable/screens/Home/senMoney.dart';
 import 'package:bstable/screens/Home/settings.dart';
+import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/ui/components/activity.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,47 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Map<String, IconData> categories = {
+    "Food": MyIcons.food,
+    "Restaurent": MyIcons.restaurent,
+    "Cafe": MyIcons.cafe,
+    "Transport": MyIcons.transport,
+    "Grocery": MyIcons.grocery,
+    "Housing": MyIcons.house,
+    "Shopping": MyIcons.shopping,
+    "Internet": MyIcons.internet,
+    "Loan": MyIcons.loan,
+  };
+  Map<String, Color> colors = {
+    "Food": MyColors.orange,
+    "Restaurent": MyColors.lightBlue,
+    "Cafe": MyColors.red,
+    "Transport": MyColors.blue,
+    "Grocery": MyColors.orange,
+    "Housing": MyColors.purpule,
+    "Shopping": MyColors.blue,
+    "Internet": MyColors.darkBorder,
+    "Loan": MyColors.green,
+  };
+  get(String name) {
+    return categories[name];
+  }
+
+  get_color(String name) {
+    return colors[name];
+  }
+
+  List<Map<String, dynamic>> data = [];
+  @override
+  initState() {
+    super.initState();
+    SQLHelper.getItems().then((rows) {
+      setState(() {
+        data = rows;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final _controller = PageController(viewportFraction: 0.8);
@@ -48,7 +90,7 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   Text(
-                    "20 Jul 2023",
+                    "${DateTime.now().year} ${DateTime.now().month} ${DateTime.now().day}",
                     style: TextStyle(
                         color: Colors.black, fontWeight: FontWeight.bold),
                   ),
@@ -253,9 +295,18 @@ class _HomeState extends State<Home> {
               child: ListView.builder(
                 shrinkWrap: true,
                 primary: false,
-                itemCount: 5,
+                itemCount: data.length,
                 itemBuilder: (context, index) {
-                  return Activity();
+                  final title = data[index]['title'];
+                  final tile = [title, get(title), get_color(title)];
+                  return Activity(
+                    title: data[index]['title'],
+                    amount: data[index]['amount'],
+                    color: tile[2],
+                    icon: tile[1],
+                    category: data[index]['category'],
+                    date: data[index]['time'],
+                  );
                 },
               ),
             ),
