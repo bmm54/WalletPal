@@ -1,22 +1,27 @@
+import 'package:bstable/ui/styles/colors.dart';
 import 'package:flutter/material.dart';
 
 class MyCard extends StatelessWidget {
   final double sold;
   final String title;
   final Color color;
-  final Color light_color;
-  const MyCard(
-      {super.key,
-      required this.sold,
-      required this.title,
-      required this.color,
-      required this.light_color});
+  const MyCard({
+    super.key,
+    required this.sold,
+    required this.title,
+    required this.color,
+  });
   //return a card widget
   @override
   Widget build(BuildContext context) {
+    final Map<Color, Color> lightColor = {
+      MyColors.lightBlue:MyColors.lightestBlue,
+      MyColors.orange:MyColors.lightOrange,
+      MyColors.purpule:MyColors.lightPurpule,
+    };
     final screenWidth = MediaQuery.of(context).size.width;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
       child: Container(
         width: screenWidth,
         height: 160,
@@ -33,13 +38,13 @@ class MyCard extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical:20,horizontal: 30),
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
               "$title",
               style: TextStyle(
-                color: light_color,
+                color: lightColor[color],
                 fontSize: 16.0,
                 fontWeight: FontWeight.bold,
               ),

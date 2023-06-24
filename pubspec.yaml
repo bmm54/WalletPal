@@ -41,6 +41,13 @@ dependencies:
   get: ^4.6.5
   contacts_service: ^0.6.3
   sqflite: ^2.2.8+4
+  fl_chart: ^0.63.0
+  flutter_colorpicker: ^1.0.3
+  qr_flutter: ^4.1.0
+  qr_code_scanner: ^1.0.1
+  mobile_scanner: ^3.2.0
+  flutter_barcode_scanner: ^2.0.0
+  simple_barcode_scanner: ^0.0.8
 
 dev_dependencies:
   flutter_test:

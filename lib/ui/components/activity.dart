@@ -1,17 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:bstable/ui/styles/colors.dart';
-import 'package:bstable/ui/styles/icons.dart';
 import 'package:flutter/material.dart';
 
 class Activity extends StatefulWidget {
-  String title;
-  IconData icon;
-  Color color;
-  String date;
-  double amount;
-  String category;
-  Activity(
+  final String title;
+  final IconData icon;
+  final Color color;
+  final String date;
+  final double amount;
+  final String category;
+  const Activity(
       {super.key,
       required this.title,
       required this.icon,
@@ -31,7 +30,7 @@ class _ActivityState extends State<Activity> {
         padding: const EdgeInsets.only(bottom: 8),
         child: ListTile(
           onTap: () {
-            print(widget.title + widget.date);
+            
           },
           leading: Container(
             height: 50,
@@ -59,8 +58,8 @@ class _ActivityState extends State<Activity> {
                 : '-\$ ${widget.amount.toString()}',
             style: TextStyle(fontWeight: FontWeight.bold,color: 
             widget.category == 'income'
-                ?Colors.green 
-                : Colors.red,
+                ?MyColors.green
+                : MyColors.red,
             ),
           ),
         ));
