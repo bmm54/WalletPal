@@ -7,6 +7,7 @@ import 'package:bstable/ui/components/activity.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../ui/styles/iconlist.dart';
 import '../../ui/styles/icons.dart';
@@ -68,7 +69,7 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         Text(
-                          "${DateTime.now().year} ${DateTime.now().month} ${DateTime.now().day}",
+                          "${DateFormat('dd MMM yyyy').format(DateTime.now())}",
                           style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold),
                         ),
@@ -295,7 +296,7 @@ class _HomeState extends State<Home> {
                           color: IconsList.get_color(title),
                           icon: IconsList.get_icon(title),
                           category: records[index]['category'],
-                          date: records[index]['time'],
+                          date: DateFormat('dd.MM.yyyy | HH:mm').format(DateTime.parse(records[index]['time'])),
                         );
                       },
                     ),

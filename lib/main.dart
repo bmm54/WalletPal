@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
             fontFamily: 'Gilory',
             scaffoldBackgroundColor: Colors.white,
-            iconTheme: IconThemeData(color: MyColors.iconColor, size: 30)),
+            iconTheme: IconThemeData(color: MyColors.iconColor, size: 30),),
         debugShowCheckedModeBanner: false,
         home: Wrapper(),
       ),

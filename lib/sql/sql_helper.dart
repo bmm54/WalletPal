@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 
 class SQLHelper {
@@ -79,9 +80,13 @@ class SQLHelper {
     print(".....deleted......");
   }
 
-    static Future<List<Map<String, dynamic>>> getRecords() async {
+    static Future<List<Map<String, dynamic>>> getExpenses() async {
     final db = await SQLHelper.db();
-    return db.rawQuery("Select sum(amount) as total,title from activity3 group by title");
+    return db.rawQuery("Select sum(amount) as total,title from activity3 where category='expense' group by title");
+  }
+  static Future<List<Map<String, dynamic>>> getIcomes() async {
+    final db = await SQLHelper.db();
+    return db.rawQuery("Select sum(amount) as total,title from activity3 where category='income' group by title");
   }
 
   static Future<List<Map<String, dynamic>>> getAccounts() async {

@@ -9,8 +9,10 @@ import '../../sql/sql_helper.dart';
 // ignore: must_be_immutable
 class CalculatorScreen extends StatefulWidget {
   final String type;
-  CalculatorScreen({super.key, required this.type});
-  String category = "Grocery";
+  late String category;
+  CalculatorScreen({super.key, required this.type}){
+      type == 'expense' ? category = "Grocery" : category = "Salary";
+  }
   String accountName = "bamba";
   int accountId = 1;
   @override
@@ -36,8 +38,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       } else if (buttonText == 'Confirm') {
         SQLHelper.insertActivity(
             widget.category, widget.type, double.parse(getOutput()));
-        SQLHelper.updateBalance(double.parse(getOutput()), widget.type, widget.accountId);
-        final ready=true;
+        SQLHelper.updateBalance(
+            double.parse(getOutput()), widget.type, widget.accountId);
+        final ready = true;
         Navigator.of(context).pop(ready);
       } else {
         _input += buttonText;
@@ -160,17 +163,19 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 ],
               ),
               Expanded(
-                child: Container(
-                  color: Colors.white,
-                  alignment: Alignment.bottomRight,
-                  child: Text(
-                    _input,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w100,
-                      color: Colors.black38,
+                child: SingleChildScrollView(
+                  child: Container(
+                    color: Colors.white,
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      _input,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w100,
+                        color: Colors.black38,
+                      ),
                     ),
                   ),
                 ),
