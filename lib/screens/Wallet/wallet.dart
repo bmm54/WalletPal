@@ -1,181 +1,15 @@
-import 'dart:math';
-
-import 'package:bstable/ui/components/setting_tile.dart';
-import 'package:bstable/ui/styles/icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:get/get.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../sql/sql_helper.dart';
-import '../../ui/components/card.dart';
 import '../../ui/styles/colors.dart';
+import '../../ui/styles/icons.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({super.key});
-
-  @override
-  State<Settings> createState() => _SettingsState();
-}
-
-class _SettingsState extends State<Settings> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
-        children: [
-          Column(
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                child: Stack(
-                  alignment: AlignmentDirectional.centerStart,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Get.back();
-                      },
-                      child: Container(
-                        height: 60,
-                        width: 60,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15.0),
-                          border: Border.all(
-                              color: MyColors.borderColor, width: 3.0),
-                        ),
-                        child: const Icon(MyIcons.back),
-                      ),
-                    ),
-                    const Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Settings",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: MyColors.iconColor,
-                              fontSize: 16),
-                        )),
-                  ],
-                ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: ListView(
-                  primary: false,
-                  shrinkWrap: true,
-                  children: [
-                    const SizedBox( height: 10,),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Text("General Settings",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: MyColors.iconColor,
-                              fontSize: 16)),
-                    ),
-                    TileButton(
-                      name: "Language",
-                      icon: Icons.language,
-                      ontap: () {},
-                    ),
-                    TileButton(
-                      name: "Currency",
-                      icon: Icons.attach_money,
-                      ontap: () {},
-                    ),
-                    TileButton(
-                      name: "Theme",
-                      icon: Icons.color_lens,
-                      ontap: () {},
-                    ),
-                    TileButton(
-                      name: "Notification",
-                      icon: Icons.notifications,
-                      ontap: () {},
-                    ),
-                    const SizedBox( height: 10,),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Text("Account & Informations",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: MyColors.iconColor,
-                              fontSize: 16)),
-                    ),
-                    TileButton(
-                      name: "Profile",
-                      icon: MyIcons.profile,
-                      ontap: () {},
-                    ),
-                    TileButton(
-                      name: "Accounts",
-                      icon: MyIcons.wallet,
-                      ontap: () {
-                        Get.to(() => ManageAccounts());
-                      },
-                    ),
-                    TileButton(
-                      name: "Backup & Restore",
-                      icon: Icons.backup,
-                      ontap: () {},
-                    ),
-                    const SizedBox( height: 10,),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Text("About",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: MyColors.iconColor,
-                              fontSize: 16)),
-                    ),
-                    TileButton(
-                      name: "About",
-                      icon: Icons.info,
-                      ontap: () {},
-                    ),
-                    TileButton(
-                      name: "Rate us",
-                      icon: Icons.star,
-                      ontap: () {},
-                    ),
-                    TileButton(
-                      name: "Bug report",
-                      icon: Icons.bug_report,
-                      ontap: () {},
-                    ),
-                    TileButton(
-                      name: "Contact us",
-                      icon: Icons.contact_mail,
-                      ontap: () {},
-                    ),
-
-                    SizedBox(
-                      height: 20,
-                    ),
-                    TileButton(
-                      name: "Logout",
-                      icon: Icons.logout,
-                      ontap: () {},
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class ManageAccounts extends StatefulWidget {
-  ManageAccounts({super.key});
+class Wallet extends StatefulWidget {
+  Wallet({super.key});
 
   @override
-  State<ManageAccounts> createState() => _ManageAccountsState();
+  State<Wallet> createState() => _WalletState();
 }
 
 int color = 0xFF8438FF;
@@ -185,7 +19,7 @@ final _avColors = [
   0xFF38CFFF,
 ];
 
-class _ManageAccountsState extends State<ManageAccounts> {
+class _WalletState extends State<Wallet> {
   List<Map<String, dynamic>> accounts = [];
   final _nameController = TextEditingController();
   final _balanceController = TextEditingController();

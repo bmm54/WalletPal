@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //SQLHelper.deleteAllActivities();
+    //SQLHelper.deleteAllAccount();
     return SafeArea(
       child: GetMaterialApp(
         theme: ThemeData(

@@ -1,5 +1,6 @@
 import 'package:bstable/screens/Home/Home.dart';
 import 'package:bstable/screens/Stats/stats.dart';
+import 'package:bstable/screens/Wallet/wallet.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:bstable/ui/styles/icons.dart';
 import 'package:flutter/material.dart';
@@ -18,13 +19,14 @@ class _WrapperState extends State<Wrapper> with TickerProviderStateMixin{
     return  Scaffold(
       body: Column(
           children: [
+            
             Expanded(
               child: TabBarView(
                   physics: const NeverScrollableScrollPhysics(),
                   controller: _controller,
                   children: [
                     Home(),
-                    Placeholder(),
+                    Wallet(),
                     Stats(),
                     Placeholder(),
                   ]),

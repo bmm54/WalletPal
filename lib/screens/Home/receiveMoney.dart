@@ -2,6 +2,7 @@ import 'package:bstable/screens/Home/contacts.dart';
 import 'package:bstable/ui/styles/icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../ui/styles/colors.dart';
 
@@ -49,11 +50,10 @@ class _ReceiveMoneyState extends State<ReceiveMoney> {
                           ],),
               ),
               Container(
-                color: Colors.red,
+                color: Colors.white,
                 height: screenHeight*0.4,
-                child: Row(
-                 
-                )
+                child: 
+                  Center(child: QrImageView(data: "data", size:screenHeight*0.4)),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -87,7 +87,7 @@ class _ReceiveMoneyState extends State<ReceiveMoney> {
               ),
               ElevatedButton(
                         onPressed: () => {
-                          print(ContactsList.contactInfo)
+                          //print(ContactsList.contactInfo)
                         },
                         child:Text("click"),
                         ),

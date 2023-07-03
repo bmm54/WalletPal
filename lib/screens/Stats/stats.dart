@@ -18,15 +18,21 @@ class _StatsState extends State<Stats> {
   List<Map<String, dynamic>> expenses = [];
   List<Map<String, dynamic>> incomes = [];
   List<Map<String, dynamic>> queryResult = [];
+  double debt = 0;
+  double totalBalance = 0;
   List<FlSpot> chartData = [];
   void _refreshData() async {
     final exp = await SQLHelper.getExpenses();
     final inc = await SQLHelper.getIcomes();
     final chart = await SQLHelper.getItems();
+    final debt=await SQLHelper.getDebt();
+    final totalBalance = await SQLHelper.getTotalBalance();
     setState(() {
-      expenses = exp;
-      incomes = inc;
-      queryResult = chart;
+      this.expenses = exp;
+      this.incomes = inc;
+      this.queryResult = chart;
+      this.debt=debt[0]['total']??0;
+      this.totalBalance = totalBalance[0]['total']??0;
       chartData = queryResult.map((row) {
         String type = row['category'];
         DateTime date = DateTime.parse(row['time']);
@@ -53,17 +59,59 @@ class _StatsState extends State<Stats> {
       children: [
         Column(
           children: [
-            ListTile(
-              title: Text('total balance'),
-              trailing: Text('\$ 200000'),
+             Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+            child: Stack(
+              alignment: AlignmentDirectional.centerStart,
+              children: [
+                const Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Statistics",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: MyColors.iconColor,
+                          fontSize: 16),
+                    )),
+              ],
             ),
-            ListTile(
-              title: Text('total debt'),
-              trailing: Text('\$ 400000'),
+          ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  ListTile(
+                    title: Text('total balance',style: TextStyle(color: MyColors.iconColor,fontSize: 16),),
+                    trailing: Text('\$ $totalBalance',style: TextStyle(color: MyColors.iconColor,fontSize: 16),),
+                  ),
+                  ListTile(
+                    title: Text('total debt',style: TextStyle(color: MyColors.iconColor,fontSize: 16),),
+                    trailing: Text('\$ $debt',style: TextStyle(color: MyColors.iconColor,fontSize: 16),),
+                  ),
+                ],
+              ),
             ),
-            SizedBox(height: 100),
+            Padding(
+                      padding: const EdgeInsets.symmetric(vertical:10.0),
+                      child: Container(
+                          height: 1.0, // Adjust the height of the separator line as per your needs
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [
+                                Colors.transparent, // Start with transparent color
+                                MyColors.buttonGrey, // Color of the line in the center
+                                Colors.transparent, // End with transparent color
+                              ],
+                              stops: [0.2,0.8,0.8], // Adjust the stops to control the fading effect
+                            ),
+                          ),
+                        ),
+                    ),
             //////////////////////////
             //Line chart
+            /*
             Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -108,8 +156,8 @@ class _StatsState extends State<Stats> {
                               int dividedValue =
                                   (value.abs() ~/ 1000); // Integer division
                               String prefix = value.isNegative
-                                  ? '-'
-                                  : ''; // Add '-' sign if value is negative
+                                  ? ''
+                                  : '-'; // Add '-' sign if value is negative
                               return Text('$prefix${dividedValue.toString()}k');
                             }
                             return Text('');
@@ -151,7 +199,7 @@ class _StatsState extends State<Stats> {
                   ),
                 ),
               ),
-            ),
+            ),*/
             Text(
               "Expenses",
               style: TextStyle(fontSize: 25, color: MyColors.red),

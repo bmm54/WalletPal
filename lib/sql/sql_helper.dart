@@ -63,9 +63,15 @@ class SQLHelper {
     return db.rawQuery("SELECT * from Activity3 order by time desc");
   }
 
+  static Future<List<Map<String, dynamic>>> queryAccounts() async {
+    final db = await SQLHelper.db();
+    return db.rawQuery('SELECT strftime("%Y-%m-%d", time) AS date, MAX(balance) AS high, MIN(balance) AS low '
+        'FROM accounts WHERE id = ? GROUP BY date ORDER BY date');
+  }
+
   static Future<void> dropTable(String tablename) async {
     final db = await SQLHelper.db();
-    db.rawQuery("DROP TABLE ${tablename}");
+    db.rawQuery("DROP TABLE $tablename");
     print("........table droped.......");
   }
 
@@ -84,6 +90,11 @@ class SQLHelper {
     final db = await SQLHelper.db();
     return db.rawQuery("Select sum(amount) as total,title from activity3 where category='expense' group by title");
   }
+
+    static Future<List<Map<String, dynamic>>> getDebt() async {
+    final db = await SQLHelper.db();
+    return db.rawQuery("Select sum(amount) as total from activity3 where title='Loan'");
+  }
   static Future<List<Map<String, dynamic>>> getIcomes() async {
     final db = await SQLHelper.db();
     return db.rawQuery("Select sum(amount) as total,title from activity3 where category='income' group by title");
@@ -94,11 +105,16 @@ class SQLHelper {
     return db.rawQuery("SELECT * from account1 order by id desc");
   }
 
+  static Future<List<Map<String, dynamic>>> getTotalBalance() async {
+    final db = await SQLHelper.db();
+    return db.rawQuery("SELECT sum(balance) as total from account1");
+  }
+
   static Future<void> updateBalance(double amount, String type,int id) async {
     final db = await SQLHelper.db();
     type == "expense"
-        ? db.rawUpdate("UPDATE account1 SET balance=balance-${amount} WHERE id=${id}")
-        : db.rawUpdate("UPDATE account1 SET balance=balance+${amount} WHERE id=${id}");
+        ? db.rawUpdate("UPDATE account1 SET balance=balance-$amount WHERE id=$id")
+        : db.rawUpdate("UPDATE account1 SET balance=balance+$amount WHERE id=$id");
     print(".............balance updated............");
   }
 }
