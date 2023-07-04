@@ -35,8 +35,10 @@ class _ContactsListState extends State<ContactsList> {
     }
     if (isGranted) {
       List<Contact> _contacts = await FastContacts.getAllContacts();
+      setState(() {
         contacts = _contacts;
         ready = true;
+      });
       return _contacts;
     } else {
       return [];

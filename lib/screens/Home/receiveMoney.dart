@@ -53,7 +53,7 @@ class _ReceiveMoneyState extends State<ReceiveMoney> {
                 color: Colors.white,
                 height: screenHeight*0.4,
                 child: 
-                  Center(child: QrImageView(data: "data", size:screenHeight*0.4)),
+                  Center(child: QrImageView(data: "hi my name is bamba", size:screenHeight*0.4)),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -80,17 +80,13 @@ class _ReceiveMoneyState extends State<ReceiveMoney> {
                           shadowColor:
                               MaterialStateProperty.all(Colors.transparent),
                         ),
+                        
                       ),
                   ),
                   
                 ],
               ),
-              ElevatedButton(
-                        onPressed: () => {
-                          //print(ContactsList.contactInfo)
-                        },
-                        child:Text("click"),
-                        ),
+
             ],
           )
         ],
