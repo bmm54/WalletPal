@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:bstable/services/auth.dart';
 import 'package:bstable/ui/components/setting_tile.dart';
 import 'package:bstable/ui/styles/icons.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,9 @@ class _SettingsState extends State<Settings> {
                   primary: false,
                   shrinkWrap: true,
                   children: [
-                    const SizedBox( height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10),
                       child: Text("General Settings",
@@ -96,7 +99,9 @@ class _SettingsState extends State<Settings> {
                       icon: Icons.notifications,
                       ontap: () {},
                     ),
-                    const SizedBox( height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10),
                       child: Text("Account & Informations",
@@ -122,7 +127,9 @@ class _SettingsState extends State<Settings> {
                       icon: Icons.backup,
                       ontap: () {},
                     ),
-                    const SizedBox( height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10),
                       child: Text("About",
@@ -151,14 +158,18 @@ class _SettingsState extends State<Settings> {
                       icon: Icons.contact_mail,
                       ontap: () {},
                     ),
-
                     SizedBox(
                       height: 20,
                     ),
                     TileButton(
                       name: "Logout",
                       icon: Icons.logout,
-                      ontap: () {},
+                      color: Color.fromARGB(255, 188, 66, 57),
+                      
+                      ontap: () {
+                        AuthService().signOut();
+                        Get.back();
+                      },
                     ),
                   ],
                 ),

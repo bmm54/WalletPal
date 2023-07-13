@@ -6,7 +6,15 @@ class TileButton extends StatelessWidget {
   final IconData icon;
   final String name;
   final void Function()? ontap;
-  const TileButton({super.key, required this.icon, required this.name,required this.ontap});
+  final Widget? option;
+  final Color? color;
+  const TileButton(
+      {super.key,
+      required this.icon,
+      required this.name,
+      required this.ontap,
+      this.color,
+      this.option});
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +24,9 @@ class TileButton extends StatelessWidget {
         onTap: ontap,
         title: Text(
           name,
-          style:
-              const TextStyle(fontWeight: FontWeight.bold, color: MyColors.iconColor),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: color == null ? MyColors.iconColor : color),
         ),
         leading: Container(
           height: 50,
@@ -25,11 +34,15 @@ class TileButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(15.0),
-            border: Border.all(color: MyColors.borderColor, width: 3.0),
+            border: Border.all(
+                color: color == null
+                    ? MyColors.borderColor
+                    : color!.withOpacity(0.3),
+                width: 3.0),
           ),
           child: Icon(
             icon,
-            color: MyColors.iconColor,
+            color: color == null ? MyColors.iconColor : color,
           ),
         ),
       ),

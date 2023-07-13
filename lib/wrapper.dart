@@ -1,56 +1,103 @@
 import 'package:bstable/screens/Home/Home.dart';
+import 'package:bstable/screens/Profile/profile.dart';
 import 'package:bstable/screens/Stats/stats.dart';
 import 'package:bstable/screens/Wallet/wallet.dart';
+import 'package:bstable/screens/authentification/authenticate.dart';
+import 'package:bstable/services/auth.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:bstable/ui/styles/icons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Wrapper extends StatefulWidget {
-  const Wrapper({super.key});
-
-  @override
-  State<Wrapper> createState() => _WrapperState();
-}
-
-class _WrapperState extends State<Wrapper> with TickerProviderStateMixin{
+class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final _controller = TabController(vsync: this, length: 4);
-    return  Scaffold(
+    return StreamBuilder<User?>(
+        stream: AuthService().authStateChanges(),
+        builder: (buildContext, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(child: Text('Something went wrong!'));
+          }
+          if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.data == null) {
+              //return Authenticate();
+              return Screens();
+            } else {
+              return Screens();
+            }
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        });
+  }
+}
+
+class Screens extends StatefulWidget {
+  const Screens({super.key});
+
+  @override
+  State<Screens> createState() => _ScreensState();
+}
+
+class _ScreensState extends State<Screens> with TickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    final _controller = TabController(vsync: this, length: 3);
+
+    return Scaffold(
       body: Column(
-          children: [
-            
-            Expanded(
-              child: TabBarView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  controller: _controller,
-                  children: [
-                    Home(),
-                    Wallet(),
-                    Stats(),
-                    Placeholder(),
-                  ]),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Container(
-                child: TabBar(
+        children: [
+          Expanded(
+            child: TabBarView(
+                physics: const NeverScrollableScrollPhysics(),
+                controller: _controller,
+                children: [
+                  Home(),
+                  Wallet(),
+                  Stats(),
+                  //Profile(),
+                ]),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              child: TabBar(
                   splashBorderRadius: BorderRadius.circular(20.0),
                   indicatorColor: Colors.white,
-                      labelColor: MyColors.blue,
-                        unselectedLabelColor: MyColors.iconGrey,
-                        labelStyle:
-                            TextStyle( fontWeight: FontWeight.bold),
-                      controller: _controller,
-                      tabs: [
-                        Tab(icon:Icon(MyIcons.home, size: 30),iconMargin: EdgeInsets.only(bottom:5),),
-                        Tab(icon:Icon(MyIcons.wallet, size: 30,),iconMargin: EdgeInsets.only(bottom:5),),
-                        Tab(icon:Icon(MyIcons.stats, size: 30,),iconMargin: EdgeInsets.only(bottom:5),),
-                        Tab(icon:Icon(MyIcons.profile, size: 30,),iconMargin: EdgeInsets.only(bottom:5),),
-                      ]),
-              ),
+                  labelColor: MyColors.blue,
+                  unselectedLabelColor: MyColors.iconGrey,
+                  labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                  controller: _controller,
+                  tabs: [
+                    Tab(
+                      icon: Icon(MyIcons.home, size: 30),
+                      iconMargin: EdgeInsets.only(bottom: 5),
+                    ),
+                    Tab(
+                      icon: Icon(
+                        MyIcons.wallet,
+                        size: 30,
+                      ),
+                      iconMargin: EdgeInsets.only(bottom: 5),
+                    ),
+                    Tab(
+                      icon: Icon(
+                        MyIcons.stats,
+                        size: 30,
+                      ),
+                      iconMargin: EdgeInsets.only(bottom: 5),
+                    ),
+                    //Tab(
+                    //  icon: Icon(
+                    //    MyIcons.profile,
+                    //    size: 30,
+                    //  ),
+                    //  iconMargin: EdgeInsets.only(bottom: 5),
+                    //),
+                  ]),
             ),
-          ],
+          ),
+        ],
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:bstable/screens/Home/add.dart';
 import 'package:bstable/screens/Home/receiveMoney.dart';
 import 'package:bstable/screens/Home/senMoney.dart';
 import 'package:bstable/screens/Home/settings.dart';
+import 'package:bstable/screens/Profile/profile.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/ui/components/activity.dart';
 import 'package:bstable/ui/styles/colors.dart';
@@ -46,7 +47,10 @@ class _HomeState extends State<Home> {
     final _controller = PageController(viewportFraction: 0.8);
     const double buttonRadius = 15;
     return !ready
-        ? Center(child: CircularProgressIndicator(color: MyColors.purpule,))
+        ? Center(
+            child: CircularProgressIndicator(
+            color: MyColors.purpule,
+          ))
         : Scaffold(
             //////////////////////////
             body: ListView(children: [
@@ -58,14 +62,20 @@ class _HomeState extends State<Home> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          height: 60,
-                          width: 60,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15.0),
-                            border: Border.all(
-                                color: MyColors.borderColor, width: 3.0),
+                        InkWell(
+                          onTap: () {
+                            Get.to(() => Profile());
+                          },
+                          child: Container(
+                            height: 60,
+                            width: 60,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15.0),
+                              border: Border.all(
+                                  color: MyColors.borderColor, width: 3.0),
+                            ),
+                            child: Icon(MyIcons.profile),
                           ),
                         ),
                         Text(
@@ -296,7 +306,8 @@ class _HomeState extends State<Home> {
                           color: IconsList.get_color(title),
                           icon: IconsList.get_icon(title),
                           category: records[index]['category'],
-                          date: DateFormat('dd.MM.yyyy | HH:mm').format(DateTime.parse(records[index]['time'])),
+                          date: DateFormat('dd.MM.yyyy | HH:mm')
+                              .format(DateTime.parse(records[index]['time'])),
                         );
                       },
                     ),

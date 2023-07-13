@@ -93,7 +93,7 @@ class SQLHelper {
 
     static Future<List<Map<String, dynamic>>> getDebt() async {
     final db = await SQLHelper.db();
-    return db.rawQuery("Select sum(amount) as total from activity3 where title='Loan'");
+    return db.rawQuery("Select sum(amount) as total from activity3 where title='Loan' and category='expense'");
   }
   static Future<List<Map<String, dynamic>>> getIcomes() async {
     final db = await SQLHelper.db();
