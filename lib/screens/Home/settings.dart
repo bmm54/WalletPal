@@ -5,7 +5,7 @@ import 'package:bstable/ui/components/setting_tile.dart';
 import 'package:bstable/ui/styles/icons.dart';
 import 'package:bstable/ui/themes/dark.dart';
 import 'package:bstable/ui/themes/light.dart';
-import 'package:bstable/ui/themes/notifier.dart';
+import 'package:bstable/ui/themes/theme_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:get/get.dart';
@@ -107,23 +107,27 @@ class _SettingsState extends State<Settings> {
                       ontap: () {},
                       option: InkWell(
                         onTap: () {
-                          Get.changeThemeMode(Get.isDarkMode
-                              ? ThemeMode.light
-                              : ThemeMode.dark);
+                          //Get.changeThemeMode(Get.isDarkMode
+                          //    ? ThemeMode.light
+                          //    : ThemeMode.dark);
+                          ThemeService().changeThemeMode();
                         },
                         child: Container(
                           height: 50,
-                          width:50,
+                          width: 50,
                           padding: EdgeInsets.symmetric(horizontal: 8),
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor,
-                            border: Border.all(
-                                width: 3,
-                                color: Theme.of(context).secondaryHeaderColor),
-                            borderRadius: BorderRadius.circular(15)),
-                          child: Icon(Get.isDarkMode
-                              ? Icons.wb_sunny
-                              : Icons.brightness_3,color:Theme.of(context).iconTheme.color),
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              border: Border.all(
+                                  width: 3,
+                                  color:
+                                      Theme.of(context).secondaryHeaderColor),
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Icon(
+                              Get.isDarkMode
+                                  ? Icons.wb_sunny
+                                  : Icons.brightness_3,
+                              color: Theme.of(context).iconTheme.color),
                         ),
                       ),
                     ),
