@@ -36,7 +36,7 @@ class _ActivityState extends State<Activity> {
             height: 50,
             width: 50,
             decoration: BoxDecoration(
-              color: MyColors.buttonGrey,
+              color: Theme.of(context).primaryColor,
               borderRadius: BorderRadius.circular(15.0),
             ),
             child: Icon(
@@ -46,11 +46,14 @@ class _ActivityState extends State<Activity> {
           title: Text(
             widget.title,
             style: TextStyle(
-                fontWeight: FontWeight.bold, color: MyColors.iconColor),
+                fontWeight: FontWeight.bold, color:Theme.of(context)
+                                          .textTheme
+                                          .displayMedium!
+                                          .color),
           ),
           subtitle: Text(
             widget.date,
-            style: TextStyle( color: MyColors.lightGrey),
+            style: TextStyle( color: MyColors.lightGrey,fontWeight: FontWeight.bold),
           ),
           trailing: Text(
             widget.category == 'income'

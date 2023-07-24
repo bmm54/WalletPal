@@ -1,10 +1,10 @@
-import 'package:bstable/screens/Stats/bar_grapth.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../ui/components/appBar.dart';
 import '../../ui/styles/colors.dart';
 import '../../ui/styles/iconlist.dart';
 
@@ -42,10 +42,9 @@ class _StatsState extends State<Stats> {
       // Filter expenses based on the selected filter option
       switch (selectedFilter) {
         case 'This Week':
-          final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-          final endOfWeek =
-              now.add(Duration(days: DateTime.daysPerWeek - now.weekday));
-
+          final startOfWeek = now.subtract(Duration(days: now.weekday-1));
+          final endOfWeek =now.add(Duration(days: DateTime.daysPerWeek - now.weekday));
+          print(endOfWeek.toString());
           chartResult = chartResult.where((expense) {
             DateTime date = DateTime.parse(expense['time']);
             return date.isAfter(startOfWeek) && date.isBefore(endOfWeek);
@@ -105,24 +104,7 @@ class _StatsState extends State<Stats> {
             children: [
               Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 20),
-                    child: Stack(
-                      alignment: AlignmentDirectional.centerStart,
-                      children: [
-                        const Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Statistics",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: MyColors.iconColor,
-                                  fontSize: 16),
-                            )),
-                      ],
-                    ),
-                  ),
+                  MyAppBar(name: "Statistics", back: false),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
@@ -166,48 +148,67 @@ class _StatsState extends State<Stats> {
                           colors: [
                             Colors.transparent, // Start with transparent color
                             MyColors
-                                .buttonGrey, // Color of the line in the center
+                                .iconColor, // Color of the line in the center
                             Colors.transparent, // End with transparent color
                           ],
                           stops: [
-                            0.2,
-                            0.8,
-                            0.8
+                            0.1,
+                            0.5,
+                            0.9
                           ], // Adjust the stops to control the fading effect
                         ),
                       ),
                     ),
                   ),
                   Padding(
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(color: MyColors.buttonGrey,border: Border.all(width: 3,color: MyColors.borderColor),borderRadius: BorderRadius.circular(15)),
-                  child: DropdownButton<String>(
-                    borderRadius: BorderRadius.circular(10),
-                    underline: Container(height: 0,),
-                    value: selectedFilter,
-                    style: TextStyle(color: MyColors.iconColor,fontWeight: FontWeight.bold),
-                    alignment: Alignment.center,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedFilter = newValue!;
-                        _refreshData();
-                      });
-                    },
-                    items: <String>['This Week', 'This Month', 'This Year'].map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              border: Border.all(
+                                  width: 3,
+                                  color:
+                                      Theme.of(context).secondaryHeaderColor),
+                              borderRadius: BorderRadius.circular(15)),
+                          child: DropdownButton<String>(
+                            dropdownColor: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                            underline: Container(
+                              height: 0,
+                            ),
+                            value: selectedFilter,
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .displayLarge!
+                                    .color,
+                                fontWeight: FontWeight.bold),
+                            alignment: Alignment.center,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedFilter = newValue!;
+                                _refreshData();
+                              });
+                            },
+                            items: <String>[
+                              'This Week',
+                              'This Month',
+                              'This Year'
+                            ].map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
                     child: SizedBox(
@@ -218,7 +219,8 @@ class _StatsState extends State<Stats> {
                             topTitles: AxisTitles(
                                 sideTitles: SideTitles(showTitles: false)),
                             rightTitles: AxisTitles(
-                                sideTitles: SideTitles(showTitles: false)),
+                                sideTitles: SideTitles(showTitles: false,
+                                )),
                             bottomTitles: AxisTitles(
                               sideTitles: SideTitles(
                                 showTitles: true,
@@ -228,33 +230,52 @@ class _StatsState extends State<Stats> {
                                       {
                                         switch (value.toInt()) {
                                           case 0:
-                                            return Text('Mon',style: TextStyle(color: MyColors.iconColor),);
+                                            return Text(
+                                              'Mon',
+                                              style: TextStyle(
+                                                  color: MyColors.iconColor),
+                                            );
                                           case 1:
-                                            return Text('Tue',style: TextStyle(color: MyColors.iconColor));
+                                            return Text('Tue',
+                                                style: TextStyle(
+                                                    color: MyColors.iconColor));
                                           case 2:
-                                            return Text('Wed',style: TextStyle(color: MyColors.iconColor));
+                                            return Text('Wed',
+                                                style: TextStyle(
+                                                    color: MyColors.iconColor));
                                           case 3:
-                                            return Text('Thu',style: TextStyle(color: MyColors.iconColor));
+                                            return Text('Thu',
+                                                style: TextStyle(
+                                                    color: MyColors.iconColor));
                                           case 4:
-                                            return Text('Fri',style: TextStyle(color: MyColors.iconColor));
+                                            return Text('Fri',
+                                                style: TextStyle(
+                                                    color: MyColors.iconColor));
                                           case 5:
-                                            return Text('Sat',style: TextStyle(color: MyColors.iconColor));
+                                            return Text('Sat',
+                                                style: TextStyle(
+                                                    color: MyColors.iconColor));
                                           case 6:
-                                            return Text('Sun',style: TextStyle(color: MyColors.iconColor));
+                                            return Text('Sun',
+                                                style: TextStyle(
+                                                    color: MyColors.iconColor));
                                           default:
                                             return Text('');
                                         }
                                       }
                                     default:
-                                      return Text(value.toInt().toString(),style: TextStyle(color: MyColors.iconColor));
+                                      return Text(value.toInt().toString(),
+                                          style: TextStyle(
+                                              color: MyColors.iconColor));
                                   }
                                 },
                               ),
                             ),
                           ),
                           alignment: BarChartAlignment.spaceAround,
-                          barTouchData: BarTouchData(touchTooltipData: BarTouchTooltipData(tooltipBgColor: MyColors.lightPurpule)
-                          ),
+                          barTouchData: BarTouchData(
+                              touchTooltipData: BarTouchTooltipData(
+                                  tooltipBgColor: MyColors.lightPurpule)),
                           maxY: chartData
                               .reduce((value, element) =>
                                   value.y > element.y ? value : element)
@@ -278,36 +299,49 @@ class _StatsState extends State<Stats> {
                       ),
                     ),
                   ),
-Padding(
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(color: MyColors.buttonGrey,border: Border.all(width: 3,color: MyColors.borderColor),borderRadius: BorderRadius.circular(15)),
-                  child: DropdownButton<String>(
-                    borderRadius: BorderRadius.circular(10),
-                    underline: Container(height: 0,),
-                    value: selectedFilter,
-                    style: TextStyle(color: MyColors.iconColor,fontWeight: FontWeight.bold),
-                    alignment: Alignment.center,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedFilter = newValue!;
-                        _refreshData();
-                      });
-                    },
-                    items: <String>['This Week', 'This Month', 'This Year'].map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                              color: MyColors.buttonGrey,
+                              border: Border.all(
+                                  width: 3, color: MyColors.borderColor),
+                              borderRadius: BorderRadius.circular(15)),
+                          child: DropdownButton<String>(
+                            borderRadius: BorderRadius.circular(10),
+                            underline: Container(
+                              height: 0,
+                            ),
+                            value: selectedFilter,
+                            style: TextStyle(
+                                color: MyColors.iconColor,
+                                fontWeight: FontWeight.bold),
+                            alignment: Alignment.center,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedFilter = newValue!;
+                                _refreshData();
+                              });
+                            },
+                            items: <String>[
+                              'This Week',
+                              'This Month',
+                              'This Year'
+                            ].map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),),
                   Text(
                     "Expenses",
                     style: TextStyle(fontSize: 25, color: MyColors.red),

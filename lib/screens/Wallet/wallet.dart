@@ -1,9 +1,14 @@
+import 'package:bstable/models/accounts_model.dart';
+import 'package:bstable/screens/Home/Home.dart';
+import 'package:bstable/ui/components/appBar.dart';
+import 'package:bstable/ui/styles/decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../sql/sql_helper.dart';
 import '../../ui/styles/colors.dart';
 import '../../ui/styles/icons.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 class Wallet extends StatefulWidget {
   Wallet({super.key});
@@ -13,21 +18,85 @@ class Wallet extends StatefulWidget {
 }
 
 class _WalletState extends State<Wallet> {
-  Color _selectedColor = Colors.red;
-  List<Map<String, dynamic>> accounts = [];
-  List<Map<String, dynamic>> goals = [];
-  final _nameController = TextEditingController();
-  final _balanceController = TextEditingController();
+  Color _accountColor = MyColors.purpule;
+  Color _goalColor = MyColors.lightPurpule;
+  List<Map<String, dynamic>> accounts = Accounts.getAccounts;
+  List<Map<String, dynamic>> goals = [
+            {},
+            {
+              "title": "laptop",
+              "amount": 320000.0,
+              "goal": 580000.0,
+              "color": "0xFFCCF3FF",
+              "icon": Icons.laptop_chromebook
+            },
+            {
+              "title": "phone",
+              "amount": 20000,
+              "goal": 30000,
+              "color": "0xFFDCC7FF",
+              "icon": Icons.phone_android
+            },
+            {
+              "title": "car",
+              "amount": 3500000,
+              "goal": 6000000.0,
+              "color": "0xFFFFDBCC",
+              "icon": Icons.car_rental_rounded
+            },
+            {
+              "title": "car",
+              "amount": 3500000,
+              "goal": 6000000.0,
+              "color": "0xFFBFDFD1",
+              "icon": Icons.car_rental_rounded
+            },
+          ];
+  final _accountName = TextEditingController();
+  final _accountBalance = TextEditingController();
+  final _goalName = TextEditingController();
+  final _goalAmount = TextEditingController();
+  final _goalTarget = TextEditingController();
+  final _addToGoal = TextEditingController();
+
   _refrechPage() {
     SQLHelper.getAccounts().then((rows) {
       setState(() {
         accounts = rows;
-        goals = [
-          {},
-          {"title": "phone", "amount": 20000, "color": "0xFFCCF3FF"},
-          {"title": "phone", "amount": 20000, "color": "0xFFDCC7FF"},
-          {"title": "phone", "amount": 20000, "color": "0xFFFFDBCC"},
-        ];
+        goals.clear();
+        goals.addAll(
+          [
+            {},
+            {
+              "title": "laptop",
+              "amount": 320000.0,
+              "goal": 580000.0,
+              "color": "0xFFCCF3FF",
+              "icon": Icons.laptop_chromebook
+            },
+            {
+              "title": "phone",
+              "amount": 20000,
+              "goal": 30000,
+              "color": "0xFFDCC7FF",
+              "icon": Icons.phone_android
+            },
+            {
+              "title": "car",
+              "amount": 3500000,
+              "goal": 6000000.0,
+              "color": "0xFFFFDBCC",
+              "icon": Icons.car_rental_rounded
+            },
+            {
+              "title": "car",
+              "amount": 3500000,
+              "goal": 6000000.0,
+              "color": "0xFFBFDFD1",
+              "icon": Icons.car_rental_rounded
+            },
+          ],
+        );
       });
     });
   }
@@ -35,7 +104,7 @@ class _WalletState extends State<Wallet> {
   @override
   void initState() {
     super.initState();
-    _refrechPage();
+    //_refrechPage();
   }
 
   _popUpAccount() {
@@ -43,63 +112,31 @@ class _WalletState extends State<Wallet> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           shape: RoundedRectangleBorder(
             borderRadius:
                 BorderRadius.circular(10.0), // Customize the border radius
           ),
           title: Text(
             'Create Account',
-            style: TextStyle(color: MyColors.iconColor),
+            style: TextStyle(color: MyColors.iconColor,fontWeight: FontWeight.bold),
           ),
           content: SingleChildScrollView(
             child: Column(children: [
               SizedBox(height: 10),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Account Name :",
-                  style: TextStyle(color: MyColors.iconColor),
-                ),
-              ),
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  //hintText: "Account name",
-                  focusColor: MyColors.purpule,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+             TextField(
+                controller: _accountName,
+                decoration: CustomDeco.inputDecoration.copyWith(hintText: 'Name',),
               ),
               SizedBox(
-                height: 10,
-              ),
-              SizedBox(height: 10),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Initial balance :",
-                  style: TextStyle(color: MyColors.iconColor),
-                ),
+                height: 20,
               ),
               TextField(
-                controller: _balanceController,
-                decoration: InputDecoration(
-                  //hintText: "Initial balance",
-                  focusColor: MyColors.purpule,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                controller: _accountBalance,
+                keyboardType: TextInputType.number,
+                decoration: CustomDeco.inputDecoration.copyWith(hintText: 'Initial balance',),
               ),
               SizedBox(height: 10),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Color :",
-                  style: TextStyle(color: MyColors.iconColor),
-                ),
-              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -118,11 +155,12 @@ class _WalletState extends State<Wallet> {
                       ColorTools.createPrimarySwatch(MyColors.green): "green",
                     },
                     enableOpacity: false,
-                    color: _selectedColor,
+                    color: _accountColor,
                     onColorChanged: (Color color) {
                       setState(() {
-                        _selectedColor = color;
+                        _accountColor = color;
                       });
+                      print(_accountColor);
                     },
                     enableShadesSelection: false,
                   ),
@@ -156,8 +194,13 @@ class _WalletState extends State<Wallet> {
                     ),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.of(context).pop(_selectedColor);
+                onPressed: () async {
+                  await SQLHelper.insertAccount(
+                      _accountName.text,
+                      double.parse(_accountBalance.text),
+                      _accountColor.value.toString());
+                  _refrechPage();
+                  Navigator.pop(context);
                 },
                 child: Text('Save'),
               ),
@@ -173,11 +216,78 @@ class _WalletState extends State<Wallet> {
     });
   }
 
+  _addToGoalPopUp() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(10.0), // Customize the border radius
+            ),
+            title: Text(
+              'Add to Goal',
+              style: TextStyle(color: MyColors.iconColor),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(height: 10),
+                  TextField(
+                    keyboardType: TextInputType.number,
+                    controller: _addToGoal,
+                    decoration: CustomDeco.inputDecoration.copyWith(hintText: 'Amount',)
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(Colors.transparent),
+                  elevation: MaterialStateProperty.all(0.0),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(color: MyColors.purpule),
+                ),
+              ),
+              Container(
+                width: 120,
+                height: 40,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(MyColors.purpule),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  ),
+                  onPressed: () async {},
+                  child: Text('Save'),
+                ),
+              ),
+            ],
+          );
+        });
+  }
+
   _popUpGoals() {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           shape: RoundedRectangleBorder(
             borderRadius:
                 BorderRadius.circular(10.0), // Customize the border radius
@@ -189,43 +299,24 @@ class _WalletState extends State<Wallet> {
           content: SingleChildScrollView(
             child: Column(children: [
               SizedBox(height: 10),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Goal Name :",
-                  style: TextStyle(color: MyColors.iconColor),
-                ),
-              ),
               TextField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  //hintText: "Account name",
-                  focusColor: MyColors.purpule,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                controller: _goalName,
+                decoration:CustomDeco.inputDecoration.copyWith(hintText: 'Name',)
               ),
               SizedBox(
                 height: 10,
               ),
-              SizedBox(height: 10),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Initial amount :",
-                  style: TextStyle(color: MyColors.iconColor),
-                ),
-              ),
+              
               TextField(
-                controller: _balanceController,
-                decoration: InputDecoration(
-                  //hintText: "Initial balance",
-                  focusColor: MyColors.purpule,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                keyboardType: TextInputType.number,
+                controller: _goalAmount,
+                decoration: CustomDeco.inputDecoration.copyWith(hintText: 'Initial amount',)
+              ),
+              SizedBox(height: 10),
+              TextField(
+                keyboardType: TextInputType.number,
+                controller: _goalTarget,
+                decoration: CustomDeco.inputDecoration.copyWith(hintText: 'Goal amount',)
               ),
               SizedBox(height: 10),
               Align(
@@ -253,10 +344,10 @@ class _WalletState extends State<Wallet> {
                           "orange",
                     },
                     enableOpacity: false,
-                    color: _selectedColor,
+                    color: _goalColor,
                     onColorChanged: (Color color) {
                       setState(() {
-                        _selectedColor = color;
+                        _goalColor = color;
                       });
                     },
                     enableShadesSelection: false,
@@ -292,7 +383,7 @@ class _WalletState extends State<Wallet> {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pop(_selectedColor);
+                  Navigator.of(context).pop(_goalColor);
                 },
                 child: Text('Save'),
               ),
@@ -300,12 +391,7 @@ class _WalletState extends State<Wallet> {
           ],
         );
       },
-    ).then((color) {
-      if (color != null) {
-        // Handle the selected color
-        print('Selected Color: $color');
-      }
-    });
+    );
   }
 
   @override
@@ -313,40 +399,28 @@ class _WalletState extends State<Wallet> {
     return Scaffold(
       body: ListView(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-            child: Stack(
-              alignment: AlignmentDirectional.centerStart,
-              children: [
-                const Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Wallet",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: MyColors.iconColor,
-                          fontSize: 16),
-                    )),
-              ],
-            ),
-          ),
+          MyAppBar(name: "Wallet", back: false),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
             child: Text(
               "Accounts",
-              style: TextStyle(color: MyColors.iconColor, fontSize: 25),
+              style: TextStyle(
+                color: Theme.of(context).textTheme.displayMedium!.color,
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(right: 20, left: 20, bottom: 10),
             child: InkWell(
               onTap: () {
-                _popUpGoals();
+                _popUpAccount();
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 decoration: BoxDecoration(
-                  color: MyColors.iconGrey,
+                  color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(15.0),
                   border: Border.all(color: MyColors.iconColor, width: 3.0),
                 ),
@@ -362,8 +436,12 @@ class _WalletState extends State<Wallet> {
                     SizedBox(height: 10),
                     Text(
                       "Create New Account",
-                      style: TextStyle(fontSize: 20, color: MyColors.iconColor),
-                    )
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: MyColors.iconColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -391,12 +469,16 @@ class _WalletState extends State<Wallet> {
                       children: [
                         Text(
                           accounts[index]['name'],
-                          style:
-                              TextStyle(fontSize: 20, color: Colors.grey[300]),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.grey[300]),
                         ),
                         Text('\$ ' + accounts[index]['balance'].toString(),
                             style: TextStyle(
-                                fontSize: 20, color: Colors.grey[300])),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.grey[300])),
                       ],
                     ),
                   ),
@@ -407,7 +489,10 @@ class _WalletState extends State<Wallet> {
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
             child: Text(
               "Goals",
-              style: TextStyle(color: MyColors.iconColor, fontSize: 25),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.displayMedium!.color,
+                  fontSize: 25),
             ),
           ),
           Padding(
@@ -416,12 +501,16 @@ class _WalletState extends State<Wallet> {
               primary: false,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 1,
+                  childAspectRatio: 5 / 6,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10),
               shrinkWrap: true,
-              itemCount:goals.length,
+              itemCount: goals.length,
               itemBuilder: (context, index) {
+                double pourcentage = index != 0
+                    ? ((goals[index]['amount'] * 100) / goals[index]['goal'])
+                    : 0.0;
+                print(pourcentage);
                 return index == 0
                     ? InkWell(
                         onTap: () {
@@ -431,7 +520,7 @@ class _WalletState extends State<Wallet> {
                           padding: EdgeInsets.symmetric(
                               horizontal: 10, vertical: 10),
                           decoration: BoxDecoration(
-                            color: MyColors.iconGrey,
+                            color: Theme.of(context).primaryColor,
                             borderRadius: BorderRadius.circular(15.0),
                             border: Border.all(
                                 color: MyColors.iconColor, width: 3.0),
@@ -449,7 +538,9 @@ class _WalletState extends State<Wallet> {
                               Text(
                                 "Create Goal",
                                 style: TextStyle(
-                                    fontSize: 20, color: MyColors.iconColor),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: MyColors.iconColor),
                               )
                             ],
                           ),
@@ -470,36 +561,48 @@ class _WalletState extends State<Wallet> {
                           ),
                           child: Column(
                             children: [
-                              Row(children: [
-                                Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.phone_android_rounded,
-                                      size: 30,
-                                    ),
-                                    Icon(
-                                      Icons.circle_outlined,
-                                      size: 70,
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  "Phone",
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(color: MyColors.iconColor),
-                                ),
-                              ]),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      CircularPercentIndicator(
+                                        radius: 35,
+                                        lineWidth: 8,
+                                        percent: pourcentage / 100,
+                                        center: Icon(
+                                          goals[index]['icon'],
+                                          size: 30,
+                                          color: Colors.green,
+                                        ),
+                                        circularStrokeCap:
+                                            CircularStrokeCap.round,
+                                        progressColor: Colors.green,
+                                        backgroundColor: MyColors.lightGrey,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        "${goals[index]['title']}",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: MyColors.iconColor),
+                                      ),
+                                    ]),
+                              ),
                               SizedBox(height: 10),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "\$ 200000",
+                                    "\$ ${goals[index]['amount']}",
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
+                                        fontWeight: FontWeight.bold,
                                         color: MyColors.iconColor,
                                         fontSize: 20),
                                   ),
@@ -509,15 +612,28 @@ class _WalletState extends State<Wallet> {
                                 height: 10,
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
+                                  InkWell(
+                                    onTap: () {
+                                      _addToGoalPopUp();
+                                    },
+                                    child: CircleAvatar(
+                                      backgroundColor: MyColors.lightGrey,
+                                      foregroundColor: Colors.white,
+                                      radius: 30,
+                                      child: Icon(Icons.add),
+                                    ),
+                                  ),
                                   Text(
-                                    "59 %",
+                                    "${pourcentage.round()} %",
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
+                                        fontWeight: FontWeight.bold,
                                         color: MyColors.iconColor,
-                                        fontSize: 25),
+                                        fontSize: 30),
                                   ),
                                 ],
                               ),

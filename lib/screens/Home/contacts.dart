@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../ui/components/appBar.dart';
 import '../../ui/styles/colors.dart';
 
 class ContactsList extends StatefulWidget {
@@ -74,6 +75,8 @@ class _ContactsListState extends State<ContactsList> {
                 children: [
                   Column(
                     children: [
+              MyAppBar(name: "Contacts",back:true),
+
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(

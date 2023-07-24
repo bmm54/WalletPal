@@ -15,13 +15,12 @@ class Wrapper extends StatelessWidget {
     return StreamBuilder<User?>(
         stream: AuthService().authStateChanges(),
         builder: (buildContext, snapshot) {
-          if (snapshot.hasError) {
-            return const Center(child: Text('Something went wrong!'));
+          if (snapshot.connectionState==ConnectionState.waiting){
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.connectionState == ConnectionState.active) {
             if (snapshot.data == null) {
-              //return Authenticate();
-              return Screens();
+              return Authenticate();
             } else {
               return Screens();
             }
@@ -55,7 +54,6 @@ class _ScreensState extends State<Screens> with TickerProviderStateMixin {
                   Home(),
                   Wallet(),
                   Stats(),
-                  //Profile(),
                 ]),
           ),
           Padding(
@@ -63,7 +61,7 @@ class _ScreensState extends State<Screens> with TickerProviderStateMixin {
             child: Container(
               child: TabBar(
                   splashBorderRadius: BorderRadius.circular(20.0),
-                  indicatorColor: Colors.white,
+                  indicatorColor: Colors.transparent,
                   labelColor: MyColors.blue,
                   unselectedLabelColor: MyColors.iconGrey,
                   labelStyle: TextStyle(fontWeight: FontWeight.bold),
@@ -87,13 +85,6 @@ class _ScreensState extends State<Screens> with TickerProviderStateMixin {
                       ),
                       iconMargin: EdgeInsets.only(bottom: 5),
                     ),
-                    //Tab(
-                    //  icon: Icon(
-                    //    MyIcons.profile,
-                    //    size: 30,
-                    //  ),
-                    //  iconMargin: EdgeInsets.only(bottom: 5),
-                    //),
                   ]),
             ),
           ),

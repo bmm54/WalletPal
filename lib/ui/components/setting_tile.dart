@@ -26,25 +26,25 @@ class TileButton extends StatelessWidget {
           name,
           style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: color == null ? MyColors.iconColor : color),
+              color: color == null ? Theme.of(context).textTheme.displayMedium!.color: color),
         ),
         leading: Container(
           height: 50,
           width: 50,
           decoration: BoxDecoration(
-            color: Colors.white,
             borderRadius: BorderRadius.circular(15.0),
             border: Border.all(
                 color: color == null
-                    ? MyColors.borderColor
+                    ? Theme.of(context).secondaryHeaderColor
                     : color!.withOpacity(0.3),
                 width: 3.0),
           ),
           child: Icon(
             icon,
-            color: color == null ? MyColors.iconColor : color,
+            color: color == null ? Theme.of(context).iconTheme.color : color,
           ),
         ),
+        trailing: option??SizedBox(),
       ),
     );
   }

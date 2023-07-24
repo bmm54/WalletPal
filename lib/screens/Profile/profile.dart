@@ -1,5 +1,10 @@
+import 'package:bstable/services/auth_data.dart';
+import 'package:bstable/ui/styles/colors.dart';
+import 'package:bstable/ui/styles/icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../ui/components/appBar.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -11,17 +16,57 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
+    final userData = AuthData().getUserData;
     return Scaffold(
       body: ListView(
         children: [
           Column(
             children: [
-              CircleAvatar(
-                radius: Get.width*0.2,
+              MyAppBar(name: "Profile",back:true),
+              Container(
+                height: Get.width * 0.3,
+                width: Get.width * 0.3,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image:  (userData['image']==null)
+                                    ? Image.asset(
+                                            "lib/assets/images/profile.png")
+                                        .image
+                                  :Image.network(userData['image']).image,
+                    fit: BoxFit.cover,
+                  ),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15.0),
+                  border: Border.all(color: MyColors.borderColor, width: 3.0),
+                ),
               ),
-              Text("name"),
-              Text("id"),
-              
+              SizedBox(
+                height: 10.0,
+              ),
+              Text(
+                userData['name'] ?? "",
+                style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    color: MyColors.iconColor),
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Text(
+                userData['email'] ?? "",
+                style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.bold,
+                    color: MyColors.iconColor),
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Text(
+                userData['id'] ?? "",
+                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+              ),
             ],
           )
         ],

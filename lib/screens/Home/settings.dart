@@ -3,12 +3,17 @@ import 'dart:math';
 import 'package:bstable/services/auth.dart';
 import 'package:bstable/ui/components/setting_tile.dart';
 import 'package:bstable/ui/styles/icons.dart';
+import 'package:bstable/ui/themes/dark.dart';
+import 'package:bstable/ui/themes/light.dart';
+import 'package:bstable/ui/themes/notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../sql/sql_helper.dart';
+import '../../ui/components/appBar.dart';
 import '../../ui/components/card.dart';
 import '../../ui/styles/colors.dart';
 
@@ -20,6 +25,7 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  var selectedCurrency = '\$';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,40 +33,7 @@ class _SettingsState extends State<Settings> {
         children: [
           Column(
             children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                child: Stack(
-                  alignment: AlignmentDirectional.centerStart,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Get.back();
-                      },
-                      child: Container(
-                        height: 60,
-                        width: 60,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15.0),
-                          border: Border.all(
-                              color: MyColors.borderColor, width: 3.0),
-                        ),
-                        child: const Icon(MyIcons.back),
-                      ),
-                    ),
-                    const Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Settings",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: MyColors.iconColor,
-                              fontSize: 16),
-                        )),
-                  ],
-                ),
-              ),
+              MyAppBar(name: "Settings", back: true),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -76,7 +49,10 @@ class _SettingsState extends State<Settings> {
                       child: Text("General Settings",
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: MyColors.iconColor,
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .color,
                               fontSize: 16)),
                     ),
                     TileButton(
@@ -88,11 +64,68 @@ class _SettingsState extends State<Settings> {
                       name: "Currency",
                       icon: Icons.attach_money,
                       ontap: () {},
+                      option: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            border: Border.all(
+                                width: 3,
+                                color: Theme.of(context).secondaryHeaderColor),
+                            borderRadius: BorderRadius.circular(15)),
+                        child: DropdownButton<String>(
+                          dropdownColor: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                          underline: Container(
+                            height: 0,
+                          ),
+                          value: selectedCurrency,
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .color,
+                              fontWeight: FontWeight.bold),
+                          alignment: Alignment.center,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedCurrency = newValue!;
+                            });
+                          },
+                          items:
+                              <String>['\$', 'MRO', 'TND'].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
                     ),
                     TileButton(
                       name: "Theme",
                       icon: Icons.color_lens,
                       ontap: () {},
+                      option: InkWell(
+                        onTap: () {
+                          Get.changeThemeMode(Get.isDarkMode
+                              ? ThemeMode.light
+                              : ThemeMode.dark);
+                        },
+                        child: Container(
+                          height: 50,
+                          width:50,
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            border: Border.all(
+                                width: 3,
+                                color: Theme.of(context).secondaryHeaderColor),
+                            borderRadius: BorderRadius.circular(15)),
+                          child: Icon(Get.isDarkMode
+                              ? Icons.wb_sunny
+                              : Icons.brightness_3,color:Theme.of(context).iconTheme.color),
+                        ),
+                      ),
                     ),
                     TileButton(
                       name: "Notification",
@@ -107,7 +140,10 @@ class _SettingsState extends State<Settings> {
                       child: Text("Account & Informations",
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: MyColors.iconColor,
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .color,
                               fontSize: 16)),
                     ),
                     TileButton(
@@ -135,7 +171,10 @@ class _SettingsState extends State<Settings> {
                       child: Text("About",
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: MyColors.iconColor,
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .color,
                               fontSize: 16)),
                     ),
                     TileButton(
@@ -165,7 +204,6 @@ class _SettingsState extends State<Settings> {
                       name: "Logout",
                       icon: Icons.logout,
                       color: Color.fromARGB(255, 188, 66, 57),
-                      
                       ontap: () {
                         AuthService().signOut();
                         Get.back();

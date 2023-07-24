@@ -1,11 +1,16 @@
-import 'package:bstable/screens/Home/add.dart';
+import 'package:bstable/models/appUser.dart';
+import 'package:bstable/screens/Home/add/add.dart';
 import 'package:bstable/screens/Home/receiveMoney.dart';
 import 'package:bstable/screens/Home/senMoney.dart';
 import 'package:bstable/screens/Home/settings.dart';
 import 'package:bstable/screens/Profile/profile.dart';
+import 'package:bstable/services/auth_data.dart';
+import 'package:bstable/services/auth.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/ui/components/activity.dart';
 import 'package:bstable/ui/styles/colors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -23,6 +28,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final user = FirebaseAuth.instance.currentUser;
+  final userData = AuthData().getUserData;
   List<Map<String, dynamic>> records = [];
   List<Map<String, dynamic>> accounts = [];
   bool ready = false;
@@ -64,24 +71,34 @@ class _HomeState extends State<Home> {
                       children: [
                         InkWell(
                           onTap: () {
-                            Get.to(() => Profile());
+                            if (user != null) {
+                              Get.to(() => Profile());
+                            }
                           },
                           child: Container(
                             height: 60,
                             width: 60,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              image: DecorationImage(
+                                image: (userData == null ||
+                                        userData['image'] == null)
+                                    ? Image.asset(
+                                            "lib/assets/images/profile.png")
+                                        .image
+                                    : Image.network(userData['image']).image,
+                                fit: BoxFit.cover,
+                              ),
+                              color: Theme.of(context).primaryColor,
                               borderRadius: BorderRadius.circular(15.0),
                               border: Border.all(
-                                  color: MyColors.borderColor, width: 3.0),
+                                  color: Theme.of(context).secondaryHeaderColor, width: 3.0),
                             ),
-                            child: Icon(MyIcons.profile),
                           ),
                         ),
                         Text(
                           "${DateFormat('dd MMM yyyy').format(DateTime.now())}",
                           style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
+                              color: Theme.of(context).textTheme.displayMedium!.color, fontWeight: FontWeight.bold),
                         ),
                         InkWell(
                           radius: buttonRadius,
@@ -92,10 +109,10 @@ class _HomeState extends State<Home> {
                             height: 60,
                             width: 60,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: Theme.of(context).primaryColor,
                               borderRadius: BorderRadius.circular(buttonRadius),
                               border: Border.all(
-                                  color: MyColors.borderColor, width: 3.0),
+                                  color: Theme.of(context).secondaryHeaderColor, width: 3.0),
                             ),
                             child: Icon(
                               MyIcons.settings,
@@ -170,10 +187,10 @@ class _HomeState extends State<Home> {
                                   height: 60,
                                   width: 60,
                                   decoration: BoxDecoration(
-                                    color: MyColors.buttonGrey,
+                                    color: Theme.of(context).primaryColor,
                                     borderRadius: BorderRadius.circular(15.0),
                                     border: Border.all(
-                                        color: MyColors.borderColor,
+                                        color: Theme.of(context).secondaryHeaderColor,
                                         width: 1.0),
                                   ),
                                   child: Icon(
@@ -186,7 +203,10 @@ class _HomeState extends State<Home> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: MyColors.iconColor),
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .displayMedium!
+                                          .color),
                                 )
                               ],
                             ),
@@ -207,10 +227,10 @@ class _HomeState extends State<Home> {
                                   height: 60,
                                   width: 60,
                                   decoration: BoxDecoration(
-                                    color: MyColors.buttonGrey,
+                                    color: Theme.of(context).primaryColor,
                                     borderRadius: BorderRadius.circular(15.0),
                                     border: Border.all(
-                                        color: MyColors.borderColor,
+                                        color: Theme.of(context).secondaryHeaderColor,
                                         width: 1.0),
                                   ),
                                   child: Icon(
@@ -223,7 +243,10 @@ class _HomeState extends State<Home> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: MyColors.iconColor),
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .displayMedium!
+                                          .color),
                                 )
                               ],
                             ),
@@ -249,10 +272,10 @@ class _HomeState extends State<Home> {
                                   height: 60,
                                   width: 60,
                                   decoration: BoxDecoration(
-                                    color: MyColors.buttonGrey,
+                                    color: Theme.of(context).primaryColor,
                                     borderRadius: BorderRadius.circular(15.0),
                                     border: Border.all(
-                                        color: MyColors.borderColor,
+                                        color: Theme.of(context).secondaryHeaderColor,
                                         width: 1.0),
                                   ),
                                   child: Icon(
@@ -265,7 +288,10 @@ class _HomeState extends State<Home> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: MyColors.iconColor),
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .displayMedium!
+                                          .color),
                                 )
                               ],
                             ),

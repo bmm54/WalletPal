@@ -18,6 +18,7 @@ class MyCard extends StatelessWidget {
       MyColors.lightBlue:MyColors.lightestBlue,
       MyColors.orange:MyColors.lightOrange,
       MyColors.purpule:MyColors.lightPurpule,
+      MyColors.green:MyColors.lightGreen
     };
     final screenWidth = MediaQuery.of(context).size.width;
     return Padding(
