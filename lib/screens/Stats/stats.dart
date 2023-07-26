@@ -24,6 +24,8 @@ class _StatsState extends State<Stats> {
   double debt = 0;
   double totalBalance = 0;
   List<FlSpot> chartData = [];
+  int? expTouchedIndex;
+  int? incTouchedIndex;
 
   void _refreshData() async {
     final exp = await SQLHelper.getExpenses();
@@ -42,8 +44,9 @@ class _StatsState extends State<Stats> {
       // Filter expenses based on the selected filter option
       switch (selectedFilter) {
         case 'This Week':
-          final startOfWeek = now.subtract(Duration(days: now.weekday-1));
-          final endOfWeek =now.add(Duration(days: DateTime.daysPerWeek - now.weekday));
+          final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+          final endOfWeek =
+              now.add(Duration(days: DateTime.daysPerWeek - now.weekday));
           print(endOfWeek.toString());
           chartResult = chartResult.where((expense) {
             DateTime date = DateTime.parse(expense['time']);
@@ -118,7 +121,12 @@ class _StatsState extends State<Stats> {
                           trailing: Text(
                             '\$ $totalBalance',
                             style: TextStyle(
-                                color: MyColors.iconColor, fontSize: 16),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .displayLarge!
+                                    .color),
                           ),
                         ),
                         ListTile(
@@ -130,7 +138,12 @@ class _StatsState extends State<Stats> {
                           trailing: Text(
                             '\$ $debt',
                             style: TextStyle(
-                                color: MyColors.iconColor, fontSize: 16),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .displayLarge!
+                                    .color),
                           ),
                         ),
                       ],
@@ -219,8 +232,9 @@ class _StatsState extends State<Stats> {
                             topTitles: AxisTitles(
                                 sideTitles: SideTitles(showTitles: false)),
                             rightTitles: AxisTitles(
-                                sideTitles: SideTitles(showTitles: false,
-                                )),
+                                sideTitles: SideTitles(
+                              showTitles: false,
+                            )),
                             bottomTitles: AxisTitles(
                               sideTitles: SideTitles(
                                 showTitles: true,
@@ -307,18 +321,24 @@ class _StatsState extends State<Stats> {
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 8),
                           decoration: BoxDecoration(
-                              color: MyColors.buttonGrey,
+                              color: Theme.of(context).primaryColor,
                               border: Border.all(
-                                  width: 3, color: MyColors.borderColor),
+                                  width: 3,
+                                  color:
+                                      Theme.of(context).secondaryHeaderColor),
                               borderRadius: BorderRadius.circular(15)),
                           child: DropdownButton<String>(
+                            dropdownColor: Theme.of(context).primaryColor,
                             borderRadius: BorderRadius.circular(10),
                             underline: Container(
                               height: 0,
                             ),
                             value: selectedFilter,
                             style: TextStyle(
-                                color: MyColors.iconColor,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .displayLarge!
+                                    .color,
                                 fontWeight: FontWeight.bold),
                             alignment: Alignment.center,
                             onChanged: (String? newValue) {
@@ -344,7 +364,10 @@ class _StatsState extends State<Stats> {
                   ),
                   Text(
                     "Expenses",
-                    style: TextStyle(fontSize: 25, color: MyColors.red),
+                    style: TextStyle(
+                        fontSize: 25,
+                        color: MyColors.red,
+                        fontWeight: FontWeight.bold),
                   ),
 
                   SizedBox(
@@ -352,25 +375,53 @@ class _StatsState extends State<Stats> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: MyColors.buttonGrey,
+                      color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(30.0),
-                      border:
-                          Border.all(color: MyColors.borderColor, width: 3.0),
+                      border: Border.all(
+                          color: Theme.of(context).secondaryHeaderColor,
+                          width: 3.0),
                     ),
-                    width: Get.width * 0.8,
-                    height: Get.width * 0.8,
-                    child: AspectRatio(
-                        aspectRatio: 1.0,
-                        child: PieChart(
-                            swapAnimationDuration:
-                                Duration(milliseconds: 150), // Optional
-                            swapAnimationCurve: Curves.linear,
-                            PieChartData(
-                              borderData: FlBorderData(show: false),
-                              sectionsSpace: 0,
-                              sections: _expensesSections(expenses),
-                              centerSpaceRadius: Get.width * 0.25,
-                            ))),
+                    width: Get.width * 0.9,
+                    height: Get.width * 0.9,
+                    child: expenses.isEmpty
+                        ? Center(
+                            child: Text(
+                            "There is no data yet",
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .color,
+                                fontSize: 20),
+                          ))
+                        : AspectRatio(
+                            aspectRatio: 1.0,
+                            child: PieChart(
+                                swapAnimationDuration:
+                                    Duration(milliseconds: 150), // Optional
+                                swapAnimationCurve: Curves.linear,
+                                PieChartData(
+                                  pieTouchData: PieTouchData(
+                                    touchCallback: (p0, p1) {
+                                      setState(() {
+                                        if (p1?.touchedSection
+                                                is FlLongPressEnd ||
+                                            p1?.touchedSection
+                                                is FlPanEndEvent) {
+                                          expTouchedIndex = -1;
+                                        } else {
+                                          expTouchedIndex = p1?.touchedSection!
+                                              .touchedSectionIndex;
+                                        }
+                                      });
+                                    },
+                                  ),
+                                  borderData: FlBorderData(show: false),
+                                  sectionsSpace: 0,
+                                  sections: _expensesSections(
+                                      expenses, expTouchedIndex),
+                                  centerSpaceRadius: Get.width * 0.25,
+                                ))),
                   ),
                   ListView.builder(
                       shrinkWrap: true,
@@ -392,32 +443,60 @@ class _StatsState extends State<Stats> {
                   ///////////////////////////////
                   Text(
                     "Incomes",
-                    style: TextStyle(fontSize: 25, color: MyColors.green),
+                    style: TextStyle(
+                        fontSize: 25,
+                        color: MyColors.green,
+                        fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     height: 20,
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: MyColors.buttonGrey,
+                      color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(30.0),
-                      border:
-                          Border.all(color: MyColors.borderColor, width: 3.0),
+                      border: Border.all(
+                          color: Theme.of(context).secondaryHeaderColor,
+                          width: 3.0),
                     ),
-                    width: Get.width * 0.8,
-                    height: Get.width * 0.8,
-                    child: AspectRatio(
-                        aspectRatio: 1.0,
-                        child: PieChart(
-                            swapAnimationDuration:
-                                Duration(milliseconds: 150), // Optional
-                            swapAnimationCurve: Curves.linear,
-                            PieChartData(
-                              borderData: FlBorderData(show: false),
-                              sectionsSpace: 0,
-                              sections: _incomesSections(incomes),
-                              centerSpaceRadius: Get.width * 0.25,
-                            ))),
+                    width: Get.width * 0.9,
+                    height: Get.width * 0.9,
+                    child: incomes.isEmpty
+                        ? Center(
+                            child: Text(
+                            "There is no data yet",
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .color,
+                                fontSize: 20),
+                          ))
+                        : AspectRatio(
+                            aspectRatio: 1.0,
+                            child: PieChart(
+                                swapAnimationCurve: Curves.linear,
+                                PieChartData(
+                                  pieTouchData: PieTouchData(
+                                    touchCallback: (p0, p1) {
+                                      setState(() {
+                                        if (p1?.touchedSection
+                                                is FlLongPressEnd ||
+                                            p1?.touchedSection
+                                                is FlPanEndEvent) {
+                                          incTouchedIndex = -1;
+                                        } else {
+                                          incTouchedIndex = p1?.touchedSection!
+                                              .touchedSectionIndex;
+                                        }
+                                      });
+                                    },
+                                  ),
+                                  borderData: FlBorderData(show: false),
+                                  sectionsSpace: 0,
+                                  sections: _incomesSections(incomes,incTouchedIndex),
+                                  centerSpaceRadius: Get.width * 0.25,
+                                ))),
                   ),
                   ListView.builder(
                       shrinkWrap: true,
@@ -440,144 +519,52 @@ class _StatsState extends State<Stats> {
           );
   }
 
-  List<PieChartSectionData> _expensesSections(List expenses) {
+  List<PieChartSectionData> _expensesSections(
+      List expenses, int? touchedIndex) {
     final List<PieChartSectionData> list = [];
+    double sum = 0;
     for (var expense in expenses) {
-      const double radius = 40.0;
+      sum += expense['total'];
+    }
+    for (var index = 0; index < expenses.length; index++) {
+      final isTouched = index == touchedIndex;
+      double fontSize = isTouched ? 20 : 14;
+      double radius = isTouched ? 70.0 : 50.0;
+      double pourc = (expenses[index]['total'] * 100) / sum;
+      String title = pourc.toStringAsFixed(1)+'%';
       final data = PieChartSectionData(
-        showTitle: false,
-        color: IconsList.get_color(expense['title']),
-        value: expense['total'],
-        radius: radius,
-        //title: expense['title'],
-      );
+          showTitle: true,
+          title: title,
+          color: IconsList.get_color(expenses[index]['title']),
+          value: expenses[index]['total'],
+          radius: radius,
+          titleStyle: TextStyle(fontSize: fontSize,fontWeight: FontWeight.bold,color: Theme.of(context).textTheme.displayMedium!.color));
       list.add(data);
     }
     return list;
   }
 
-  List<PieChartSectionData> _incomesSections(List incomes) {
+  List<PieChartSectionData> _incomesSections(List incomes, int? touchedIndex) {
     final List<PieChartSectionData> list = [];
+    double sum = 0;
     for (var income in incomes) {
-      const double radius = 40.0;
+      sum += income['total'];
+    }
+    for (var index = 0; index < incomes.length; index++) {
+      final isTouched = index == touchedIndex;
+      double fontSize = isTouched ? 20 : 14;
+      double radius = isTouched ? 70.0 : 50.0;
+      double pourc = (incomes[index]['total'] * 100) / sum;
+      String title = pourc.toStringAsFixed(1)+'%';
       final data = PieChartSectionData(
-        showTitle: false,
-        color: IconsList.get_color(income['title']),
-        value: income['total'],
-        radius: radius,
-        //title: expense['title'],
-      );
+          showTitle: true,
+          title: title,
+          color: IconsList.get_color(incomes[index]['title']),
+          value: incomes[index]['total'],
+          radius: radius,
+          titleStyle: TextStyle(fontSize: fontSize,fontWeight: FontWeight.bold,color: Theme.of(context).textTheme.displayMedium!.color));
       list.add(data);
     }
     return list;
   }
 }
-
-SideTitles get _bottomTitles => SideTitles(
-      showTitles: true,
-      getTitlesWidget: (value, meta) {
-        String text = '';
-        switch (value.toInt()) {
-          case 2:
-            text = 'Mar';
-          case 5:
-            text = 'Jun';
-          case 8:
-            text = 'Sep';
-        }
-
-        return Text(text);
-      },
-    );
-
-//////////////////////////
-//Line chart
-/*
-            Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: MyColors.buttonGrey,
-                border: Border.all(color: MyColors.borderColor, width: 3.0),
-              ),
-              width: Get.width * 0.9,
-              height: Get.width * 0.8,
-              child: AspectRatio(
-                aspectRatio: 1.0,
-                child: LineChart(
-                  LineChartData(
-                    titlesData: FlTitlesData(
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 22,
-                          getTitlesWidget: (value, meta) {
-                            // Generate dynamic bottom titles based on the chart data
-                            int index = value.toInt();
-                            if (index >= 0 && index < chartData.length) {
-                              DateTime date =
-                                  DateTime.fromMillisecondsSinceEpoch(
-                                      chartData[index].x.toInt().round());
-                              return Text(DateFormat('dd MMM').format(date));
-                            }
-                            return Text('');
-                          },
-                        ),
-                      ),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 40,
-                          getTitlesWidget: (value, meta) {
-                            // Generate dynamic left titles based on the chart data
-                            if (value > -1000 && value < 1000) {
-                              // Display numbers directly within the range -100000 to 100000
-                              return Text(value.toInt().toString());
-                            } else if (value.abs() >= 1000) {
-                              // Convert numbers greater than 1000 to "k" format
-                              int dividedValue =
-                                  (value.abs() ~/ 1000); // Integer division
-                              String prefix = value.isNegative
-                                  ? ''
-                                  : '-'; // Add '-' sign if value is negative
-                              return Text('$prefix${dividedValue.toString()}k');
-                            }
-                            return Text('');
-                          },
-                        ),
-                      ),
-                      topTitles:
-                          AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      rightTitles:
-                          AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    ),
-                    gridData: FlGridData(
-                      show: true,
-                      getDrawingHorizontalLine: (value) {
-                        return FlLine(
-                          strokeWidth: 1,
-                        );
-                      },
-                    ),
-                    borderData: FlBorderData(
-                        show: true,
-                        border: Border.all(
-                            color: MyColors.borderColor, width: 3.0)),
-                    lineBarsData: [
-                      LineChartBarData(
-                        spots: chartData,
-                        isCurved: true,
-                        color: MyColors.purpule,
-                        barWidth: 3,
-                        dotData: FlDotData(
-                          show: true,
-                        ),
-                        belowBarData: BarAreaData(
-                          show: true,
-                          color: MyColors.lightPurpule.withOpacity(0.3),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),*/

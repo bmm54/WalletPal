@@ -3,6 +3,7 @@ import 'package:bstable/screens/Home/Home.dart';
 import 'package:bstable/ui/components/appBar.dart';
 import 'package:bstable/ui/styles/decoration.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import '../../sql/sql_helper.dart';
 import '../../ui/styles/colors.dart';
@@ -20,38 +21,38 @@ class Wallet extends StatefulWidget {
 class _WalletState extends State<Wallet> {
   Color _accountColor = MyColors.purpule;
   Color _goalColor = MyColors.lightPurpule;
-  List<Map<String, dynamic>> accounts = Accounts.getAccounts;
+  List<Map<String, dynamic>> accounts = [];
   List<Map<String, dynamic>> goals = [
-            {},
-            {
-              "title": "laptop",
-              "amount": 320000.0,
-              "goal": 580000.0,
-              "color": "0xFFCCF3FF",
-              "icon": Icons.laptop_chromebook
-            },
-            {
-              "title": "phone",
-              "amount": 20000,
-              "goal": 30000,
-              "color": "0xFFDCC7FF",
-              "icon": Icons.phone_android
-            },
-            {
-              "title": "car",
-              "amount": 3500000,
-              "goal": 6000000.0,
-              "color": "0xFFFFDBCC",
-              "icon": Icons.car_rental_rounded
-            },
-            {
-              "title": "car",
-              "amount": 3500000,
-              "goal": 6000000.0,
-              "color": "0xFFBFDFD1",
-              "icon": Icons.car_rental_rounded
-            },
-          ];
+    {},
+    {
+      "title": "laptop",
+      "amount": 320000.0,
+      "goal": 580000.0,
+      "color": "0xFFCCF3FF",
+      "icon": Icons.laptop_chromebook
+    },
+    {
+      "title": "phone",
+      "amount": 20000,
+      "goal": 30000,
+      "color": "0xFFDCC7FF",
+      "icon": Icons.phone_android
+    },
+    {
+      "title": "car",
+      "amount": 3500000,
+      "goal": 6000000.0,
+      "color": "0xFFFFDBCC",
+      "icon": Icons.car_rental_rounded
+    },
+    {
+      "title": "car",
+      "amount": 3500000,
+      "goal": 6000000.0,
+      "color": "0xFFBFDFD1",
+      "icon": Icons.car_rental_rounded
+    },
+  ];
   final _accountName = TextEditingController();
   final _accountBalance = TextEditingController();
   final _goalName = TextEditingController();
@@ -104,7 +105,7 @@ class _WalletState extends State<Wallet> {
   @override
   void initState() {
     super.initState();
-    //_refrechPage();
+    _refrechPage();
   }
 
   _popUpAccount() {
@@ -119,14 +120,17 @@ class _WalletState extends State<Wallet> {
           ),
           title: Text(
             'Create Account',
-            style: TextStyle(color: MyColors.iconColor,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: MyColors.iconColor, fontWeight: FontWeight.bold),
           ),
           content: SingleChildScrollView(
             child: Column(children: [
               SizedBox(height: 10),
-             TextField(
+              TextField(
                 controller: _accountName,
-                decoration: CustomDeco.inputDecoration.copyWith(hintText: 'Name',),
+                decoration: CustomDeco.inputDecoration.copyWith(
+                  hintText: 'Name',
+                ),
               ),
               SizedBox(
                 height: 20,
@@ -134,7 +138,9 @@ class _WalletState extends State<Wallet> {
               TextField(
                 controller: _accountBalance,
                 keyboardType: TextInputType.number,
-                decoration: CustomDeco.inputDecoration.copyWith(hintText: 'Initial balance',),
+                decoration: CustomDeco.inputDecoration.copyWith(
+                  hintText: 'Initial balance',
+                ),
               ),
               SizedBox(height: 10),
               Row(
@@ -235,10 +241,11 @@ class _WalletState extends State<Wallet> {
                 children: [
                   SizedBox(height: 10),
                   TextField(
-                    keyboardType: TextInputType.number,
-                    controller: _addToGoal,
-                    decoration: CustomDeco.inputDecoration.copyWith(hintText: 'Amount',)
-                  ),
+                      keyboardType: TextInputType.number,
+                      controller: _addToGoal,
+                      decoration: CustomDeco.inputDecoration.copyWith(
+                        hintText: 'Amount',
+                      )),
                   SizedBox(
                     height: 10,
                   ),
@@ -300,24 +307,26 @@ class _WalletState extends State<Wallet> {
             child: Column(children: [
               SizedBox(height: 10),
               TextField(
-                controller: _goalName,
-                decoration:CustomDeco.inputDecoration.copyWith(hintText: 'Name',)
-              ),
+                  controller: _goalName,
+                  decoration: CustomDeco.inputDecoration.copyWith(
+                    hintText: 'Name',
+                  )),
               SizedBox(
                 height: 10,
               ),
-              
               TextField(
-                keyboardType: TextInputType.number,
-                controller: _goalAmount,
-                decoration: CustomDeco.inputDecoration.copyWith(hintText: 'Initial amount',)
-              ),
+                  keyboardType: TextInputType.number,
+                  controller: _goalAmount,
+                  decoration: CustomDeco.inputDecoration.copyWith(
+                    hintText: 'Initial amount',
+                  )),
               SizedBox(height: 10),
               TextField(
-                keyboardType: TextInputType.number,
-                controller: _goalTarget,
-                decoration: CustomDeco.inputDecoration.copyWith(hintText: 'Goal amount',)
-              ),
+                  keyboardType: TextInputType.number,
+                  controller: _goalTarget,
+                  decoration: CustomDeco.inputDecoration.copyWith(
+                    hintText: 'Goal amount',
+                  )),
               SizedBox(height: 10),
               Align(
                 alignment: Alignment.centerLeft,
@@ -456,30 +465,50 @@ class _WalletState extends State<Wallet> {
                 return Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                  child: Container(
-                    height: 80,
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Color(int.parse(accounts[index]['color'])),
-                      borderRadius: BorderRadius.circular(
-                          15.0), // Specify the border radius
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          accounts[index]['name'],
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.grey[300]),
-                        ),
-                        Text('\$ ' + accounts[index]['balance'].toString(),
+                  child: Slidable(
+                    endActionPane:
+                        ActionPane(motion: StretchMotion(), children: [
+                          SizedBox(width: 5,),
+                      SlidableAction(
+                          borderRadius: BorderRadius.circular(15),
+                          backgroundColor: MyColors.blue,
+                          icon: Icons.edit,
+                          label: "edit",
+                          onPressed: (context) {}),
+                          SizedBox(width: 5,),
+                      SlidableAction(
+                          borderRadius: BorderRadius.circular(15),
+                          backgroundColor: Colors.red,
+                          icon: Icons.delete,
+                          label: "delete",
+                          onPressed: (context) {})
+                    ]),
+                    child: Container(
+                      height: 80,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Color(int.parse(accounts[index]['color'])),
+                        borderRadius: BorderRadius.circular(
+                            15.0), // Specify the border radius
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            accounts[index]['name'],
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
-                                color: Colors.grey[300])),
-                      ],
+                                color: Colors.grey[300]),
+                          ),
+                          Text('\$ ' + accounts[index]['balance'].toString(),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.grey[300])),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -510,7 +539,6 @@ class _WalletState extends State<Wallet> {
                 double pourcentage = index != 0
                     ? ((goals[index]['amount'] * 100) / goals[index]['goal'])
                     : 0.0;
-                print(pourcentage);
                 return index == 0
                     ? InkWell(
                         onTap: () {

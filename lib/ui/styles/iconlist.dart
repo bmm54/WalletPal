@@ -14,6 +14,8 @@ class IconsList {
     "Internet": MyIcons.internet,
     "Loan": MyIcons.loan,
     "Salary": MyIcons.cashin,
+    "Sent":Icons.output_rounded,
+    "Received":Icons.input_rounded,
   };
   static Map<String, Color> colors = {
     "Food": MyColors.orange,
@@ -24,8 +26,10 @@ class IconsList {
     "Housing": MyColors.purpule,
     "Shopping": MyColors.blue,
     "Internet": MyColors.darkBorder,
-    "Loan": MyColors.green,
+    "Loan": Colors.lightGreen,
     "Salary": MyColors.green,
+    "Sent":Colors.redAccent,
+    "Received":Colors.greenAccent,
   };
   static get_icon(String name) {
     return categories[name];

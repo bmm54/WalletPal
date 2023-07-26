@@ -21,4 +21,5 @@ class MyColors {
   static const Color buttonColor = Color(0xFFD2D3DA);
   static const Color darkPurple=Color(0xFF04182F);
   static const Color buttonDark=Color(0xFF1A3146);
+  static const Color logoColor=Color(0xFF2A3454);
 }

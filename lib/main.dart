@@ -1,4 +1,5 @@
 import 'package:bstable/firebase_options.dart';
+import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:bstable/ui/themes/dark.dart';
 import 'package:bstable/ui/themes/light.dart';
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
       child: GetMaterialApp(
         darkTheme: darkTheme,
         theme: lightTheme,
-        themeMode: ThemeService().getThemeMode(),//Get.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        themeMode: ThemeService().getThemeMode(),
         debugShowCheckedModeBanner: false,
         home: Wrapper(),
       ),

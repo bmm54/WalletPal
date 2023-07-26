@@ -68,23 +68,26 @@ class _ExpenseCategoryState extends State<ExpenseCategory> {
                       get(titles[index]), //icon
                       get_color(color[index])
                     ];
-                    return ListTile(
-                      onTap: () {
-                        final result = data[0];
-                        Navigator.pop(context, result);
-                      },
-                      title: Text(
-                        data[0],
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      leading: Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: MyColors.buttonGrey,
-                          borderRadius: BorderRadius.circular(15.0),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: ListTile(
+                        onTap: () {
+                          final result = data[0];
+                          Navigator.pop(context, result);
+                        },
+                        title: Text(
+                          data[0],
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        child: Icon(data[1], color: data[2]),
+                        leading: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: Icon(data[1], color: data[2]),
+                        ),
                       ),
                     );
                   },

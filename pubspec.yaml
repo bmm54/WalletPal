@@ -59,6 +59,8 @@ dependencies:
   percent_indicator: ^4.2.3
   cloud_firestore: ^4.8.3
   get_storage: ^2.1.1
+  flutter_svg: ^2.0.7
+  flutter_slidable: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -99,6 +101,9 @@ flutter:
     - lib/assets/images/google_logo.png
     - lib/assets/images/profile.png
     - lib/assets/images/welcome.png
+    - lib/assets/images/logo.svg
+    - lib/assets/images/vector1.svg
+    - lib/assets/images/vector2.svg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

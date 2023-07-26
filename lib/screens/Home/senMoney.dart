@@ -66,12 +66,28 @@ class _SendMoneyState extends State<SendMoney> {
         return snapshot.data()!;
       } else {
         showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: Text("doesnt exist"),
-            );
-          });
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                actions: [
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.transparent),
+                      elevation: MaterialStateProperty.all(0.0),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      'Ok',
+                      style: TextStyle(color: MyColors.purpule),
+                    ),
+                  ),
+                ],
+                content: Text("Use doesnt exist"),
+              );
+            });
         return null;
       }
     } catch (e) {
@@ -83,19 +99,19 @@ class _SendMoneyState extends State<SendMoney> {
               content: Text("Please check your internet connection"),
               actions: [
                 ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(Colors.transparent),
-                  elevation: MaterialStateProperty.all(0.0),
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(Colors.transparent),
+                    elevation: MaterialStateProperty.all(0.0),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'Ok',
+                    style: TextStyle(color: MyColors.purpule),
+                  ),
                 ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  'Ok',
-                  style: TextStyle(color: MyColors.purpule),
-                ),
-              ),
               ],
             );
           });
@@ -103,17 +119,18 @@ class _SendMoneyState extends State<SendMoney> {
   }
 
   _showSheet(String uid) async {
-    final _amountController=TextEditingController();
-    String name;
-    String photo;
+    final _amountController = TextEditingController();
+    String? name;
+    String? photo;
     final value = await getUserData(uid);
     name = value['name'];
     photo = value['photo_url'];
     return showModalBottomSheet(
+      backgroundColor: Theme.of(context).primaryColor,
       shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(20.0), // Customize the border radius
-          ),
+        borderRadius:
+            BorderRadius.circular(20.0), // Customize the border radius
+      ),
       isScrollControlled: true,
       context: context,
       builder: (_) => Container(
@@ -124,7 +141,7 @@ class _SendMoneyState extends State<SendMoney> {
             bottom: MediaQuery.of(context).viewInsets.bottom + 150),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(
               child: Container(
@@ -133,11 +150,10 @@ class _SendMoneyState extends State<SendMoney> {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: photo != null
-                        ? NetworkImage(photo!)
+                        ? NetworkImage(photo)
                         : Image.asset("lib/assets/images/profile.png").image,
                     fit: BoxFit.cover,
                   ),
-                  color: Colors.white,
                   borderRadius: BorderRadius.circular(15.0),
                   border: Border.all(color: MyColors.borderColor, width: 3.0),
                 ),
@@ -152,7 +168,7 @@ class _SendMoneyState extends State<SendMoney> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
-              child:  TextField(
+              child: TextField(
                 controller: _amountController,
                 textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
@@ -182,18 +198,20 @@ class _SendMoneyState extends State<SendMoney> {
               height: 30,
             ),
             Container(
-              width: MediaQuery.of(context).size.width,
+              width: Get.width * 0.6,
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  Transactions.createTransaction(uid, uid, double.parse(_amountController.text));
+                  Transactions.createTransaction(
+                      uid, uid, double.parse(_amountController.text));
+                  Navigator.pop(context);
                 },
                 child: Text("Confirm"),
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(MyColors.purpule),
                   shape: MaterialStateProperty.all(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
                   shadowColor: MaterialStateProperty.all(Colors.transparent),
@@ -216,14 +234,17 @@ class _SendMoneyState extends State<SendMoney> {
     return Scaffold(
       body: Column(
         children: [
-          MyAppBar(name: "Send Money",back:true),
+          MyAppBar(name: "Send Money", back: true),
           SizedBox(
             height: 20,
           ),
           Text(
             "Scan the QR code to get the other person infos",
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 15,color: Theme.of(context).textTheme.displayMedium!.color,),
+            style: TextStyle(
+              fontSize: 15,
+              color: Theme.of(context).textTheme.displayMedium!.color,
+            ),
           ),
           Expanded(
             child: Stack(
@@ -251,18 +272,21 @@ class _SendMoneyState extends State<SendMoney> {
               ],
             ),
           ),
-          //ElevatedButton(
-          //    onPressed: () async {
-          //      _showSheet("gp9wUSarXqzxwiepv02f");
-          //    },
-          //    child: Text("click")),
+          ElevatedButton(
+              onPressed: () async {
+                _showSheet("NGlwic1z5qYTCQVqnZJWwbQeilj2");
+              },
+              child: Text("click")),
           Container(
               padding: EdgeInsets.all(8),
               child: Text(
                 "if you're offline or the other person doesn't have the app you can use his contact",
                 maxLines: 2,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12,color:Theme.of(context).textTheme.displayMedium!.color,),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).textTheme.displayMedium!.color,
+                ),
               )),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

@@ -107,9 +107,6 @@ class _SettingsState extends State<Settings> {
                       ontap: () {},
                       option: InkWell(
                         onTap: () {
-                          //Get.changeThemeMode(Get.isDarkMode
-                          //    ? ThemeMode.light
-                          //    : ThemeMode.dark);
                           ThemeService().changeThemeMode();
                         },
                         child: Container(
@@ -126,8 +123,8 @@ class _SettingsState extends State<Settings> {
                           child: Icon(
                               Get.isDarkMode
                                   ? Icons.wb_sunny
-                                  : Icons.brightness_3,
-                              color: Theme.of(context).iconTheme.color),
+                                  : Icons.brightness_2_rounded,
+                              color: Theme.of(context).iconTheme.color,),
                         ),
                       ),
                     ),

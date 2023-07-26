@@ -41,20 +41,23 @@ class _IncomeCategoryState extends State<IncomeCategory> {
                       IconsList.get_icon(titles[index]), //icon
                       IconsList.get_color(titles[index])
                     ];
-                    return ListTile(
-                      onTap: () {
-                        final result = data[0];
-                        Navigator.pop(context, result);
-                      },
-                      title: Text(data[0],style: TextStyle(fontWeight: FontWeight.bold),),
-                      leading: Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: MyColors.buttonGrey,
-                          borderRadius: BorderRadius.circular(15.0),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: ListTile(
+                        onTap: () {
+                          final result = data[0];
+                          Navigator.pop(context, result);
+                        },
+                        title: Text(data[0],style: TextStyle(fontWeight: FontWeight.bold),),
+                        leading: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: Icon(data[1], color: data[2]),
                         ),
-                        child: Icon(data[1], color: data[2]),
                       ),
                     );
                   },

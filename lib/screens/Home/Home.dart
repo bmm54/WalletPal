@@ -1,16 +1,13 @@
-import 'package:bstable/models/appUser.dart';
 import 'package:bstable/screens/Home/add/add.dart';
 import 'package:bstable/screens/Home/receiveMoney.dart';
 import 'package:bstable/screens/Home/senMoney.dart';
 import 'package:bstable/screens/Home/settings.dart';
-import 'package:bstable/screens/Profile/profile.dart';
+import 'package:bstable/screens/Home/profile.dart';
 import 'package:bstable/services/auth_data.dart';
-import 'package:bstable/services/auth.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/ui/components/activity.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -91,14 +88,19 @@ class _HomeState extends State<Home> {
                               color: Theme.of(context).primaryColor,
                               borderRadius: BorderRadius.circular(15.0),
                               border: Border.all(
-                                  color: Theme.of(context).secondaryHeaderColor, width: 3.0),
+                                  color: Theme.of(context).secondaryHeaderColor,
+                                  width: 3.0),
                             ),
                           ),
                         ),
                         Text(
                           "${DateFormat('dd MMM yyyy').format(DateTime.now())}",
                           style: TextStyle(
-                              color: Theme.of(context).textTheme.displayMedium!.color, fontWeight: FontWeight.bold),
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .color,
+                              fontWeight: FontWeight.bold),
                         ),
                         InkWell(
                           radius: buttonRadius,
@@ -112,7 +114,8 @@ class _HomeState extends State<Home> {
                               color: Theme.of(context).primaryColor,
                               borderRadius: BorderRadius.circular(buttonRadius),
                               border: Border.all(
-                                  color: Theme.of(context).secondaryHeaderColor, width: 3.0),
+                                  color: Theme.of(context).secondaryHeaderColor,
+                                  width: 3.0),
                             ),
                             child: Icon(
                               MyIcons.settings,
@@ -154,7 +157,7 @@ class _HomeState extends State<Home> {
                                 count: accounts.length,
                                 effect: ExpandingDotsEffect(
                                   activeDotColor: MyColors.darkBorder,
-                                  dotColor: MyColors.lightGrey,
+                                  dotColor: MyColors.lightGrey.withOpacity(0.5),
                                   dotHeight: 8.0,
                                   dotWidth: 8.0,
                                   expansionFactor: 4,
@@ -190,7 +193,8 @@ class _HomeState extends State<Home> {
                                     color: Theme.of(context).primaryColor,
                                     borderRadius: BorderRadius.circular(15.0),
                                     border: Border.all(
-                                        color: Theme.of(context).secondaryHeaderColor,
+                                        color: Theme.of(context)
+                                            .secondaryHeaderColor,
                                         width: 1.0),
                                   ),
                                   child: Icon(
@@ -230,7 +234,8 @@ class _HomeState extends State<Home> {
                                     color: Theme.of(context).primaryColor,
                                     borderRadius: BorderRadius.circular(15.0),
                                     border: Border.all(
-                                        color: Theme.of(context).secondaryHeaderColor,
+                                        color: Theme.of(context)
+                                            .secondaryHeaderColor,
                                         width: 1.0),
                                   ),
                                   child: Icon(
@@ -275,7 +280,8 @@ class _HomeState extends State<Home> {
                                     color: Theme.of(context).primaryColor,
                                     borderRadius: BorderRadius.circular(15.0),
                                     border: Border.all(
-                                        color: Theme.of(context).secondaryHeaderColor,
+                                        color: Theme.of(context)
+                                            .secondaryHeaderColor,
                                         width: 1.0),
                                   ),
                                   child: Icon(
@@ -326,15 +332,27 @@ class _HomeState extends State<Home> {
                       itemCount: records.length,
                       itemBuilder: (context, index) {
                         final title = records[index]['title'];
-                        return Activity(
-                          title: records[index]['title'],
-                          amount: records[index]['amount'],
-                          color: IconsList.get_color(title),
-                          icon: IconsList.get_icon(title),
-                          category: records[index]['category'],
-                          date: DateFormat('dd.MM.yyyy | HH:mm')
-                              .format(DateTime.parse(records[index]['time'])),
-                        );
+                        return (records[index]['title'] == 'Sent' ||
+                                records[index]['title'] == 'Received')
+                            ? Activity(
+                                title: "bamba",
+                                amount: records[index]['amount'],
+                                color: IconsList.get_color(title),
+                                icon: IconsList.get_icon(title),
+                                category: records[index]['category'],
+                                date: DateFormat('dd.MM.yyyy | HH:mm').format(
+                                    DateTime.parse(records[index]['time'])),
+                                option: "Debt",
+                              )
+                            : Activity(
+                                title: records[index]['title'],
+                                amount: records[index]['amount'],
+                                color: IconsList.get_color(title),
+                                icon: IconsList.get_icon(title),
+                                category: records[index]['category'],
+                                date: DateFormat('dd.MM.yyyy | HH:mm').format(
+                                    DateTime.parse(records[index]['time'])),
+                              );
                       },
                     ),
                   ),

@@ -1,4 +1,30 @@
+import 'package:bstable/sql/sql_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
+
+class TransactionModel {
+  final String senderId;
+  final String receiverId;
+  final double amount;
+  final String time;
+
+  TransactionModel({
+    required this.senderId,
+    required this.receiverId,
+    required this.amount,
+    required this.time,
+  });
+
+  // Convert Firestore snapshot to TransactionModel
+  factory TransactionModel.fromSnapshot(DocumentSnapshot snapshot) {
+    return TransactionModel(
+      senderId: snapshot['senderId'],
+      receiverId: snapshot['receiverId'],
+      amount: snapshot['amount'],
+      time: snapshot['time'],
+    );
+  }
+}
 
 class Transactions {
   static void createTransaction(
@@ -16,8 +42,38 @@ class Transactions {
 
       String transactionId = docRef.id;
       print('Transaction document created with ID: $transactionId');
+      await SQLHelper.insertActivity("Sent", "expense", amount);
     } catch (e) {
-      print('Error creating transaction document: $e');
+      Get.snackbar("Error", "Somthing went wrong during transaction");
     }
+  }
+
+  // Receiver listens for changes from Firestore
+  static void startListeningForTransactions(String receiverId) {
+    FirebaseFirestore.instance
+        .collection('transactions')
+        .where('receiverId', isEqualTo: receiverId)
+        .snapshots()
+        .listen((QuerySnapshot snapshot) async {
+      final transactions = snapshot.docs
+          .map((DocumentSnapshot doc) => TransactionModel.fromSnapshot(doc))
+          .toList();
+      if (transactions.isNotEmpty) {
+        print("transaction received");
+        print(transactions.toString());
+        for (final transaction in transactions) {
+          await SQLHelper.insertActivity(
+              "Received", "income", transaction.amount);
+        }
+        for (final doc in snapshot.docs) {
+          await doc.reference.delete();
+        }
+      } else {
+        print("there is no transactions");
+      }
+    });
+    // Update local SQLite database with the latest data
+    //final Database db = await openDatabase('your_db_name.db');
+    // Perform any necessary updates in the local database based on the received transactions.
   }
 }

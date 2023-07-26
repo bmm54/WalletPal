@@ -1,5 +1,5 @@
 import 'package:bstable/screens/Home/Home.dart';
-import 'package:bstable/screens/Profile/profile.dart';
+import 'package:bstable/screens/Home/profile.dart';
 import 'package:bstable/screens/Stats/stats.dart';
 import 'package:bstable/screens/Wallet/wallet.dart';
 import 'package:bstable/screens/authentification/authenticate.dart';

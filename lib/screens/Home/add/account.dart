@@ -1,11 +1,6 @@
-import 'package:bstable/models/accounts_model.dart';
 import 'package:bstable/sql/sql_helper.dart';
-import 'package:bstable/ui/styles/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
 import '../../../ui/components/appBar.dart';
-import '../../../ui/styles/icons.dart';
 
 class Account extends StatefulWidget {
   const Account({super.key});
@@ -15,10 +10,19 @@ class Account extends StatefulWidget {
 }
 
 class _AccountState extends State<Account> {
-  List<Map<String, dynamic>> accounts = Accounts.getAccounts;
+  List<Map<String, dynamic>> accounts = [];
+  _refresh() {
+    SQLHelper.getAccounts().then((rows) {
+      setState(() {
+        accounts = rows;
+      });
+    });
+  }
+
   @override
   initState() {
     super.initState();
+    _refresh();
   }
 
   @override
@@ -28,13 +32,10 @@ class _AccountState extends State<Account> {
         children: [
           Column(
             children: [
-                            MyAppBar(name: "Accounts",back:true),
-
-              const SizedBox(
-                height: 20,
-              ),
+              MyAppBar(name: "Accounts", back: true),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
                 child: ListView.builder(
                   primary: false,
                   shrinkWrap: true,
@@ -42,19 +43,40 @@ class _AccountState extends State<Account> {
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: ListTile(
-                        
-                        contentPadding: EdgeInsets.all(8),
+                      child: InkWell(
                         onTap: () {
                           final name = accounts[index]['name'];
                           final id = accounts[index]['id'];
                           Navigator.pop(context, [name, id]);
                         },
-                        title: Text(accounts[index]['name'],style: TextStyle(fontWeight: FontWeight.bold),),
-                        tileColor: Color(int.parse(accounts[index]['color'])),
-                        trailing: Text(
-                            "\$ ${accounts[index]['balance']!.toString()}",style: TextStyle(fontWeight: FontWeight.bold),),
-                        textColor: Colors.grey[300],
+                        child: Container(
+                          height: 80,
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: Color(int.parse(accounts[index]['color'])),
+                            borderRadius: BorderRadius.circular(
+                                15.0), // Specify the border radius
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                accounts[index]['name'],
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.grey[300]),
+                              ),
+                              Text(
+                                  '\$ ${accounts[index]['balance']}',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.grey[300])),
+                            ],
+                          ),
+                        ),
                       ),
                     );
                   },
@@ -67,4 +89,3 @@ class _AccountState extends State<Account> {
     );
   }
 }
- 

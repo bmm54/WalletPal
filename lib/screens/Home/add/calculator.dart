@@ -20,15 +20,25 @@ class CalculatorScreen extends StatefulWidget {
 }
 
 class _CalculatorScreenState extends State<CalculatorScreen> {
-  List accounts = Accounts.getAccounts;
   String accountName = '';
   int accountId = 0;
+  List<Map<String, dynamic>> accounts = [];
+  _refresh() {
+    SQLHelper.getAccounts().then((rows) {
+      setState(() {
+        accounts = rows;
+        if (accounts.isNotEmpty) {
+          accountName = accounts[accounts.length - 1]['name'];
+          accountId = accounts[accounts.length - 1]['id'];
+        }
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    if (accounts.isNotEmpty)
-    {accountName = accounts[accounts.length-1]['name'];
-    accountId = accounts[accounts.length-1]['id'];}
+    _refresh();
   }
 
   String _output = '';
