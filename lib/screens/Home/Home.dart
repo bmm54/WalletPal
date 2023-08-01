@@ -31,7 +31,7 @@ class _HomeState extends State<Home> {
   List<Map<String, dynamic>> accounts = [];
   bool ready = false;
   void _refreshData() async {
-    final rec = await SQLHelper.getItems();
+    final rec = await SQLHelper.getAllActivities();
     final acc = await SQLHelper.getAccounts();
     setState(() {
       records = rec;
@@ -203,7 +203,7 @@ class _HomeState extends State<Home> {
                                 ),
                                 SizedBox(height: 5),
                                 Text(
-                                  "Receive Money",
+                                  "Receive Money".tr,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -244,7 +244,7 @@ class _HomeState extends State<Home> {
                                 ),
                                 SizedBox(height: 5),
                                 Text(
-                                  "Send Money",
+                                  "Send Money".tr,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -290,7 +290,7 @@ class _HomeState extends State<Home> {
                                 ),
                                 SizedBox(height: 5),
                                 Text(
-                                  "Add",
+                                  "Add".tr,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -313,7 +313,7 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Recent Acitivities",
+                          "RecentActivities".tr,
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: MyColors.iconColor),
@@ -335,14 +335,14 @@ class _HomeState extends State<Home> {
                         return (records[index]['title'] == 'Sent' ||
                                 records[index]['title'] == 'Received')
                             ? Activity(
-                                title: "bamba",
+                                title: "Bemba Mahmouden",
+                                image: Image.asset(
+                                    "lib/assets/images/profile.png"),
                                 amount: records[index]['amount'],
-                                color: IconsList.get_color(title),
-                                icon: IconsList.get_icon(title),
                                 category: records[index]['category'],
                                 date: DateFormat('dd.MM.yyyy | HH:mm').format(
                                     DateTime.parse(records[index]['time'])),
-                                option: "Debt",
+                                option: "Loan",
                               )
                             : Activity(
                                 title: records[index]['title'],

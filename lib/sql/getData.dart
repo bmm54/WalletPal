@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class DataModel {
   static List<Map<String, dynamic>> records = [];
   DataModel(records) {
-    SQLHelper.getItems().then((rows) {
+    SQLHelper.getAllActivities().then((rows) {
       records = rows;
     });
     print("data model");

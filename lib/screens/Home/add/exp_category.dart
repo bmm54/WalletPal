@@ -61,7 +61,7 @@ class _ExpenseCategoryState extends State<ExpenseCategory> {
                   shrinkWrap: true,
                   itemCount: categories.length,
                   itemBuilder: (context, index) {
-                    dynamic titles = categories.keys.toList(); //list of strings
+                    List<String> titles = categories.keys.toList(); //list of strings
                     dynamic color = colors.keys.toList();
                     List data = [
                       titles[index], //title
@@ -76,7 +76,7 @@ class _ExpenseCategoryState extends State<ExpenseCategory> {
                           Navigator.pop(context, result);
                         },
                         title: Text(
-                          data[0],
+                          titles[index].tr,
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         leading: Container(

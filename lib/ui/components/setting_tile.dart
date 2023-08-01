@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../styles/colors.dart';
 
@@ -23,7 +24,7 @@ class TileButton extends StatelessWidget {
       child: ListTile(
         onTap: ontap,
         title: Text(
-          name,
+          name.tr,
           style: TextStyle(
               fontWeight: FontWeight.bold,
               color: color == null ? Theme.of(context).textTheme.displayMedium!.color: color),

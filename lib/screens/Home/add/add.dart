@@ -45,9 +45,9 @@ class _AddTransactionState extends State<AddTransaction>
                 labelStyle:
                     const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 controller: _controller,
-                tabs: const [
-                  Tab(child: Text("Expense")),
-                  Tab(child: Text("Income")),
+                tabs:  [
+                  Tab(child: Text("Expense".tr)),
+                  Tab(child: Text("Income".tr)),
                 ]),
           ),
           Expanded(

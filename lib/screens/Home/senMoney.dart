@@ -1,5 +1,7 @@
 import 'package:bstable/screens/Home/contacts.dart';
+import 'package:bstable/services/auth_data.dart';
 import 'package:bstable/services/transaction.dart';
+import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:bstable/ui/styles/icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,10 +20,30 @@ class SendMoney extends StatefulWidget {
 }
 
 class _SendMoneyState extends State<SendMoney> {
+  final MobileScannerController _scannerController = MobileScannerController();
+
+  List<DropdownMenuItem<String>> accountsNames = [];
+  List accounts = [];
+  _refresh() async {
+    await SQLHelper.getAccounts().then((rows) {
+      accounts = rows;
+    });
+    accountsNames.clear();
+    for (var i = 0; i < accounts.length; i++) {
+      print(accounts[i]['name']);
+      accountsNames.add(DropdownMenuItem<String>(
+        value: accounts[i]['id'].toString(),
+        child: Text(accounts[i]['name']),
+      ));
+    }
+  }
+
+  final userData = AuthData().getUserData;
   @override
   void initState() {
     super.initState();
     _requestCameraPermission();
+    _refresh();
   }
 
   Future<void> _requestCameraPermission() async {
@@ -50,8 +72,8 @@ class _SendMoneyState extends State<SendMoney> {
     }
   }
 
-  getUserData(String userId) async {
-    String userName = '';
+  Future<Map<String, dynamic>?> getUserData(
+      String userId, BuildContext context) async {
     try {
       final DocumentSnapshot<Map<String, dynamic>> snapshot =
           await FirebaseFirestore.instance
@@ -92,40 +114,46 @@ class _SendMoneyState extends State<SendMoney> {
       }
     } catch (e) {
       showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Somthing went wrong!"),
-              content: Text("Please check your internet connection"),
-              actions: [
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.transparent),
-                    elevation: MaterialStateProperty.all(0.0),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    'Ok',
-                    style: TextStyle(color: MyColors.purpule),
-                  ),
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Something went wrong!"),
+            content: Text(
+                "This could be due to your internet connection scanning the wrong QR code"),
+            actions: [
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(Colors.transparent),
+                  elevation: MaterialStateProperty.all(0.0),
                 ),
-              ],
-            );
-          });
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Ok',
+                  style: TextStyle(color: MyColors.purpule),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+      return null;
     }
   }
 
-  _showSheet(String uid) async {
+  _showSheet(String myUid, String receiverUid, context) async {
     final _amountController = TextEditingController();
+    var selectedAccount = accounts[0]['name'];
     String? name;
     String? photo;
-    final value = await getUserData(uid);
-    name = value['name'];
+    final value = await getUserData(receiverUid, context);
+    name = value!['name'];
     photo = value['photo_url'];
     return showModalBottomSheet(
+      enableDrag: false,
+      isDismissible: false,
       backgroundColor: Theme.of(context).primaryColor,
       shape: RoundedRectangleBorder(
         borderRadius:
@@ -143,6 +171,24 @@ class _SendMoneyState extends State<SendMoney> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: InkWell(
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    _scannerController.start();
+                    Navigator.pop(context);
+                  },
+                  child: Icon(
+                    Icons.close,
+                    size: 40,
+                  ),
+                ),
+              ),
+            ),
             Center(
               child: Container(
                 height: 80,
@@ -165,6 +211,65 @@ class _SendMoneyState extends State<SendMoney> {
             Center(child: Text(name ?? "User")),
             SizedBox(
               height: 10,
+            ),
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: DropdownButton<String>(
+                    dropdownColor: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(10),
+                    underline: Container(
+                      height: 0,
+                    ),
+                    value: "Loan",
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.displayMedium!.color,
+                        fontWeight: FontWeight.bold),
+                    alignment: Alignment.center,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        //selectedCurrency = newValue!;
+                      });
+                    },
+                    items: <String>['Loan', 'Paycheck'].map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .primaryColor,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: DropdownButton<String>(
+                    dropdownColor: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(10),
+                    underline: Container(
+                      height: 0,
+                    ),
+                    value: selectedAccount,
+                    hint: Text("Sect account"),
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.displayMedium!.color,
+                        fontWeight: FontWeight.bold),
+                    alignment: Alignment.center,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedAccount = newValue!;
+                      });
+                    },
+                    items: accountsNames,
+                  ),
+                )
+              ],
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -194,6 +299,8 @@ class _SendMoneyState extends State<SendMoney> {
                 ),
               ),
             ),
+            //add two drop downs one for status ['loan','paycheck']
+            //one for accounts
             SizedBox(
               height: 30,
             ),
@@ -203,7 +310,9 @@ class _SendMoneyState extends State<SendMoney> {
               child: ElevatedButton(
                 onPressed: () {
                   Transactions.createTransaction(
-                      uid, uid, double.parse(_amountController.text));
+                      myUid, receiverUid, double.parse(_amountController.text));
+                  //resume camera
+                  _scannerController.start();
                   Navigator.pop(context);
                 },
                 child: Text("Confirm"),
@@ -226,11 +335,6 @@ class _SendMoneyState extends State<SendMoney> {
 
   @override
   Widget build(BuildContext context) {
-    bool isScanCompleted = false;
-    void _closeScanner() {
-      isScanCompleted = false;
-    }
-
     return Scaffold(
       body: Column(
         children: [
@@ -239,7 +343,7 @@ class _SendMoneyState extends State<SendMoney> {
             height: 20,
           ),
           Text(
-            "Scan the QR code to get the other person infos",
+            "Scan the QR code to get the other person infos".tr,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 15,
@@ -250,9 +354,14 @@ class _SendMoneyState extends State<SendMoney> {
             child: Stack(
               children: [
                 MobileScanner(
+                  controller: _scannerController,
                   onDetect: (qrcode) async {
-                    String code = qrcode.barcodes.first.rawValue.toString();
-                    _showSheet(code);
+                    String receiverUid =
+                        qrcode.barcodes.first.rawValue.toString();
+                    String myUid = userData['id'];
+                    //pause the camera
+                    _scannerController.stop();
+                    _showSheet(myUid, receiverUid, context);
                   },
                 ),
                 Positioned.fill(
@@ -274,13 +383,15 @@ class _SendMoneyState extends State<SendMoney> {
           ),
           ElevatedButton(
               onPressed: () async {
-                _showSheet("NGlwic1z5qYTCQVqnZJWwbQeilj2");
+                String myUid = userData['id'];
+                _showSheet(myUid, "SOwyUaG8WZXmMCHtAuM3I0qpYX73", context);
+                _scannerController.stop();
               },
               child: Text("click")),
           Container(
               padding: EdgeInsets.all(8),
               child: Text(
-                "if you're offline or the other person doesn't have the app you can use his contact",
+                "if you're offline or the other person doesn't have the app you can use his contact".tr,
                 maxLines: 2,
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -300,7 +411,7 @@ class _SendMoneyState extends State<SendMoney> {
                     width: Get.width * 0.8,
                     child: Center(
                         child: Text(
-                      "Select Contact",
+                      "Select Contact".tr,
                       style: TextStyle(fontSize: 20),
                     )),
                   ),

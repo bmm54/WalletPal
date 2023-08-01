@@ -1,5 +1,7 @@
 import 'package:bstable/firebase_options.dart';
 import 'package:bstable/sql/sql_helper.dart';
+import 'package:bstable/translation/language_service.dart';
+import 'package:bstable/translation/local.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:bstable/ui/themes/dark.dart';
 import 'package:bstable/ui/themes/light.dart';
@@ -29,10 +31,12 @@ class MyApp extends StatelessWidget {
     //SQLHelper.deleteAllAccount();
     return SafeArea(
       child: GetMaterialApp(
+        translations: LocalTranslation(),
+        locale: Locale(LanguageService().getLanguage()),
         darkTheme: darkTheme,
         theme: lightTheme,
         themeMode: ThemeService().getThemeMode(),
-        debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: true,
         home: Wrapper(),
       ),
     );

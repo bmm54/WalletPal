@@ -1,11 +1,13 @@
 import 'dart:math';
 
 import 'package:bstable/services/auth.dart';
+import 'package:bstable/translation/language_service.dart';
 import 'package:bstable/ui/components/setting_tile.dart';
 import 'package:bstable/ui/styles/icons.dart';
 import 'package:bstable/ui/themes/dark.dart';
 import 'package:bstable/ui/themes/light.dart';
 import 'package:bstable/ui/themes/theme_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:get/get.dart';
@@ -26,6 +28,7 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   var selectedCurrency = '\$';
+  var selectedLanguage = LanguageService().getLanguage();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +36,7 @@ class _SettingsState extends State<Settings> {
         children: [
           Column(
             children: [
-              MyAppBar(name: "Settings", back: true),
+              MyAppBar(name: "Settings".tr, back: true),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -46,7 +49,7 @@ class _SettingsState extends State<Settings> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10),
-                      child: Text("General Settings",
+                      child: Text("General Settings".tr,
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context)
@@ -58,7 +61,9 @@ class _SettingsState extends State<Settings> {
                     TileButton(
                       name: "Language",
                       icon: Icons.language,
-                      ontap: () {},
+                      ontap: () {
+                        Get.to(() => Language());
+                      },
                     ),
                     TileButton(
                       name: "Currency",
@@ -78,7 +83,7 @@ class _SettingsState extends State<Settings> {
                           underline: Container(
                             height: 0,
                           ),
-                          value: selectedCurrency,
+                          //value: selectedCurrency,
                           style: TextStyle(
                               color: Theme.of(context)
                                   .textTheme
@@ -121,10 +126,11 @@ class _SettingsState extends State<Settings> {
                                       Theme.of(context).secondaryHeaderColor),
                               borderRadius: BorderRadius.circular(15)),
                           child: Icon(
-                              Get.isDarkMode
-                                  ? Icons.wb_sunny
-                                  : Icons.brightness_2_rounded,
-                              color: Theme.of(context).iconTheme.color,),
+                            Get.isDarkMode
+                                ? Icons.wb_sunny
+                                : Icons.brightness_2_rounded,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
                         ),
                       ),
                     ),
@@ -138,7 +144,7 @@ class _SettingsState extends State<Settings> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10),
-                      child: Text("Account & Informations",
+                      child: Text("Account & Informations".tr,
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context)
@@ -155,9 +161,7 @@ class _SettingsState extends State<Settings> {
                     TileButton(
                       name: "Accounts",
                       icon: MyIcons.wallet,
-                      ontap: () {
-                        Get.to(() => ManageAccounts());
-                      },
+                      ontap: () {},
                     ),
                     TileButton(
                       name: "Backup & Restore",
@@ -169,7 +173,7 @@ class _SettingsState extends State<Settings> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10),
-                      child: Text("About",
+                      child: Text("About".tr,
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context)
@@ -221,251 +225,62 @@ class _SettingsState extends State<Settings> {
   }
 }
 
-class ManageAccounts extends StatefulWidget {
-  ManageAccounts({super.key});
+class Language extends StatefulWidget {
+  const Language({super.key});
 
   @override
-  State<ManageAccounts> createState() => _ManageAccountsState();
+  State<Language> createState() => _LanguageState();
 }
 
-int color = 0xFF8438FF;
-final _avColors = [
-  0xFF8438FF,
-  0xFFFF7438,
-  0xFF38CFFF,
-];
-
-class _ManageAccountsState extends State<ManageAccounts> {
-  List<Map<String, dynamic>> accounts = [];
-  final _nameController = TextEditingController();
-  final _balanceController = TextEditingController();
-  _refrechPage() {
-    SQLHelper.getAccounts().then((rows) {
-      setState(() {
-        accounts = rows;
-      });
-    });
-  }
-
+class _LanguageState extends State<Language> {
   @override
-  void initState() {
-    super.initState();
-    _refrechPage();
-  }
-
-  _buildColors(int Mycolor) {
-    return Container(
-      child: Stack(children: [
-        Icon(
-          Icons.check,
-          size: 20,
-          color: color == Mycolor ? Color(Mycolor) : Colors.transparent,
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.circle,
-            size: 30,
-            color: Color(Mycolor),
-          ),
-          onPressed: () {
-            setState(() {
-              color = Mycolor;
-              print("here");
-            });
-          },
-        )
-      ]),
-    );
-  }
-
-  Widget _colorPicker() {
-    return Row(children: [
-      for (var i = 0; i < 3; i++) _buildColors(_avColors[i]),
-    ]);
-  }
-
-  _showSheet() {
-    return showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (_) => Container(
-        padding: EdgeInsets.only(
-            left: 10,
-            right: 10,
-            top: 30,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 100),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget build(BuildContext context) {
+    String _selectedLanguage = LanguageService().getLanguage();
+    Map<String, String> languages = {
+      "English": "en",
+      "العربية": "ar",
+      "语言": "zh"
+    };
+    return Scaffold(
+        body: Column(
           children: [
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                hintText: "Account name",
-                focusColor: MyColors.purpule,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-            ),
+            MyAppBar(name: "Language", back: true),
             SizedBox(
-              height: 10,
-            ),
-            TextField(
-              controller: _balanceController,
-              decoration: InputDecoration(
-                hintText: "Initial balance",
-                focusColor: MyColors.purpule,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            SizedBox(child: _colorPicker()),
-            SizedBox(
-              height: 10,
+              height: 40,
             ),
             Container(
-              width: MediaQuery.of(context).size.width,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: () async {
-                  await SQLHelper.insertAccount(_nameController.text,
-                      double.parse(_balanceController.text), color.toString());
-                  _refrechPage();
-                  _nameController.clear();
-                  _balanceController.clear();
-                  Navigator.of(context).pop();
+              padding: EdgeInsets.all(10),
+              width: Get.width * 0.9,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Theme.of(context).primaryColor),
+              child: ListView.builder(
+                shrinkWrap: true,
+                primary: false,
+                itemCount: languages.length,
+                itemBuilder: (context, index) {
+                  var values=languages.values.toList();
+                  var names=languages.keys.toList();
+                  return RadioListTile(
+                    activeColor: MyColors.blue,
+                    selected: _selectedLanguage == values[index],
+                    value:values[index],
+                    groupValue: _selectedLanguage,
+                    onChanged: (value) {
+                      var locale = Locale(value!);
+                      Get.updateLocale(locale);
+                      LanguageService().saveLanguage(value);
+                      print(value);
+                      setState(() {
+                        _selectedLanguage = value;
+                      });
+                    },
+                    title: Text(names[index]),
+                  );
                 },
-                child: Text("Create"),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(MyColors.purpule),
-                  shape: MaterialStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                  ),
-                  shadowColor: MaterialStateProperty.all(Colors.transparent),
-                ),
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-            child: Stack(
-              alignment: AlignmentDirectional.centerStart,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Get.back();
-                  },
-                  child: Container(
-                    height: 60,
-                    width: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15.0),
-                      border:
-                          Border.all(color: MyColors.borderColor, width: 3.0),
-                    ),
-                    child: const Icon(MyIcons.back),
-                  ),
-                ),
-                const Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Accounts",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: MyColors.iconColor,
-                          fontSize: 16),
-                    )),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Container(
-              height: 100,
-              child: ElevatedButton(
-                onPressed: () {
-                  _showSheet();
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.add_rounded,
-                      size: 40,
-                    ),
-                    Text(
-                      "Add New Account",
-                      style: TextStyle(fontSize: 20),
-                    )
-                  ],
-                ),
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(MyColors.lightGrey),
-                  shape: MaterialStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                  ),
-                  shadowColor: MaterialStateProperty.all(Colors.transparent),
-                ),
-              ),
-            ),
-          ),
-          ListView.builder(
-              shrinkWrap: true,
-              primary: false,
-              scrollDirection: Axis.vertical,
-              itemCount: accounts.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  child: Container(
-                    height: 80,
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Color(int.parse(accounts[index]['color'])),
-                      borderRadius: BorderRadius.circular(
-                          15.0), // Specify the border radius
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          accounts[index]['name'],
-                          style:
-                              TextStyle(fontSize: 20, color: Colors.grey[300]),
-                        ),
-                        Text('\$ ' + accounts[index]['balance'].toString(),
-                            style: TextStyle(
-                                fontSize: 20, color: Colors.grey[300])),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-        ],
-      ),
-    );
+        ));
   }
 }

@@ -29,7 +29,7 @@ class _StatsState extends State<Stats> {
 
   void _refreshData() async {
     final exp = await SQLHelper.getExpenses();
-    final chart = await SQLHelper.getItems();
+    final chart = await SQLHelper.getAllActivities();
     final inc = await SQLHelper.getIcomes();
     final debt = await SQLHelper.getDebt();
     final totalBalance = await SQLHelper.getTotalBalance();
@@ -229,6 +229,9 @@ class _StatsState extends State<Stats> {
                       child: BarChart(
                         BarChartData(
                           titlesData: FlTitlesData(
+                            leftTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                    reservedSize: 52, showTitles: true)),
                             topTitles: AxisTitles(
                                 sideTitles: SideTitles(showTitles: false)),
                             rightTitles: AxisTitles(
@@ -237,6 +240,7 @@ class _StatsState extends State<Stats> {
                             )),
                             bottomTitles: AxisTitles(
                               sideTitles: SideTitles(
+                                reservedSize: 25,
                                 showTitles: true,
                                 getTitlesWidget: (double value, meta) {
                                   switch (selectedFilter) {
@@ -244,35 +248,69 @@ class _StatsState extends State<Stats> {
                                       {
                                         switch (value.toInt()) {
                                           case 0:
-                                            return Text(
-                                              'Mon',
-                                              style: TextStyle(
-                                                  color: MyColors.iconColor),
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10),
+                                              child: Text(
+                                                'Mon',
+                                                style: TextStyle(
+                                                    color: MyColors.iconColor),
+                                              ),
                                             );
                                           case 1:
-                                            return Text('Tue',
-                                                style: TextStyle(
-                                                    color: MyColors.iconColor));
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10),
+                                              child: Text('Tue',
+                                                  style: TextStyle(
+                                                      color:
+                                                          MyColors.iconColor)),
+                                            );
                                           case 2:
-                                            return Text('Wed',
-                                                style: TextStyle(
-                                                    color: MyColors.iconColor));
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10),
+                                              child: Text('Wed',
+                                                  style: TextStyle(
+                                                      color:
+                                                          MyColors.iconColor)),
+                                            );
                                           case 3:
-                                            return Text('Thu',
-                                                style: TextStyle(
-                                                    color: MyColors.iconColor));
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10),
+                                              child: Text('Thu',
+                                                  style: TextStyle(
+                                                      color:
+                                                          MyColors.iconColor)),
+                                            );
                                           case 4:
-                                            return Text('Fri',
-                                                style: TextStyle(
-                                                    color: MyColors.iconColor));
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10),
+                                              child: Text('Fri',
+                                                  style: TextStyle(
+                                                      color:
+                                                          MyColors.iconColor)),
+                                            );
                                           case 5:
-                                            return Text('Sat',
-                                                style: TextStyle(
-                                                    color: MyColors.iconColor));
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10),
+                                              child: Text('Sat',
+                                                  style: TextStyle(
+                                                      color:
+                                                          MyColors.iconColor)),
+                                            );
                                           case 6:
-                                            return Text('Sun',
-                                                style: TextStyle(
-                                                    color: MyColors.iconColor));
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10),
+                                              child: Text('Sun',
+                                                  style: TextStyle(
+                                                      color:
+                                                          MyColors.iconColor)),
+                                            );
                                           default:
                                             return Text('');
                                         }
@@ -294,7 +332,7 @@ class _StatsState extends State<Stats> {
                               .reduce((value, element) =>
                                   value.y > element.y ? value : element)
                               .y,
-                          gridData: FlGridData(show: false),
+                          gridData: FlGridData(show: true),
                           borderData: FlBorderData(show: false),
                           barGroups: List.generate(7, (index) {
                             return BarChartGroupData(x: index, barRods: [
@@ -363,7 +401,7 @@ class _StatsState extends State<Stats> {
                     ),
                   ),
                   Text(
-                    "Expenses",
+                    "Expenses".tr,
                     style: TextStyle(
                         fontSize: 25,
                         color: MyColors.red,
@@ -386,7 +424,7 @@ class _StatsState extends State<Stats> {
                     child: expenses.isEmpty
                         ? Center(
                             child: Text(
-                            "There is no data yet",
+                            "There is no data yet".tr,
                             style: TextStyle(
                                 color: Theme.of(context)
                                     .textTheme
@@ -428,12 +466,12 @@ class _StatsState extends State<Stats> {
                       primary: false,
                       itemCount: expenses.length,
                       itemBuilder: (context, index) {
+                        String title = expenses[index]['title'];
                         return ListTile(
-                          title: Text(expenses[index]['title']),
+                          title: Text(title.tr),
                           leading: Icon(
                             Icons.circle,
-                            color:
-                                IconsList.get_color(expenses[index]['title']),
+                            color: IconsList.get_color(title),
                           ),
                           trailing: Text('\$ ' +
                               (expenses[index]['total'] ?? 0).toString()),
@@ -442,7 +480,7 @@ class _StatsState extends State<Stats> {
 
                   ///////////////////////////////
                   Text(
-                    "Incomes",
+                    "Incomes".tr,
                     style: TextStyle(
                         fontSize: 25,
                         color: MyColors.green,
@@ -464,7 +502,7 @@ class _StatsState extends State<Stats> {
                     child: incomes.isEmpty
                         ? Center(
                             child: Text(
-                            "There is no data yet",
+                            "There is no data yet".tr,
                             style: TextStyle(
                                 color: Theme.of(context)
                                     .textTheme
@@ -494,7 +532,8 @@ class _StatsState extends State<Stats> {
                                   ),
                                   borderData: FlBorderData(show: false),
                                   sectionsSpace: 0,
-                                  sections: _incomesSections(incomes,incTouchedIndex),
+                                  sections: _incomesSections(
+                                      incomes, incTouchedIndex),
                                   centerSpaceRadius: Get.width * 0.25,
                                 ))),
                   ),
@@ -503,11 +542,12 @@ class _StatsState extends State<Stats> {
                       primary: false,
                       itemCount: incomes.length,
                       itemBuilder: (context, index) {
+                        String title = incomes[index]['title'];
                         return ListTile(
-                          title: Text(incomes[index]['title']),
+                          title: Text(title.tr),
                           leading: Icon(
                             Icons.circle,
-                            color: IconsList.get_color(incomes[index]['title']),
+                            color: IconsList.get_color(title),
                           ),
                           trailing:
                               Text('\$ ' + incomes[index]['total'].toString()),
@@ -531,14 +571,17 @@ class _StatsState extends State<Stats> {
       double fontSize = isTouched ? 20 : 14;
       double radius = isTouched ? 70.0 : 50.0;
       double pourc = (expenses[index]['total'] * 100) / sum;
-      String title = pourc.toStringAsFixed(1)+'%';
+      String title = pourc.toStringAsFixed(1) + '%';
       final data = PieChartSectionData(
           showTitle: true,
           title: title,
           color: IconsList.get_color(expenses[index]['title']),
           value: expenses[index]['total'],
           radius: radius,
-          titleStyle: TextStyle(fontSize: fontSize,fontWeight: FontWeight.bold,color: Theme.of(context).textTheme.displayMedium!.color));
+          titleStyle: TextStyle(
+              fontSize: fontSize,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).textTheme.displayMedium!.color));
       list.add(data);
     }
     return list;
@@ -555,14 +598,17 @@ class _StatsState extends State<Stats> {
       double fontSize = isTouched ? 20 : 14;
       double radius = isTouched ? 70.0 : 50.0;
       double pourc = (incomes[index]['total'] * 100) / sum;
-      String title = pourc.toStringAsFixed(1)+'%';
+      String title = pourc.toStringAsFixed(1) + '%';
       final data = PieChartSectionData(
           showTitle: true,
           title: title,
           color: IconsList.get_color(incomes[index]['title']),
           value: incomes[index]['total'],
           radius: radius,
-          titleStyle: TextStyle(fontSize: fontSize,fontWeight: FontWeight.bold,color: Theme.of(context).textTheme.displayMedium!.color));
+          titleStyle: TextStyle(
+              fontSize: fontSize,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).textTheme.displayMedium!.color));
       list.add(data);
     }
     return list;

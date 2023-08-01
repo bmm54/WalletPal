@@ -2,11 +2,13 @@
 
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class Activity extends StatefulWidget {
   final String title;
-  final IconData icon;
-  final Color color;
+  final IconData? icon;
+  final Image? image;
+  final Color? color;
   final String date;
   final double amount;
   final String category;
@@ -14,13 +16,13 @@ class Activity extends StatefulWidget {
   const Activity(
       {super.key,
       required this.title,
-      required this.icon,
-      required this.color,
+      this.icon,
+      this.image,
+      this.color,
       required this.date,
       required this.amount,
       required this.category,
-      this.option
-      });
+      this.option});
 
   @override
   State<Activity> createState() => _ActivityState();
@@ -32,21 +34,69 @@ class _ActivityState extends State<Activity> {
     return Padding(
         padding: const EdgeInsets.only(bottom: 8),
         child: ListTile(
-          onTap: () {},
-          leading: Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            child: Icon(
-              widget.icon,
-              color: widget.color,
-            ),
-          ),
-          title: Text(
+          onLongPress: () {
+             showModalBottomSheet(
+                backgroundColor: Theme.of(context).primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      20.0), // Customize the border radius
+                ),
+                isScrollControlled: true,
+                context: context,
+                builder: (_) => Container(
+                    padding: EdgeInsets.only(
+                        left: 10,
+                        right: 10,
+                        top: 10,
+                        bottom: 20,),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                      Container(height: 10,width: 100,decoration: BoxDecoration(borderRadius: BorderRadius.circular(5),color: Colors.grey),),
+                      Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: Icon(
+                    widget.icon,
+                    color: widget.color,
+                  ),
+                ),
+                Text(
             widget.title,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.displayMedium!.color),
+          ),
+                    ],)));
+          },
+          leading: widget.option != null
+              ? Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(image: widget.image!.image),
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                )
+              : Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: Icon(
+                    widget.icon,
+                    color: widget.color,
+                  ),
+                ),
+          title: Text(
+            widget.title.tr,
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).textTheme.displayMedium!.color),
@@ -66,14 +116,19 @@ class _ActivityState extends State<Activity> {
                     : '-\$ ${widget.amount.toString()}',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color:
-                      widget.category == 'income' ? MyColors.green : MyColors.red,
+                  color: widget.category == 'income'
+                      ? MyColors.green
+                      : MyColors.red,
                 ),
               ),
-              widget.option!=null? Text(widget.option!,style: TextStyle(
-                  fontSize: 12,
-                  
-                ),):SizedBox()
+              widget.option != null
+                  ? Text(
+                      widget.option!,
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    )
+                  : SizedBox()
             ],
           ),
         ));

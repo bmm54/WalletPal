@@ -14,7 +14,7 @@ class IncomeCategory extends StatefulWidget {
 }
 
 class _IncomeCategoryState extends State<IncomeCategory> {
-  List titles = [
+  List<String> titles = [
     "Loan",
     "Salary"
   ];
@@ -48,7 +48,7 @@ class _IncomeCategoryState extends State<IncomeCategory> {
                           final result = data[0];
                           Navigator.pop(context, result);
                         },
-                        title: Text(data[0],style: TextStyle(fontWeight: FontWeight.bold),),
+                        title: Text(titles[index].tr,style: TextStyle(fontWeight: FontWeight.bold),),
                         leading: Container(
                           height: 50,
                           width: 50,

@@ -43,7 +43,7 @@ class _ReceiveMoneyState extends State<ReceiveMoney> {
                 ),
                 Center(
                     child: Text(
-                  "Scan QR Code to send the money",
+                  "Scan QR Code to send the money".tr,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).textTheme.displayMedium!.color,
@@ -58,7 +58,7 @@ class _ReceiveMoneyState extends State<ReceiveMoney> {
                       //Center(child: QrImageView(data: userData['id'], size:screenHeight*0.4)),
                       Center(
                           child: QrImageView(
-                    data: "gp9wUSarXqzxwiepv02f",
+                    data: userData['id'],
                     size: screenHeight * 0.4,
                     backgroundColor: Colors.white,
                   )),
@@ -89,7 +89,7 @@ class _ReceiveMoneyState extends State<ReceiveMoney> {
                           width: screenWidth * 0.8,
                           child: Center(
                               child: Text(
-                            "Select Contact",
+                            "Select Contact".tr,
                             style: TextStyle(fontSize: 20),
                           )),
                         ),

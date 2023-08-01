@@ -41,7 +41,7 @@ class _MyAppBarState extends State<MyAppBar> {
           Align(
               alignment: Alignment.center,
               child: Text(
-                widget.name,
+                widget.name.tr,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).textTheme.displayLarge!.color,

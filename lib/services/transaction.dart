@@ -32,7 +32,6 @@ class Transactions {
     try {
       CollectionReference transactionsRef =
           FirebaseFirestore.instance.collection('transactions');
-
       DocumentReference docRef = await transactionsRef.add({
         'senderId': senderId,
         'receiverId': receiverId,
@@ -42,9 +41,11 @@ class Transactions {
 
       String transactionId = docRef.id;
       print('Transaction document created with ID: $transactionId');
-      await SQLHelper.insertActivity("Sent", "expense", amount);
+      docRef.isBlank!
+          ? null
+          : await SQLHelper.insertActivity("Sent", "expense", amount);
     } catch (e) {
-      Get.snackbar("Error", "Somthing went wrong during transaction");
+      print(e);
     }
   }
 
@@ -72,8 +73,5 @@ class Transactions {
         print("there is no transactions");
       }
     });
-    // Update local SQLite database with the latest data
-    //final Database db = await openDatabase('your_db_name.db');
-    // Perform any necessary updates in the local database based on the received transactions.
   }
 }

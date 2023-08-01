@@ -52,11 +52,11 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     setState(() {
       if (buttonText == '=') {
         _output = _calculateResult();
-        _output == "Error" ? _input = _input : _input = _output;
+        _output == "Error".tr ? _input = _input : _input = _output;
       } else if (buttonText == 'C') {
         _output = '';
         _input = '';
-      } else if (buttonText == 'Confirm') {
+      } else if (buttonText == 'Confirm'.tr) {
         SQLHelper.insertActivity(
             widget.category, widget.type, double.parse(getOutput()));
         SQLHelper.updateBalance(
@@ -74,7 +74,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       final result = eval(_input);
       return result.toString();
     } catch (e) {
-      return 'Error';
+      return 'Error'.tr;
     }
   }
 
@@ -121,7 +121,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                         child: Column(
                           children: [
                             Text(
-                              "Account",
+                              "Account".tr,
                               style: TextStyle(
                                 color: textColor,
                               ),
@@ -166,14 +166,14 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           children: [
-                            const Text(
-                              "Category",
+                             Text(
+                              "Category".tr,
                               style: TextStyle(
                                 color: Colors.white,
                               ),
                             ),
                             Text(
-                              widget.category,
+                              widget.category.tr,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -324,7 +324,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                   Row(
                     children: [
                       Expanded(
-                          child: _buildButton('Confirm',
+                          child: _buildButton('Confirm'.tr,
                               color: buttonBgColor, textColor: textColor)),
                     ],
                   ),
