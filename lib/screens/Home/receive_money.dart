@@ -43,7 +43,7 @@ class _ReceiveMoneyState extends State<ReceiveMoney> {
                 ),
                 Center(
                     child: Text(
-                  "Scan QR Code to send the money".tr,
+                  "Scan QR code to send the money".tr,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).textTheme.displayMedium!.color,

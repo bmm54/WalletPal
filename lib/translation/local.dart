@@ -7,9 +7,10 @@ class LocalTranslation extends Translations {
         'en': {
           "RecentActivities": "Recent Activities",
           "Settings": "Settings",
+          //"Contacts":"Contacts",
           "WorldLanguage": "World Language",
           "Language": "Language",
-          "Statistic": "Statistics",
+          "Statistics": "Statistics",
           "Incomes": "Incomes",
           "Expenses": "Expenses",
           "Total Balance": "Total Balance",
@@ -45,7 +46,7 @@ class LocalTranslation extends Translations {
           "Logout": "Logout",
           "Scan QR code to send the money": "Scan QR code to send the money",
           "Select Contact": "Select Contact",
-          "Scan the QR code to get the other person info":
+          "Scan the QR code to get the other person infos":
               "Scan the QR code to get the other person info",
           "If you're offline or the other person doesn't have the app you can use his contact":
               "If you're offline or the other person doesn't have the app you can use his contact",
@@ -75,7 +76,7 @@ class LocalTranslation extends Translations {
           "Settings": "الاعدادات",
           "WorldLanguage": "اللغة العالمية",
           "Language": "اللغة",
-          "Statistic": "الإحصائيات",
+          "Statistics": "الإحصائيات",
           "Incomes": "الإيرادات",
           "Expenses": "المصروفات",
           "Total Balance": "الرصيد الكلي",
@@ -112,7 +113,7 @@ class LocalTranslation extends Translations {
           "Scan QR code to send the money":
               "مسح رمز الاستجابة السريعة لإرسال المال",
           "Select Contact": "اختيار جهة اتصال",
-          "Scan the QR code to get the other person info":
+          "Scan the QR code to get the other person infos":
               "مسح رمز الاستجابة السريعة للحصول على معلومات الشخص الآخر",
           "If you're offline or the other person doesn't have the app you can use his contact":
               "إذا كنت غير متصل بالإنترنت أو الشخص الآخر ليس لديه التطبيق يمكنك استخدام جهة اتصاله",
@@ -142,7 +143,7 @@ class LocalTranslation extends Translations {
           "Settings": "设置",
           "WorldLanguage": "世界语言",
           "Language": "语言",
-          "Statistic": "统计",
+          "Statistics": "统计",
           "Incomes": "收入",
           "Expenses": "支出",
           "Total Balance": "总余额",
@@ -178,7 +179,7 @@ class LocalTranslation extends Translations {
           "Logout": "登出",
           "Scan QR code to send the money": "扫描二维码发送钱",
           "Select Contact": "选择联系人",
-          "Scan the QR code to get the other person info": "扫描二维码获取其他人信息",
+          "Scan the QR code to get the other person infos": "扫描二维码获取其他人信息",
           "If you're offline or the other person doesn't have the app you can use his contact":
               "如果您没有连接到互联网或其他人没有此应用，您可以使用他的联系方式",
           "Profile": "个人资料",

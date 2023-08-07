@@ -1,12 +1,12 @@
+import 'package:bstable/screens/Home/add/account.dart';
 import 'package:bstable/screens/Home/contacts.dart';
 import 'package:bstable/services/auth_data.dart';
 import 'package:bstable/services/transaction.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/ui/styles/colors.dart';
-import 'package:bstable/ui/styles/icons.dart';
+import 'package:bstable/ui/styles/decoration.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -19,7 +19,7 @@ class SendMoney extends StatefulWidget {
   _SendMoneyState createState() => _SendMoneyState();
 }
 
-class _SendMoneyState extends State<SendMoney> {
+class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
   final MobileScannerController _scannerController = MobileScannerController();
 
   List<DropdownMenuItem<String>> accountsNames = [];
@@ -144,8 +144,11 @@ class _SendMoneyState extends State<SendMoney> {
   }
 
   _showSheet(String myUid, String receiverUid, context) async {
+    final _controller = TabController(vsync: this, length: 2);
     final _amountController = TextEditingController();
-    var selectedAccount = accounts[0]['name'];
+    var accountName = accounts[0]['name'];
+    var accountId = accounts[0]['id'];
+    var selectedStatus = "Loan";
     String? name;
     String? photo;
     final value = await getUserData(receiverUid, context);
@@ -166,7 +169,7 @@ class _SendMoneyState extends State<SendMoney> {
             left: 10,
             right: 10,
             top: 10,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 150),
+            bottom: MediaQuery.of(context).viewInsets.bottom + 50),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -212,118 +215,104 @@ class _SendMoneyState extends State<SendMoney> {
             SizedBox(
               height: 10,
             ),
-            Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: DropdownButton<String>(
-                    dropdownColor: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(10),
-                    underline: Container(
-                      height: 0,
-                    ),
-                    value: "Loan",
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.displayMedium!.color,
-                        fontWeight: FontWeight.bold),
-                    alignment: Alignment.center,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        //selectedCurrency = newValue!;
-                      });
-                    },
-                    items: <String>['Loan', 'Paycheck'].map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .primaryColor,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: DropdownButton<String>(
-                    dropdownColor: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(10),
-                    underline: Container(
-                      height: 0,
-                    ),
-                    value: selectedAccount,
-                    hint: Text("Sect account"),
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.displayMedium!.color,
-                        fontWeight: FontWeight.bold),
-                    alignment: Alignment.center,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedAccount = newValue!;
-                      });
-                    },
-                    items: accountsNames,
-                  ),
-                )
-              ],
-            ),
-            Padding(
+           Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: TextField(
                 controller: _amountController,
                 textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                    borderSide: BorderSide(
-                      color: MyColors.purpule,
-                      width: 2.0,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                    borderSide: BorderSide(
-                      color: MyColors.lightGrey,
-                      width: 2.0,
-                    ),
-                  ),
-                  hintText: 'Enter Amount',
-                  hintStyle: TextStyle(
-                    color: MyColors.lightGrey,
-                  ),
-                ),
+                decoration:CustomDeco.inputDecoration.copyWith(hintText: "Enter Amount")
               ),
             ),
-            //add two drop downs one for status ['loan','paycheck']
-            //one for accounts
             SizedBox(
-              height: 30,
+              height: 20,
             ),
-            Container(
-              width: Get.width * 0.6,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: () {
-                  Transactions.createTransaction(
-                      myUid, receiverUid, double.parse(_amountController.text));
-                  //resume camera
-                  _scannerController.start();
-                  Navigator.pop(context);
-                },
-                child: Text("Confirm"),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(MyColors.purpule),
-                  shape: MaterialStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+             Row(
+              children: [
+                Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child:InkWell(onTap: () async {
+                          final result = await Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => Account()));
+                          setState(
+                            () {
+                              accountName = result[0];
+                              accountId = result[1];
+                            },
+                          );
+                        },child: Container(
+                          decoration: BoxDecoration(color: MyColors.darkBorder.withOpacity(0.2),borderRadius: BorderRadius.circular(10)),
+                          padding: EdgeInsets.all(8.0),
+                          child:Column(
+                            children: [
+                              Text(
+                                "Account".tr,
+                              ),
+                              Text(
+                                accountName,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),),
                     ),
                   ),
-                  shadowColor: MaterialStateProperty.all(Colors.transparent),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+              child: TabBar(
+                  splashBorderRadius: BorderRadius.circular(10),
+                  onTap: (index) {
+                    index == 0
+                        ? selectedStatus = "Loan"
+                        : selectedStatus = "Paycheck";
+                    print(selectedStatus);
+                  },
+                  indicator: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    color: MyColors.purpule,
+                  ),
+                  labelColor: Colors.white,
+                  unselectedLabelColor: MyColors.iconColor,
+                  labelStyle: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.bold),
+                  controller: _controller,
+                  tabs: [
+                    Tab(child: Text("Loan".tr)),
+                    Tab(child: Text("Paycheck".tr)),
+                  ]),
+            ),
+            
+            SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Container(
+                width: Get.width,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Transactions.createTransaction(
+                        myUid, receiverUid, double.parse(_amountController.text));
+                    //resume camera
+                    _scannerController.start();
+                    Navigator.pop(context);
+                  },
+                  child: Text("Confirm".tr),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(MyColors.purpule),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    shadowColor: MaterialStateProperty.all(Colors.transparent),
+                  ),
                 ),
               ),
             ),
@@ -391,7 +380,8 @@ class _SendMoneyState extends State<SendMoney> {
           Container(
               padding: EdgeInsets.all(8),
               child: Text(
-                "if you're offline or the other person doesn't have the app you can use his contact".tr,
+                "If you're offline or the other person doesn't have the app you can use his contact"
+                    .tr,
                 maxLines: 2,
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -430,25 +420,6 @@ class _SendMoneyState extends State<SendMoney> {
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-class QrPage extends StatefulWidget {
-  const QrPage({super.key});
-
-  @override
-  State<QrPage> createState() => _QrPageState();
-}
-
-class _QrPageState extends State<QrPage> {
-  @override
-  Widget build(BuildContext context) {
-    String code = Get.arguments.toString();
-    return Scaffold(
-      body: Center(
-        child: Text(code),
       ),
     );
   }

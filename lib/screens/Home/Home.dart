@@ -1,12 +1,14 @@
 import 'package:bstable/screens/Home/add/add.dart';
-import 'package:bstable/screens/Home/receiveMoney.dart';
-import 'package:bstable/screens/Home/senMoney.dart';
+import 'package:bstable/screens/Home/receive_money.dart';
+import 'package:bstable/screens/Home/send_money.dart';
 import 'package:bstable/screens/Home/settings.dart';
 import 'package:bstable/screens/Home/profile.dart';
 import 'package:bstable/services/auth_data.dart';
+import 'package:bstable/services/currency.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/ui/components/activity.dart';
 import 'package:bstable/ui/styles/colors.dart';
+import 'package:bstable/ui/styles/currency_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -57,308 +59,322 @@ class _HomeState extends State<Home> {
           ))
         : Scaffold(
             //////////////////////////
-            body: ListView(children: [
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            if (user != null) {
-                              Get.to(() => Profile());
-                            }
-                          },
-                          child: Container(
-                            height: 60,
-                            width: 60,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: (userData == null ||
-                                        userData['image'] == null)
-                                    ? Image.asset(
-                                            "lib/assets/images/profile.png")
-                                        .image
-                                    : Image.network(userData['image']).image,
-                                fit: BoxFit.cover,
+            body: RefreshIndicator(
+              backgroundColor: Theme.of(context).primaryColor,
+              displacement: 60,
+              color: MyColors.purpule,
+              onRefresh: () async{
+                _refreshData();
+              },
+              child: ListView(children: [
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              if (user != null) {
+                                Get.to(() => Profile());
+                              }
+                            },
+                            child: Container(
+                              height: 60,
+                              width: 60,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: (userData == null ||
+                                          userData['image'] == null)
+                                      ? Image.asset(
+                                              "lib/assets/images/profile.png")
+                                          .image
+                                      : Image.network(userData['image']).image,
+                                  fit: BoxFit.cover,
+                                ),
+                                color: Theme.of(context).primaryColor,
+                                borderRadius: BorderRadius.circular(15.0),
+                                border: Border.all(
+                                    color:
+                                        Theme.of(context).secondaryHeaderColor,
+                                    width: 3.0),
                               ),
-                              color: Theme.of(context).primaryColor,
-                              borderRadius: BorderRadius.circular(15.0),
-                              border: Border.all(
-                                  color: Theme.of(context).secondaryHeaderColor,
-                                  width: 3.0),
                             ),
                           ),
-                        ),
-                        Text(
-                          "${DateFormat('dd MMM yyyy').format(DateTime.now())}",
-                          style: TextStyle(
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .displayMedium!
-                                  .color,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        InkWell(
-                          radius: buttonRadius,
-                          onTap: () {
-                            Get.to(() => Settings());
-                          },
-                          child: Container(
-                            height: 60,
-                            width: 60,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor,
-                              borderRadius: BorderRadius.circular(buttonRadius),
-                              border: Border.all(
-                                  color: Theme.of(context).secondaryHeaderColor,
-                                  width: 3.0),
-                            ),
-                            child: Icon(
-                              MyIcons.settings,
+                          Text(
+                            "${DateFormat('dd MMM yyyy').format(DateTime.now())}",
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .color,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          InkWell(
+                            radius: buttonRadius,
+                            onTap: () {
+                              Get.to(() => Settings());
+                            },
+                            child: Container(
+                              height: 60,
+                              width: 60,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor,
+                                borderRadius:
+                                    BorderRadius.circular(buttonRadius),
+                                border: Border.all(
+                                    color:
+                                        Theme.of(context).secondaryHeaderColor,
+                                    width: 3.0),
+                              ),
+                              child: Icon(
+                                MyIcons.settings,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  //Cards
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 0),
-                    child: SizedBox(
-                      height: 200,
-                      child: PageView.builder(
-                          onPageChanged: (value) => {},
-                          scrollDirection: Axis.horizontal,
-                          controller: _controller,
-                          itemCount: accounts.length,
-                          itemBuilder: (context, index) {
-                            return MyCard(
-                              sold: accounts[index]['balance'],
-                              title: accounts[index]['name'],
-                              color: Color(int.parse(accounts[index]['color'])),
-                            );
-                          }),
-                    ),
-                  ),
-                  //Scroll indicator
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 40),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        accounts.length > 1
-                            ? SmoothPageIndicator(
-                                controller: _controller,
-                                count: accounts.length,
-                                effect: ExpandingDotsEffect(
-                                  activeDotColor: MyColors.darkBorder,
-                                  dotColor: MyColors.lightGrey.withOpacity(0.5),
-                                  dotHeight: 8.0,
-                                  dotWidth: 8.0,
-                                  expansionFactor: 4,
-                                ),
-                              )
-                            : SizedBox(),
-                      ],
-                    ),
-                  ),
-                  //Action Buttons
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 20),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        //Recive Money
-                        InkWell(
-                          onTap: () {
-                            Get.to(() => ReceiveMoney());
-                          },
-                          radius: buttonRadius,
-                          child: SizedBox(
-                            width: 60,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  height: 60,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).primaryColor,
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    border: Border.all(
-                                        color: Theme.of(context)
-                                            .secondaryHeaderColor,
-                                        width: 1.0),
-                                  ),
-                                  child: Icon(
-                                    MyIcons.cashin,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  "Receive Money".tr,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .displayMedium!
-                                          .color),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        //Send Money
-                        InkWell(
-                          onTap: () {
-                            Get.to(() => SendMoney());
-                          },
-                          radius: buttonRadius,
-                          child: SizedBox(
-                            width: 60,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  height: 60,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).primaryColor,
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    border: Border.all(
-                                        color: Theme.of(context)
-                                            .secondaryHeaderColor,
-                                        width: 1.0),
-                                  ),
-                                  child: Icon(
-                                    MyIcons.cashout,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  "Send Money".tr,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .displayMedium!
-                                          .color),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        //ADD
-                        InkWell(
-                          onTap: () async {
-                            final result = await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => AddTransaction()));
-                            if (result) {
-                              _refreshData();
-                            }
-                          },
-                          radius: buttonRadius,
-                          child: SizedBox(
-                            width: 60,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  height: 60,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).primaryColor,
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    border: Border.all(
-                                        color: Theme.of(context)
-                                            .secondaryHeaderColor,
-                                        width: 1.0),
-                                  ),
-                                  child: Icon(
-                                    MyIcons.add,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  "Add".tr,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .displayMedium!
-                                          .color),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  //Recent Activities
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "RecentActivities".tr,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: MyColors.iconColor),
-                        ),
-                        Icon(Icons.arrow_right_alt_outlined, color: Colors.blue)
-                      ],
-                    ),
-                  ),
-                  //List of Activities
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 20),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      primary: false,
-                      itemCount: records.length,
-                      itemBuilder: (context, index) {
-                        final title = records[index]['title'];
-                        return (records[index]['title'] == 'Sent' ||
-                                records[index]['title'] == 'Received')
-                            ? Activity(
-                                title: "Bemba Mahmouden",
-                                image: Image.asset(
-                                    "lib/assets/images/profile.png"),
-                                amount: records[index]['amount'],
-                                category: records[index]['category'],
-                                date: DateFormat('dd.MM.yyyy | HH:mm').format(
-                                    DateTime.parse(records[index]['time'])),
-                                option: "Loan",
-                              )
-                            : Activity(
-                                title: records[index]['title'],
-                                amount: records[index]['amount'],
-                                color: IconsList.get_color(title),
-                                icon: IconsList.get_icon(title),
-                                category: records[index]['category'],
-                                date: DateFormat('dd.MM.yyyy | HH:mm').format(
-                                    DateTime.parse(records[index]['time'])),
+                    //Cards
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0),
+                      child: SizedBox(
+                        height: 200,
+                        child: PageView.builder(
+                            onPageChanged: (value) => {},
+                            scrollDirection: Axis.horizontal,
+                            controller: _controller,
+                            itemCount: accounts.length,
+                            itemBuilder: (context, index) {
+                              return MyCard(
+                                sold: accounts[index]['balance'],
+                                title: accounts[index]['name'],
+                                color:
+                                    Color(int.parse(accounts[index]['color'])),
                               );
-                      },
+                            }),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ]),
+                    //Scroll indicator
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 40),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          accounts.length > 1
+                              ? SmoothPageIndicator(
+                                  controller: _controller,
+                                  count: accounts.length,
+                                  effect: ExpandingDotsEffect(
+                                    activeDotColor: MyColors.darkBorder,
+                                    dotColor:
+                                        MyColors.lightGrey.withOpacity(0.5),
+                                    dotHeight: 8.0,
+                                    dotWidth: 8.0,
+                                    expansionFactor: 4,
+                                  ),
+                                )
+                              : SizedBox(),
+                        ],
+                      ),
+                    ),
+                    //Action Buttons
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 20),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          //Recive Money
+                          InkWell(
+                            onTap: () {
+                              Get.to(() => ReceiveMoney());
+                            },
+                            radius: buttonRadius,
+                            child: SizedBox(
+                              width: 60,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    height: 60,
+                                    width: 60,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      border: Border.all(
+                                          color: Theme.of(context)
+                                              .secondaryHeaderColor,
+                                          width: 1.0),
+                                    ),
+                                    child: Icon(
+                                      MyIcons.cashin,
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    "Receive Money".tr,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .displayMedium!
+                                            .color),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          //Send Money
+                          InkWell(
+                            onTap: () {
+                              Get.to(() => SendMoney());
+                            },
+                            radius: buttonRadius,
+                            child: SizedBox(
+                              width: 60,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    height: 60,
+                                    width: 60,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      border: Border.all(
+                                          color: Theme.of(context)
+                                              .secondaryHeaderColor,
+                                          width: 1.0),
+                                    ),
+                                    child: Icon(
+                                      MyIcons.cashout,
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    "Send Money".tr,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .displayMedium!
+                                            .color),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          //ADD
+                          InkWell(
+                            onTap: () async {
+                              final result = await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => AddTransaction()));
+                              if (result) {
+                                _refreshData();
+                              }
+                            },
+                            radius: buttonRadius,
+                            child: SizedBox(
+                              width: 60,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    height: 60,
+                                    width: 60,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      border: Border.all(
+                                          color: Theme.of(context)
+                                              .secondaryHeaderColor,
+                                          width: 1.0),
+                                    ),
+                                    child: Icon(
+                                      MyIcons.add,
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    "Add".tr,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .displayMedium!
+                                            .color),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    //Recent Activities
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "RecentActivities".tr,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: MyColors.iconColor),
+                          ),
+                          Icon(Icons.arrow_right_alt_outlined,
+                              color: Colors.blue)
+                        ],
+                      ),
+                    ),
+                    //List of Activities
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        primary: false,
+                        itemCount: records.length,
+                        itemBuilder: (context, index) {
+                          final title = records[index]['title'];
+                          return (records[index]['title'] == 'Sent' ||
+                                  records[index]['title'] == 'Received')
+                              ? Activity(
+                                  title: "Bemba Mahmouden",
+                                  image: Image.asset(
+                                      "lib/assets/images/profile.png"),
+                                  amount: records[index]['amount'],
+                                  category: records[index]['category'],
+                                  date: DateFormat('dd.MM.yyyy | HH:mm').format(
+                                      DateTime.parse(records[index]['time'])),
+                                  option: "Loan",
+                                )
+                              : Activity(
+                                  title: records[index]['title'],
+                                  amount: records[index]['amount'],
+                                  color: IconsList.get_color(title),
+                                  icon: IconsList.get_icon(title),
+                                  category: records[index]['category'],
+                                  date: DateFormat('dd.MM.yyyy | HH:mm').format(
+                                      DateTime.parse(records[index]['time'])),
+                                );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ]),
+            ),
           );
   }
 }

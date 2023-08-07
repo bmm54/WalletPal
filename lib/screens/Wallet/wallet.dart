@@ -1,6 +1,8 @@
 import 'package:bstable/models/accounts_model.dart';
-import 'package:bstable/screens/Home/Home.dart';
+import 'package:bstable/screens/Home/home.dart';
+import 'package:bstable/services/currency.dart';
 import 'package:bstable/ui/components/appBar.dart';
+import 'package:bstable/ui/styles/currency_list.dart';
 import 'package:bstable/ui/styles/decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -356,6 +358,9 @@ class _WalletState extends State<Wallet> {
 
   @override
   Widget build(BuildContext context) {
+            CurrencyController currencyController = Get.find();
+    final currency =
+        CurrencyList.currencies[currencyController.selectedCurrency.value];
     return Scaffold(
       body: ListView(
         children: [
@@ -463,7 +468,7 @@ class _WalletState extends State<Wallet> {
                                 fontSize: 20,
                                 color: Colors.grey[300]),
                           ),
-                          Text('\$ ' + accounts[index]['balance'].toString(),
+                          Text('$currency  ${accounts[index]['balance'].toString()}',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,

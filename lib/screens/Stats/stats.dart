@@ -20,12 +20,51 @@ class _StatsState extends State<Stats> {
   List<Map<String, dynamic>> expenses = [];
   List<Map<String, dynamic>> incomes = [];
   List<Map<String, dynamic>> chartResult = [];
-  String selectedFilter = 'This Week';
   double debt = 0;
+  String selectedFilter = 'This Week';
   double totalBalance = 0;
   List<FlSpot> chartData = [];
   int? expTouchedIndex;
   int? incTouchedIndex;
+
+  List<Map<String, dynamic>> _filterData(
+      String selectedFilter, List<Map<String, dynamic>> dataList) {
+    setState(() {
+      final now = DateTime.now();
+      switch (selectedFilter) {
+        case "This Week":
+          final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+          final endOfWeek =
+              now.add(Duration(days: DateTime.daysPerWeek - now.weekday));
+          dataList = dataList.where((data) {
+            DateTime date = DateTime.parse(data['time']);
+            return date.isAfter(startOfWeek) && date.isBefore(endOfWeek);
+          }).toList();
+          break;
+
+        case "This Month":
+          final startOfMonth = DateTime(now.year, now.month, 1);
+          final endOfMonth = DateTime(now.year, now.month + 1, 0);
+
+          dataList = dataList.where((data) {
+            DateTime date = DateTime.parse(data['time']);
+            return date.isAfter(startOfMonth) && date.isBefore(endOfMonth);
+          }).toList();
+          break;
+
+        case "This Year":
+          final startOfYear = DateTime(now.year, 1, 1);
+          final endOfYear = DateTime(now.year + 1, 1, 0);
+
+          dataList = dataList.where((data) {
+            DateTime date = DateTime.parse(data['time']);
+            return date.isAfter(startOfYear) && date.isBefore(endOfYear);
+          }).toList();
+          break;
+      }
+    });
+    return dataList;
+  }
 
   void _refreshData() async {
     final exp = await SQLHelper.getExpenses();
@@ -114,7 +153,7 @@ class _StatsState extends State<Stats> {
                       children: [
                         ListTile(
                           title: Text(
-                            'total balance',
+                            'Total Balance'.tr,
                             style: TextStyle(
                                 color: MyColors.iconColor, fontSize: 16),
                           ),
@@ -131,7 +170,7 @@ class _StatsState extends State<Stats> {
                         ),
                         ListTile(
                           title: Text(
-                            'total debt',
+                            'Total Debt'.tr,
                             style: TextStyle(
                                 color: MyColors.iconColor, fontSize: 16),
                           ),
@@ -474,7 +513,7 @@ class _StatsState extends State<Stats> {
                             color: IconsList.get_color(title),
                           ),
                           trailing: Text('\$ ' +
-                              (expenses[index]['total'] ?? 0).toString()),
+                              (expenses[index]['amount'] ?? 0).toString()),
                         );
                       }),
 
@@ -560,23 +599,42 @@ class _StatsState extends State<Stats> {
   }
 
   List<PieChartSectionData> _expensesSections(
-      List expenses, int? touchedIndex) {
+      List<Map<String, dynamic>> expenses, int? touchedIndex) {
+    // TODO: separate the expenses by categories
+    expenses = _filterData(selectedFilter, expenses);
+    List<Map<String, dynamic>> temp = expenses;
     final List<PieChartSectionData> list = [];
     double sum = 0;
+    Map<String, double> totalAmountByTitle =
+        {}; // Map to store total amount for each title
+
     for (var expense in expenses) {
-      sum += expense['total'];
+      String title = expense['title'];
+      double amount = expense['amount'];
+      sum += expense['amount'];
+
+      // Add the expense amount to the corresponding title/category
+
+      totalAmountByTitle[title] = (totalAmountByTitle[title] ?? 0) + amount;
+      print(totalAmountByTitle[title]);
+      //k  expense['title'] = totalAmountByTitle[title];
     }
+
     for (var index = 0; index < expenses.length; index++) {
       final isTouched = index == touchedIndex;
       double fontSize = isTouched ? 20 : 14;
       double radius = isTouched ? 70.0 : 50.0;
-      double pourc = (expenses[index]['total'] * 100) / sum;
-      String title = pourc.toStringAsFixed(1) + '%';
+      // Use the total amount from the map instead of the individual expense amount
+      double totalAmount = totalAmountByTitle[expenses[index]['title']] ?? 0;
+      print(totalAmount);
+      double pourc = (totalAmount * 100) / sum;
+      String title = '${pourc.toStringAsFixed(1)}%';
+
       final data = PieChartSectionData(
           showTitle: true,
           title: title,
           color: IconsList.get_color(expenses[index]['title']),
-          value: expenses[index]['total'],
+          value: totalAmount,
           radius: radius,
           titleStyle: TextStyle(
               fontSize: fontSize,
@@ -584,6 +642,7 @@ class _StatsState extends State<Stats> {
               color: Theme.of(context).textTheme.displayMedium!.color));
       list.add(data);
     }
+
     return list;
   }
 
@@ -598,7 +657,7 @@ class _StatsState extends State<Stats> {
       double fontSize = isTouched ? 20 : 14;
       double radius = isTouched ? 70.0 : 50.0;
       double pourc = (incomes[index]['total'] * 100) / sum;
-      String title = pourc.toStringAsFixed(1) + '%';
+      String title = '${pourc.toStringAsFixed(1)}%';
       final data = PieChartSectionData(
           showTitle: true,
           title: title,
@@ -608,7 +667,7 @@ class _StatsState extends State<Stats> {
           titleStyle: TextStyle(
               fontSize: fontSize,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).textTheme.displayMedium!.color));
+              color: MyColors.buttonGrey));
       list.add(data);
     }
     return list;

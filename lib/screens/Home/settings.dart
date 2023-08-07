@@ -1,12 +1,16 @@
 import 'dart:math';
 
+import 'package:bstable/screens/Home/home.dart';
 import 'package:bstable/services/auth.dart';
-import 'package:bstable/translation/language_service.dart';
+import 'package:bstable/services/currency.dart';
+import 'package:bstable/services/hot_restart.dart';
+import 'package:bstable/services/language_service.dart';
 import 'package:bstable/ui/components/setting_tile.dart';
+import 'package:bstable/ui/styles/currency_list.dart';
 import 'package:bstable/ui/styles/icons.dart';
 import 'package:bstable/ui/themes/dark.dart';
 import 'package:bstable/ui/themes/light.dart';
-import 'package:bstable/ui/themes/theme_service.dart';
+import 'package:bstable/services/theme_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -20,13 +24,19 @@ import '../../ui/components/card.dart';
 import '../../ui/styles/colors.dart';
 
 class Settings extends StatefulWidget {
-  const Settings({super.key});
+  Settings({super.key});
 
   @override
   State<Settings> createState() => _SettingsState();
 }
 
 class _SettingsState extends State<Settings> {
+  final CurrencyController currencyController = Get.find();
+
+  void changeCurrency(String newCurrency) {
+    currencyController.changeCurrency(newCurrency);
+  }
+
   var selectedCurrency = '\$';
   var selectedLanguage = LanguageService().getLanguage();
   @override
@@ -83,7 +93,6 @@ class _SettingsState extends State<Settings> {
                           underline: Container(
                             height: 0,
                           ),
-                          //value: selectedCurrency,
                           style: TextStyle(
                               color: Theme.of(context)
                                   .textTheme
@@ -91,18 +100,24 @@ class _SettingsState extends State<Settings> {
                                   .color,
                               fontWeight: FontWeight.bold),
                           alignment: Alignment.center,
+                          value: currencyController.selectedCurrency.value,
                           onChanged: (String? newValue) {
-                            setState(() {
-                              selectedCurrency = newValue!;
-                            });
+                            if (newValue != null) {
+                              setState(() {
+                                currencyController.changeCurrency(newValue);
+                              });
+                              HotRestartController.performHotRestart(context);
+                            }
                           },
-                          items:
-                              <String>['\$', 'MRO', 'TND'].map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+                          items: CurrencyList.currencies.keys
+                              .map<DropdownMenuItem<String>>(
+                            (String currency) {
+                              return DropdownMenuItem<String>(
+                                value: currency,
+                                child: Text(CurrencyList.currencies[currency]!),
+                              );
+                            },
+                          ).toList(),
                         ),
                       ),
                     ),
@@ -135,7 +150,7 @@ class _SettingsState extends State<Settings> {
                       ),
                     ),
                     TileButton(
-                      name: "Notification",
+                      name: "Notifications",
                       icon: Icons.notifications,
                       ontap: () {},
                     ),
@@ -154,17 +169,7 @@ class _SettingsState extends State<Settings> {
                               fontSize: 16)),
                     ),
                     TileButton(
-                      name: "Profile",
-                      icon: MyIcons.profile,
-                      ontap: () {},
-                    ),
-                    TileButton(
-                      name: "Accounts",
-                      icon: MyIcons.wallet,
-                      ontap: () {},
-                    ),
-                    TileButton(
-                      name: "Backup & Restore",
+                      name: "BackUp & Restore",
                       icon: Icons.backup,
                       ontap: () {},
                     ),
@@ -218,7 +223,7 @@ class _SettingsState extends State<Settings> {
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -243,44 +248,44 @@ class _LanguageState extends State<Language> {
     };
     return Scaffold(
         body: Column(
-          children: [
-            MyAppBar(name: "Language", back: true),
-            SizedBox(
-              height: 40,
-            ),
-            Container(
-              padding: EdgeInsets.all(10),
-              width: Get.width * 0.9,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Theme.of(context).primaryColor),
-              child: ListView.builder(
-                shrinkWrap: true,
-                primary: false,
-                itemCount: languages.length,
-                itemBuilder: (context, index) {
-                  var values=languages.values.toList();
-                  var names=languages.keys.toList();
-                  return RadioListTile(
-                    activeColor: MyColors.blue,
-                    selected: _selectedLanguage == values[index],
-                    value:values[index],
-                    groupValue: _selectedLanguage,
-                    onChanged: (value) {
-                      var locale = Locale(value!);
-                      Get.updateLocale(locale);
-                      LanguageService().saveLanguage(value);
-                      print(value);
-                      setState(() {
-                        _selectedLanguage = value;
-                      });
-                    },
-                    title: Text(names[index]),
-                  );
+      children: [
+        MyAppBar(name: "Language", back: true),
+        SizedBox(
+          height: 40,
+        ),
+        Container(
+          padding: EdgeInsets.all(10),
+          width: Get.width * 0.9,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Theme.of(context).primaryColor),
+          child: ListView.builder(
+            shrinkWrap: true,
+            primary: false,
+            itemCount: languages.length,
+            itemBuilder: (context, index) {
+              var values = languages.values.toList();
+              var names = languages.keys.toList();
+              return RadioListTile(
+                activeColor: MyColors.blue,
+                selected: _selectedLanguage == values[index],
+                value: values[index],
+                groupValue: _selectedLanguage,
+                onChanged: (value) {
+                  var locale = Locale(value!);
+                  Get.updateLocale(locale);
+                  LanguageService().saveLanguage(value);
+                  print(value);
+                  setState(() {
+                    _selectedLanguage = value;
+                  });
                 },
-              ),
-            ),
-          ],
-        ));
+                title: Text(names[index]),
+              );
+            },
+          ),
+        ),
+      ],
+    ));
   }
 }

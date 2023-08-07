@@ -1,4 +1,4 @@
-import 'package:bstable/screens/Home/Home.dart';
+import 'package:bstable/screens/Home/home.dart';
 import 'package:bstable/screens/Home/profile.dart';
 import 'package:bstable/screens/Stats/stats.dart';
 import 'package:bstable/screens/Wallet/wallet.dart';

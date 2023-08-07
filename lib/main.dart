@@ -1,18 +1,17 @@
 import 'package:bstable/firebase_options.dart';
+import 'package:bstable/services/currency.dart';
+import 'package:bstable/services/hot_restart.dart';
 import 'package:bstable/sql/sql_helper.dart';
-import 'package:bstable/translation/language_service.dart';
+import 'package:bstable/services/language_service.dart';
 import 'package:bstable/translation/local.dart';
-import 'package:bstable/ui/styles/colors.dart';
 import 'package:bstable/ui/themes/dark.dart';
 import 'package:bstable/ui/themes/light.dart';
-import 'package:bstable/ui/themes/theme_service.dart';
+import 'package:bstable/services/theme_service.dart';
 import 'package:bstable/wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,11 +19,13 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await GetStorage.init();
-  runApp(const MyApp());
+ runApp(new HotRestartController(
+    child: new MyApp()
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+   final CurrencyController currencyController = Get.put(CurrencyController());
   @override
   Widget build(BuildContext context) {
     //SQLHelper.deleteAllActivities();

@@ -1,5 +1,5 @@
 import 'package:bstable/services/auth.dart';
-import 'package:bstable/ui/themes/theme_service.dart';
+import 'package:bstable/services/theme_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';

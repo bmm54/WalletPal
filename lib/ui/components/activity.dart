@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:bstable/services/currency.dart';
 import 'package:bstable/ui/styles/colors.dart';
+import 'package:bstable/ui/styles/currency_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -31,11 +33,14 @@ class Activity extends StatefulWidget {
 class _ActivityState extends State<Activity> {
   @override
   Widget build(BuildContext context) {
+    CurrencyController currencyController = Get.find();
+    final currency =
+        CurrencyList.currencies[currencyController.selectedCurrency.value];
     return Padding(
         padding: const EdgeInsets.only(bottom: 8),
         child: ListTile(
           onLongPress: () {
-             showModalBottomSheet(
+            showModalBottomSheet(
                 backgroundColor: Theme.of(context).primaryColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
@@ -45,33 +50,44 @@ class _ActivityState extends State<Activity> {
                 context: context,
                 builder: (_) => Container(
                     padding: EdgeInsets.only(
-                        left: 10,
-                        right: 10,
-                        top: 10,
-                        bottom: 20,),
+                      left: 10,
+                      right: 10,
+                      top: 10,
+                      bottom: 20,
+                    ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                      Container(height: 10,width: 100,decoration: BoxDecoration(borderRadius: BorderRadius.circular(5),color: Colors.grey),),
-                      Container(
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  child: Icon(
-                    widget.icon,
-                    color: widget.color,
-                  ),
-                ),
-                Text(
-            widget.title,
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).textTheme.displayMedium!.color),
-          ),
-                    ],)));
+                        Container(
+                          height: 10,
+                          width: 100,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Colors.grey),
+                        ),
+                        Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: Icon(
+                            widget.icon,
+                            color: widget.color,
+                          ),
+                        ),
+                        Text(
+                          widget.title,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .color),
+                        ),
+                      ],
+                    )));
           },
           leading: widget.option != null
               ? Container(
@@ -112,8 +128,8 @@ class _ActivityState extends State<Activity> {
             children: [
               Text(
                 widget.category == 'income'
-                    ? '+\$ ${widget.amount.toString()}'
-                    : '-\$ ${widget.amount.toString()}',
+                    ? '+ ${'$currency ${widget.amount}'}'
+                    : '- ${'$currency ${widget.amount}'}',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: widget.category == 'income'
