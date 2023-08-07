@@ -8,7 +8,6 @@ import 'package:bstable/services/currency.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/ui/components/activity.dart';
 import 'package:bstable/ui/styles/colors.dart';
-import 'package:bstable/ui/styles/currency_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

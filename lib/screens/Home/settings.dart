@@ -6,7 +6,6 @@ import 'package:bstable/services/currency.dart';
 import 'package:bstable/services/hot_restart.dart';
 import 'package:bstable/services/language_service.dart';
 import 'package:bstable/ui/components/setting_tile.dart';
-import 'package:bstable/ui/styles/currency_list.dart';
 import 'package:bstable/ui/styles/icons.dart';
 import 'package:bstable/ui/themes/dark.dart';
 import 'package:bstable/ui/themes/light.dart';
@@ -109,12 +108,12 @@ class _SettingsState extends State<Settings> {
                               HotRestartController.performHotRestart(context);
                             }
                           },
-                          items: CurrencyList.currencies.keys
+                          items: CurrencyController.currency_symbol.keys
                               .map<DropdownMenuItem<String>>(
                             (String currency) {
                               return DropdownMenuItem<String>(
                                 value: currency,
-                                child: Text(CurrencyList.currencies[currency]!),
+                                child: Text(CurrencyController.currency_symbol[currency]!),
                               );
                             },
                           ).toList(),

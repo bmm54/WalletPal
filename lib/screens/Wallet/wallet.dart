@@ -2,7 +2,6 @@ import 'package:bstable/models/accounts_model.dart';
 import 'package:bstable/screens/Home/home.dart';
 import 'package:bstable/services/currency.dart';
 import 'package:bstable/ui/components/appBar.dart';
-import 'package:bstable/ui/styles/currency_list.dart';
 import 'package:bstable/ui/styles/decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -358,9 +357,8 @@ class _WalletState extends State<Wallet> {
 
   @override
   Widget build(BuildContext context) {
-            CurrencyController currencyController = Get.find();
-    final currency =
-        CurrencyList.currencies[currencyController.selectedCurrency.value];
+    CurrencyController currencyController = Get.find();
+    final currency = currencyController.getSelectedCurrency();
     return Scaffold(
       body: ListView(
         children: [
@@ -468,7 +466,8 @@ class _WalletState extends State<Wallet> {
                                 fontSize: 20,
                                 color: Colors.grey[300]),
                           ),
-                          Text('$currency  ${accounts[index]['balance'].toString()}',
+                          Text(
+                              '$currency  ${accounts[index]['balance'].toString()}',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
@@ -601,7 +600,7 @@ class _WalletState extends State<Wallet> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "\$ ${goals[index]['amount']}",
+                                    "$currency ${goals[index]['amount']}",
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -610,7 +609,7 @@ class _WalletState extends State<Wallet> {
                                             .textTheme
                                             .displayMedium!
                                             .color,
-                                        fontSize: 20),
+                                        fontSize: 18),
                                   ),
                                 ],
                               ),
@@ -623,7 +622,7 @@ class _WalletState extends State<Wallet> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          "Completed",
+                                          "Completed".tr,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,

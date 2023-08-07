@@ -1,6 +1,5 @@
 import 'package:bstable/services/currency.dart';
 import 'package:bstable/ui/styles/colors.dart';
-import 'package:bstable/ui/styles/currency_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,9 +16,8 @@ class MyCard extends StatelessWidget {
   //return a card widget
   @override
   Widget build(BuildContext context) {
-            CurrencyController currencyController = Get.find();
-    final currency =
-        CurrencyList.currencies[currencyController.selectedCurrency.value];
+    CurrencyController currencyController = Get.find();
+    final currency = currencyController.getSelectedCurrency();
     final Map<Color, Color> lightColor = {
       MyColors.lightBlue:MyColors.lightestBlue,
       MyColors.orange:MyColors.lightOrange,

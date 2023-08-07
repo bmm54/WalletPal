@@ -2,7 +2,6 @@
 
 import 'package:bstable/services/currency.dart';
 import 'package:bstable/ui/styles/colors.dart';
-import 'package:bstable/ui/styles/currency_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -34,8 +33,7 @@ class _ActivityState extends State<Activity> {
   @override
   Widget build(BuildContext context) {
     CurrencyController currencyController = Get.find();
-    final currency =
-        CurrencyList.currencies[currencyController.selectedCurrency.value];
+    final currency = currencyController.getSelectedCurrency();
     return Padding(
         padding: const EdgeInsets.only(bottom: 8),
         child: ListTile(

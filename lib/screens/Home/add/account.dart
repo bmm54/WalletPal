@@ -1,5 +1,7 @@
+import 'package:bstable/services/currency.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../../ui/components/appBar.dart';
 
 class Account extends StatefulWidget {
@@ -27,6 +29,8 @@ class _AccountState extends State<Account> {
 
   @override
   Widget build(BuildContext context) {
+    CurrencyController currencyController = Get.find();
+    final currency = currencyController.getSelectedCurrency();
     return Scaffold(
       body: ListView(
         children: [
@@ -69,7 +73,7 @@ class _AccountState extends State<Account> {
                                     color: Colors.grey[300]),
                               ),
                               Text(
-                                  '\$ ${accounts[index]['balance']}',
+                                  '$currency ${accounts[index]['balance']}',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20,

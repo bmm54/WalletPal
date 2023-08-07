@@ -1,3 +1,4 @@
+import 'package:bstable/services/currency.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -137,6 +138,8 @@ class _StatsState extends State<Stats> {
 
   @override
   Widget build(BuildContext context) {
+    CurrencyController currencyController = Get.find();
+    final currency = currencyController.getSelectedCurrency();
     return !ready
         ? Center(
             child: CircularProgressIndicator(
@@ -158,7 +161,7 @@ class _StatsState extends State<Stats> {
                                 color: MyColors.iconColor, fontSize: 16),
                           ),
                           trailing: Text(
-                            '\$ $totalBalance',
+                            '$currency $totalBalance',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -175,7 +178,7 @@ class _StatsState extends State<Stats> {
                                 color: MyColors.iconColor, fontSize: 16),
                           ),
                           trailing: Text(
-                            '\$ $debt',
+                            '$currency $debt',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -512,8 +515,7 @@ class _StatsState extends State<Stats> {
                             Icons.circle,
                             color: IconsList.get_color(title),
                           ),
-                          trailing: Text('\$ ' +
-                              (expenses[index]['amount'] ?? 0).toString()),
+                          trailing: Text('$currency ${expenses[index]['amount'] ?? 0}'),
                         );
                       }),
 
@@ -589,7 +591,7 @@ class _StatsState extends State<Stats> {
                             color: IconsList.get_color(title),
                           ),
                           trailing:
-                              Text('\$ ' + incomes[index]['total'].toString()),
+                              Text('$currency ${incomes[index]['total']}'),
                         );
                       }),
                 ],
