@@ -19,8 +19,11 @@ class Stats extends StatefulWidget {
 class _StatsState extends State<Stats> {
   bool ready = false;
   List<Map<String, dynamic>> expenses = [];
+  List<Map<String, dynamic>> separatedExpenses = [];
   List<Map<String, dynamic>> incomes = [];
+  List<Map<String, dynamic>> separatedIncomes = [];
   List<Map<String, dynamic>> chartResult = [];
+  Map<String, double> totalAmountByTitle = {};
   double debt = 0;
   String selectedFilter = 'This Week';
   double totalBalance = 0;
@@ -67,6 +70,25 @@ class _StatsState extends State<Stats> {
     return dataList;
   }
 
+  List<Map<String, dynamic>> _seperateByCategory(data_list) {
+    Map<String, double> totalAmountByTitle = {};
+    for (var data in data_list) {
+      String title = data['title'];
+      double amount = data['amount'];
+      totalAmountByTitle[title] = (totalAmountByTitle[title] ?? 0) + amount;
+    }
+
+    // Create a new list based on the categories and total amounts
+    List<Map<String, dynamic>> separated_data = [];
+    totalAmountByTitle.forEach((title, totalAmount) {
+      separated_data.add({
+        'title': title,
+        'amount': totalAmount,
+      });
+    });
+    return separated_data;
+  }
+
   void _refreshData() async {
     final exp = await SQLHelper.getExpenses();
     final chart = await SQLHelper.getAllActivities();
@@ -81,6 +103,10 @@ class _StatsState extends State<Stats> {
       this.debt = debt[0]['total'] ?? 0;
       this.totalBalance = totalBalance[0]['total'] ?? 0;
       final now = DateTime.now();
+      final filteredExpenses = _filterData(selectedFilter, expenses);
+      this.separatedExpenses = _seperateByCategory(filteredExpenses);
+      final filteredIncomes = _filterData(selectedFilter, incomes);
+      this.separatedIncomes = _seperateByCategory(filteredIncomes);
       // Filter expenses based on the selected filter option
       switch (selectedFilter) {
         case 'This Week':
@@ -499,23 +525,24 @@ class _StatsState extends State<Stats> {
                                   borderData: FlBorderData(show: false),
                                   sectionsSpace: 0,
                                   sections: _expensesSections(
-                                      expenses, expTouchedIndex),
+                                      separatedExpenses, expTouchedIndex),
                                   centerSpaceRadius: Get.width * 0.25,
                                 ))),
                   ),
                   ListView.builder(
                       shrinkWrap: true,
                       primary: false,
-                      itemCount: expenses.length,
+                      itemCount: separatedExpenses.length,
                       itemBuilder: (context, index) {
-                        String title = expenses[index]['title'];
+                        String title = separatedExpenses[index]['title'];
                         return ListTile(
                           title: Text(title.tr),
                           leading: Icon(
                             Icons.circle,
                             color: IconsList.get_color(title),
                           ),
-                          trailing: Text('$currency ${expenses[index]['amount'] ?? 0}'),
+                          trailing: Text(
+                              '$currency ${separatedExpenses[index]['amount'] ?? 0}'),
                         );
                       }),
 
@@ -574,24 +601,24 @@ class _StatsState extends State<Stats> {
                                   borderData: FlBorderData(show: false),
                                   sectionsSpace: 0,
                                   sections: _incomesSections(
-                                      incomes, incTouchedIndex),
+                                      separatedIncomes, incTouchedIndex),
                                   centerSpaceRadius: Get.width * 0.25,
                                 ))),
                   ),
                   ListView.builder(
                       shrinkWrap: true,
                       primary: false,
-                      itemCount: incomes.length,
+                      itemCount: separatedIncomes.length,
                       itemBuilder: (context, index) {
-                        String title = incomes[index]['title'];
+                        String title = separatedIncomes[index]['title'];
                         return ListTile(
                           title: Text(title.tr),
                           leading: Icon(
                             Icons.circle,
                             color: IconsList.get_color(title),
                           ),
-                          trailing:
-                              Text('$currency ${incomes[index]['total']}'),
+                          trailing: Text(
+                              '$currency ${separatedIncomes[index]['amount']}'),
                         );
                       }),
                 ],
@@ -602,76 +629,73 @@ class _StatsState extends State<Stats> {
 
   List<PieChartSectionData> _expensesSections(
       List<Map<String, dynamic>> expenses, int? touchedIndex) {
-    // TODO: separate the expenses by categories
-    expenses = _filterData(selectedFilter, expenses);
-    List<Map<String, dynamic>> temp = expenses;
     final List<PieChartSectionData> list = [];
     double sum = 0;
-    Map<String, double> totalAmountByTitle =
-        {}; // Map to store total amount for each title
-
-    for (var expense in expenses) {
-      String title = expense['title'];
-      double amount = expense['amount'];
+    // Calculate the total sum for the new separatedExpenses list
+    for (var expense in separatedExpenses) {
       sum += expense['amount'];
-
-      // Add the expense amount to the corresponding title/category
-
-      totalAmountByTitle[title] = (totalAmountByTitle[title] ?? 0) + amount;
-      print(totalAmountByTitle[title]);
-      //k  expense['title'] = totalAmountByTitle[title];
     }
-
-    for (var index = 0; index < expenses.length; index++) {
+    // Create PieChartSectionData for each category in the separatedExpenses list
+    for (var index = 0; index < separatedExpenses.length; index++) {
       final isTouched = index == touchedIndex;
       double fontSize = isTouched ? 20 : 14;
       double radius = isTouched ? 70.0 : 50.0;
-      // Use the total amount from the map instead of the individual expense amount
-      double totalAmount = totalAmountByTitle[expenses[index]['title']] ?? 0;
-      print(totalAmount);
+      double totalAmount = separatedExpenses[index]['amount'];
       double pourc = (totalAmount * 100) / sum;
       String title = '${pourc.toStringAsFixed(1)}%';
 
       final data = PieChartSectionData(
-          showTitle: true,
-          title: title,
-          color: IconsList.get_color(expenses[index]['title']),
-          value: totalAmount,
-          radius: radius,
-          titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).textTheme.displayMedium!.color));
+        showTitle: true,
+        title: title,
+        color: IconsList.get_color(separatedExpenses[index]['title']),
+        value: totalAmount,
+        radius: radius,
+        titleStyle: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          color: MyColors.buttonGrey,
+        ),
+      );
+
       list.add(data);
     }
 
     return list;
   }
 
-  List<PieChartSectionData> _incomesSections(List incomes, int? touchedIndex) {
+  List<PieChartSectionData> _incomesSections(
+      List<Map<String, dynamic>> separatedIncomes, int? touchedIndex) {
     final List<PieChartSectionData> list = [];
     double sum = 0;
-    for (var income in incomes) {
-      sum += income['total'];
+    // Calculate the total sum for the new separatedExpenses list
+    for (var income in separatedIncomes) {
+      sum += income['amount'];
     }
-    for (var index = 0; index < incomes.length; index++) {
+    // Create PieChartSectionData for each category in the separatedExpenses list
+    for (var index = 0; index < separatedIncomes.length; index++) {
       final isTouched = index == touchedIndex;
       double fontSize = isTouched ? 20 : 14;
       double radius = isTouched ? 70.0 : 50.0;
-      double pourc = (incomes[index]['total'] * 100) / sum;
+      double totalAmount = separatedIncomes[index]['amount'];
+      double pourc = (totalAmount * 100) / sum;
       String title = '${pourc.toStringAsFixed(1)}%';
+
       final data = PieChartSectionData(
-          showTitle: true,
-          title: title,
-          color: IconsList.get_color(incomes[index]['title']),
-          value: incomes[index]['total'],
-          radius: radius,
-          titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: MyColors.buttonGrey));
+        showTitle: true,
+        title: title,
+        color: IconsList.get_color(separatedIncomes[index]['title']),
+        value: totalAmount,
+        radius: radius,
+        titleStyle: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          color: MyColors.buttonGrey,
+        ),
+      );
+
       list.add(data);
     }
+
     return list;
   }
 }

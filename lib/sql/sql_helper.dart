@@ -145,7 +145,7 @@ class SQLHelper {
   static Future<List<Map<String, dynamic>>> getIcomes() async {
     final db = await SQLHelper.db();
     return db.rawQuery(
-        "Select sum(amount) as total,title from activities where category='income' group by title");
+        "Select amount,title,time from activities where category='income'");
   }
 
   static Future<List<Map<String, dynamic>>> getAccounts() async {
