@@ -108,38 +108,7 @@ class _StatsState extends State<Stats> {
       final filteredIncomes = _filterData(selectedFilter, incomes);
       this.separatedIncomes = _seperateByCategory(filteredIncomes);
       // Filter expenses based on the selected filter option
-      switch (selectedFilter) {
-        case 'This Week':
-          final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-          final endOfWeek =
-              now.add(Duration(days: DateTime.daysPerWeek - now.weekday));
-          print(endOfWeek.toString());
-          chartResult = chartResult.where((expense) {
-            DateTime date = DateTime.parse(expense['time']);
-            return date.isAfter(startOfWeek) && date.isBefore(endOfWeek);
-          }).toList();
-          break;
-
-        case 'This Month':
-          final startOfMonth = DateTime(now.year, now.month, 1);
-          final endOfMonth = DateTime(now.year, now.month + 1, 0);
-
-          chartResult = chartResult.where((expense) {
-            DateTime date = DateTime.parse(expense['time']);
-            return date.isAfter(startOfMonth) && date.isBefore(endOfMonth);
-          }).toList();
-          break;
-
-        case 'This Year':
-          final startOfYear = DateTime(now.year, 1, 1);
-          final endOfYear = DateTime(now.year + 1, 1, 0);
-
-          chartResult = chartResult.where((expense) {
-            DateTime date = DateTime.parse(expense['time']);
-            return date.isAfter(startOfYear) && date.isBefore(endOfYear);
-          }).toList();
-          break;
-      }
+      chartResult = _filterData("This Week", chartResult);
 
       chartData = List.generate(7, (index) {
         final dayOfWeek = now
@@ -241,7 +210,7 @@ class _StatsState extends State<Stats> {
                       ),
                     ),
                   ),
-                  Padding(
+                  /*Padding(
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -289,7 +258,7 @@ class _StatsState extends State<Stats> {
                         ),
                       ],
                     ),
-                  ),
+                  ),*/
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
                     child: SizedBox(
@@ -311,82 +280,60 @@ class _StatsState extends State<Stats> {
                                 reservedSize: 25,
                                 showTitles: true,
                                 getTitlesWidget: (double value, meta) {
-                                  switch (selectedFilter) {
-                                    case 'This Week':
-                                      {
-                                        switch (value.toInt()) {
-                                          case 0:
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10),
-                                              child: Text(
-                                                'Mon',
-                                                style: TextStyle(
-                                                    color: MyColors.iconColor),
-                                              ),
-                                            );
-                                          case 1:
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10),
-                                              child: Text('Tue',
-                                                  style: TextStyle(
-                                                      color:
-                                                          MyColors.iconColor)),
-                                            );
-                                          case 2:
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10),
-                                              child: Text('Wed',
-                                                  style: TextStyle(
-                                                      color:
-                                                          MyColors.iconColor)),
-                                            );
-                                          case 3:
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10),
-                                              child: Text('Thu',
-                                                  style: TextStyle(
-                                                      color:
-                                                          MyColors.iconColor)),
-                                            );
-                                          case 4:
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10),
-                                              child: Text('Fri',
-                                                  style: TextStyle(
-                                                      color:
-                                                          MyColors.iconColor)),
-                                            );
-                                          case 5:
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10),
-                                              child: Text('Sat',
-                                                  style: TextStyle(
-                                                      color:
-                                                          MyColors.iconColor)),
-                                            );
-                                          case 6:
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10),
-                                              child: Text('Sun',
-                                                  style: TextStyle(
-                                                      color:
-                                                          MyColors.iconColor)),
-                                            );
-                                          default:
-                                            return Text('');
-                                        }
-                                      }
-                                    default:
-                                      return Text(value.toInt().toString(),
+                                  switch (value.toInt()) {
+                                    case 0:
+                                      return Padding(
+                                        padding: const EdgeInsets.only(top: 10),
+                                        child: Text(
+                                          'Mon',
                                           style: TextStyle(
-                                              color: MyColors.iconColor));
+                                              color: MyColors.iconColor),
+                                        ),
+                                      );
+                                    case 1:
+                                      return Padding(
+                                        padding: const EdgeInsets.only(top: 10),
+                                        child: Text('Tue',
+                                            style: TextStyle(
+                                                color: MyColors.iconColor)),
+                                      );
+                                    case 2:
+                                      return Padding(
+                                        padding: const EdgeInsets.only(top: 10),
+                                        child: Text('Wed',
+                                            style: TextStyle(
+                                                color: MyColors.iconColor)),
+                                      );
+                                    case 3:
+                                      return Padding(
+                                        padding: const EdgeInsets.only(top: 10),
+                                        child: Text('Thu',
+                                            style: TextStyle(
+                                                color: MyColors.iconColor)),
+                                      );
+                                    case 4:
+                                      return Padding(
+                                        padding: const EdgeInsets.only(top: 10),
+                                        child: Text('Fri',
+                                            style: TextStyle(
+                                                color: MyColors.iconColor)),
+                                      );
+                                    case 5:
+                                      return Padding(
+                                        padding: const EdgeInsets.only(top: 10),
+                                        child: Text('Sat',
+                                            style: TextStyle(
+                                                color: MyColors.iconColor)),
+                                      );
+                                    case 6:
+                                      return Padding(
+                                        padding: const EdgeInsets.only(top: 10),
+                                        child: Text('Sun',
+                                            style: TextStyle(
+                                                color: MyColors.iconColor)),
+                                      );
+                                    default:
+                                      return Text('');
                                   }
                                 },
                               ),
@@ -489,7 +436,7 @@ class _StatsState extends State<Stats> {
                     ),
                     width: Get.width * 0.9,
                     height: Get.width * 0.9,
-                    child: expenses.isEmpty
+                    child: (expenses.isEmpty)
                         ? Center(
                             child: Text(
                             "There is no data yet".tr,
@@ -503,31 +450,32 @@ class _StatsState extends State<Stats> {
                         : AspectRatio(
                             aspectRatio: 1.0,
                             child: PieChart(
-                                swapAnimationDuration:
-                                    Duration(milliseconds: 150), // Optional
-                                swapAnimationCurve: Curves.linear,
-                                PieChartData(
-                                  pieTouchData: PieTouchData(
-                                    touchCallback: (p0, p1) {
-                                      setState(() {
-                                        if (p1?.touchedSection
-                                                is FlLongPressEnd ||
-                                            p1?.touchedSection
-                                                is FlPanEndEvent) {
-                                          expTouchedIndex = -1;
-                                        } else {
-                                          expTouchedIndex = p1?.touchedSection!
-                                              .touchedSectionIndex;
-                                        }
-                                      });
-                                    },
-                                  ),
-                                  borderData: FlBorderData(show: false),
-                                  sectionsSpace: 0,
-                                  sections: _expensesSections(
-                                      separatedExpenses, expTouchedIndex),
-                                  centerSpaceRadius: Get.width * 0.25,
-                                ))),
+                              swapAnimationDuration:
+                                  Duration(milliseconds: 150), // Optional
+                              swapAnimationCurve: Curves.linear,
+                              PieChartData(
+                                pieTouchData: PieTouchData(
+                                  touchCallback: (p0, p1) {
+                                    setState(() {
+                                      if (p1?.touchedSection
+                                              is FlLongPressEnd ||
+                                          p1?.touchedSection is FlPanEndEvent) {
+                                        expTouchedIndex = -1;
+                                      } else {
+                                        expTouchedIndex = p1?.touchedSection!
+                                            .touchedSectionIndex;
+                                      }
+                                    });
+                                  },
+                                ),
+                                borderData: FlBorderData(show: false),
+                                sectionsSpace: 2,
+                                sections: _expensesSections(
+                                    separatedExpenses, expTouchedIndex),
+                                centerSpaceRadius: Get.width * 0.25,
+                              ),
+                            ),
+                          ),
                   ),
                   ListView.builder(
                       shrinkWrap: true,

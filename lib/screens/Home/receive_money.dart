@@ -21,7 +21,6 @@ class _ReceiveMoneyState extends State<ReceiveMoney> {
   final userData = AuthData().getUserData;
   @override
   Widget build(BuildContext context) {
-    Transactions.startListeningForTransactions(userData['id']);
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(

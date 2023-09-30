@@ -1,6 +1,8 @@
 import 'package:bstable/firebase_options.dart';
+import 'package:bstable/services/auth_data.dart';
 import 'package:bstable/services/currency.dart';
 import 'package:bstable/services/hot_restart.dart';
+import 'package:bstable/services/transaction.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/services/language_service.dart';
 import 'package:bstable/translation/local.dart';
@@ -17,7 +19,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  );
+  ); 
   await GetStorage.init();
  runApp(new HotRestartController(
     child: new MyApp()
@@ -30,6 +32,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     //SQLHelper.deleteAllActivities();
     //SQLHelper.deleteAllAccount();
+  final userData = AuthData().getUserData;
+    Transactions.startListeningForTransactions(userData['id']);
     return SafeArea(
       child: GetMaterialApp(
         translations: LocalTranslation(),
