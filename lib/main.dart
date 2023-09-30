@@ -2,7 +2,7 @@ import 'package:bstable/firebase_options.dart';
 import 'package:bstable/services/auth_data.dart';
 import 'package:bstable/services/currency.dart';
 import 'package:bstable/services/hot_restart.dart';
-import 'package:bstable/services/transaction.dart';
+import 'package:bstable/services/transaction_service.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/services/language_service.dart';
 import 'package:bstable/translation/local.dart';
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
     //SQLHelper.deleteAllActivities();
     //SQLHelper.deleteAllAccount();
   final userData = AuthData().getUserData;
-    Transactions.startListeningForTransactions(userData['id']);
+    TransactionsService.startListeningForTransactions(userData['id']);
     return SafeArea(
       child: GetMaterialApp(
         translations: LocalTranslation(),

@@ -1,7 +1,7 @@
 import 'package:bstable/screens/Home/add/account.dart';
 import 'package:bstable/screens/Home/contacts.dart';
 import 'package:bstable/services/auth_data.dart';
-import 'package:bstable/services/transaction.dart';
+import 'package:bstable/services/transaction_service.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:bstable/ui/styles/decoration.dart';
@@ -297,7 +297,7 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
-                    Transactions.createTransaction(
+                    TransactionsService.createTransaction(
                         myUid, receiverUid, double.parse(_amountController.text));
                     //resume camera
                     _scannerController.start();

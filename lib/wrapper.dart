@@ -3,6 +3,7 @@ import 'package:bstable/screens/Home/profile.dart';
 import 'package:bstable/screens/Stats/stats.dart';
 import 'package:bstable/screens/Wallet/wallet.dart';
 import 'package:bstable/screens/authentification/authenticate.dart';
+import 'package:bstable/screens/transactions/transactions.dart';
 import 'package:bstable/services/auth.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:bstable/ui/styles/icons.dart';
@@ -41,7 +42,7 @@ class Screens extends StatefulWidget {
 class _ScreensState extends State<Screens> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    final _controller = TabController(vsync: this, length: 3);
+    final _controller = TabController(vsync: this, length: 4);
 
     return Scaffold(
       body: Column(
@@ -54,6 +55,7 @@ class _ScreensState extends State<Screens> with TickerProviderStateMixin {
                   Home(),
                   Wallet(),
                   Stats(),
+                  Transactions(),
                 ]),
           ),
           Padding(
@@ -81,6 +83,13 @@ class _ScreensState extends State<Screens> with TickerProviderStateMixin {
                     Tab(
                       icon: Icon(
                         MyIcons.stats,
+                        size: 30,
+                      ),
+                      iconMargin: EdgeInsets.only(bottom: 5),
+                    ),
+                    Tab(
+                      icon: Icon(
+                        Icons.thumbs_up_down,
                         size: 30,
                       ),
                       iconMargin: EdgeInsets.only(bottom: 5),

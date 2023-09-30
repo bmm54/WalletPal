@@ -94,6 +94,10 @@ class SQLHelper {
     return db.rawQuery("SELECT * from activities order by time desc");
   }
 
+    static Future<List<Map<String, dynamic>>> getPersonsTransactions() async {
+    final db = await SQLHelper.db();
+    return db.rawQuery("SELECT title,sum(amount) as total from activities where title='Sent' or title='Received' group by title order by total desc");
+  }
   static Future<List<Map<String, dynamic>>> getGoals() async {
     final db = await SQLHelper.db();
     return db.rawQuery("SELECT * from goals order by id desc");

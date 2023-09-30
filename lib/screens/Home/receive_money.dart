@@ -1,6 +1,6 @@
 import 'package:bstable/screens/Home/contacts.dart';
 import 'package:bstable/services/auth_data.dart';
-import 'package:bstable/services/transaction.dart';
+import 'package:bstable/services/transaction_service.dart';
 import 'package:bstable/ui/styles/icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

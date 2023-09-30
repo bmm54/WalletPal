@@ -26,7 +26,7 @@ class TransactionModel {
   }
 }
 
-class Transactions {
+class TransactionsService {
   static void createTransaction(
       String senderId, String receiverId, double amount) async {
     try {
