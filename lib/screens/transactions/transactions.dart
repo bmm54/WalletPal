@@ -48,27 +48,30 @@ class _TransactionsState extends State<Transactions> {
             itemBuilder: (context, index) {
               return ListTile(
                 leading:Container(
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(image: Image.asset("lib/assets/images/profile.png").image),
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                ),
-                title: Text(persons[index]['title']),
-                trailing: Text(persons[index]['total'].toString()),
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: Image.asset(
+                                              "lib/assets/images/profile.png")
+                                          .image,
+                                  fit: BoxFit.cover,
+                                ),
+                                color: Theme.of(context).primaryColor,
+                                borderRadius: BorderRadius.circular(15.0),
+                                border: Border.all(
+                                    color:
+                                        Theme.of(context).secondaryHeaderColor,
+                                    width: 3.0),
+                              ),
+                            ),
+                title: Text(persons[index]['title'],style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.displayMedium!.color),),
+                trailing: Text(persons[index]['total'].toString(),style: TextStyle(
+                  fontWeight: FontWeight.bold,),),
 
               );
-
-              //Activity(
-              //  title: persons[index]['title'],
-              //  image: 
-              //  amount: persons[index]['total'],
-              //  category: "sent",
-              //  date: " ",
-              //  option: "Loan",
-              //);
             },
           ),
         ),
@@ -94,16 +97,16 @@ class _TransactionsState extends State<Transactions> {
             primary: false,
             itemCount: records.length,
             itemBuilder: (context, index) {
-              return (records[index]['title'] == "Sent" ||
-                      records[index]['title'] == "Received")
+              return (records[index]['category'] == "Sent" ||
+                      records[index]['category'] == "Received")
                   ? Activity(
-                      title: "Bemba Mahmouden",
+                      title: records[index]['title'],
                       image: Image.asset("lib/assets/images/profile.png"),
                       amount: records[index]['amount'],
                       category: records[index]['category'],
                       date: DateFormat('dd.MM.yyyy | HH:mm')
                           .format(DateTime.parse(records[index]['time'])),
-                      option: "Loan",
+                      option: records[index]['status'],
                     )
                   : SizedBox();
             },

@@ -72,7 +72,7 @@ class LocalTranslation extends Translations {
         },
         // Arabic
         'ar': {
-          "RecentActivities": "اخر النشطة",
+          "RecentActivities": "اخر الانشطة",
           "Settings": "الاعدادات",
           "WorldLanguage": "اللغة العالمية",
           "Language": "اللغة",

@@ -125,12 +125,12 @@ class _ActivityState extends State<Activity> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                widget.category == 'income'
+                (widget.category == 'income'|| widget.category == 'Received')
                     ? '+ ${'$currency ${widget.amount}'}'
                     : '- ${'$currency ${widget.amount}'}',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: widget.category == 'income'
+                  color: (widget.category == 'income'|| widget.category == 'Received')
                       ? MyColors.green
                       : MyColors.red,
                 ),

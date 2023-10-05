@@ -5,9 +5,11 @@ import 'package:bstable/screens/Home/settings.dart';
 import 'package:bstable/screens/Home/profile.dart';
 import 'package:bstable/services/auth_data.dart';
 import 'package:bstable/services/currency.dart';
+import 'package:bstable/services/transaction_service.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/ui/components/activity.dart';
 import 'package:bstable/ui/styles/colors.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -62,7 +64,7 @@ class _HomeState extends State<Home> {
               backgroundColor: Theme.of(context).primaryColor,
               displacement: 60,
               color: MyColors.purpule,
-              onRefresh: () async{
+              onRefresh: () async {
                 _refreshData();
               },
               child: ListView(children: [
@@ -80,26 +82,39 @@ class _HomeState extends State<Home> {
                                 Get.to(() => Profile());
                               }
                             },
-                            child: Container(
-                              height: 60,
-                              width: 60,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: (userData == null ||
-                                          userData['image'] == null)
-                                      ? Image.asset(
-                                              "lib/assets/images/profile.png")
-                                          .image
-                                      : Image.network(userData['image']).image,
-                                  fit: BoxFit.cover,
+                            child: CachedNetworkImage(
+                              imageUrl: userData['image'],
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                height: 60,
+                                width: 60,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  border: Border.all(
+                                      color: Theme.of(context)
+                                          .secondaryHeaderColor,
+                                      width: 3.0),
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                                color: Theme.of(context).primaryColor,
-                                borderRadius: BorderRadius.circular(15.0),
-                                border: Border.all(
-                                    color:
-                                        Theme.of(context).secondaryHeaderColor,
-                                    width: 3.0),
                               ),
+                              placeholder: (context, url) => Container(
+                                height: 60,
+                                width: 60,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  border: Border.all(
+                                      color: Theme.of(context)
+                                          .secondaryHeaderColor,
+                                      width: 3.0),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error,size: 30,),
                             ),
                           ),
                           Text(
@@ -346,17 +361,17 @@ class _HomeState extends State<Home> {
                         itemCount: records.length,
                         itemBuilder: (context, index) {
                           final title = records[index]['title'];
-                          return (records[index]['title'] == 'Sent' ||
-                                  records[index]['title'] == 'Received')
+                          return (records[index]['category'] == 'Sent' ||
+                                  records[index]['category'] == 'Received')
                               ? Activity(
-                                  title: "Bemba Mahmouden",
+                                  title: records[index]['title'],
                                   image: Image.asset(
                                       "lib/assets/images/profile.png"),
                                   amount: records[index]['amount'],
                                   category: records[index]['category'],
                                   date: DateFormat('dd.MM.yyyy | HH:mm').format(
                                       DateTime.parse(records[index]['time'])),
-                                  option: "Loan",
+                                  option: records[index]['status'],
                                 )
                               : Activity(
                                   title: records[index]['title'],

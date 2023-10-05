@@ -37,13 +37,14 @@ class SQLHelper {
   }
 
   static Future<int> insertActivity(
-      String title, String category, double amount) async {
+      String title, String category, double amount,[String? status,String? time]) async {
     final db = await SQLHelper.db();
     final data = {
       'title': title,
-      'time': DateTime.now().toString(),
+      'time': time??DateTime.now().toString(),
       'category': category,
-      'amount': amount
+      'amount': amount,
+      'status': status,
     };
     final id = await db.insert(
         'activities', //table name
@@ -96,7 +97,7 @@ class SQLHelper {
 
     static Future<List<Map<String, dynamic>>> getPersonsTransactions() async {
     final db = await SQLHelper.db();
-    return db.rawQuery("SELECT title,sum(amount) as total from activities where title='Sent' or title='Received' group by title order by total desc");
+    return db.rawQuery("SELECT title,sum(amount) as total from activities where category='Sent' or category='Received' group by title order by total desc");
   }
   static Future<List<Map<String, dynamic>>> getGoals() async {
     final db = await SQLHelper.db();

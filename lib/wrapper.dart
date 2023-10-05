@@ -89,7 +89,7 @@ class _ScreensState extends State<Screens> with TickerProviderStateMixin {
                     ),
                     Tab(
                       icon: Icon(
-                        Icons.thumbs_up_down,
+                        Icons.swap_vert,
                         size: 30,
                       ),
                       iconMargin: EdgeInsets.only(bottom: 5),

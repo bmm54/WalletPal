@@ -143,17 +143,19 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
     }
   }
 
-  _showSheet(String myUid, String receiverUid, context) async {
+  _showSheet(String receiverUid, context) async {
     final _controller = TabController(vsync: this, length: 2);
     final _amountController = TextEditingController();
     var accountName = accounts[0]['name'];
     var accountId = accounts[0]['id'];
     var selectedStatus = "Loan";
-    String? name;
-    String? photo;
+    String myUid = userData['id'];
+    String myName = userData['name'] ?? "Unknown";
+    String receiverName;
+    String? receiverPhoto;
     final value = await getUserData(receiverUid, context);
-    name = value!['name'];
-    photo = value['photo_url'];
+    receiverName = value!['name'] ?? "Unknown";
+    receiverPhoto = value['photo_url'];
     return showModalBottomSheet(
       enableDrag: false,
       isDismissible: false,
@@ -198,8 +200,8 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
                 width: 80,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: photo != null
-                        ? NetworkImage(photo)
+                    image: receiverPhoto != null
+                        ? NetworkImage(receiverPhoto)
                         : Image.asset("lib/assets/images/profile.png").image,
                     fit: BoxFit.cover,
                   ),
@@ -211,55 +213,60 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
             SizedBox(
               height: 10,
             ),
-            Center(child: Text(name ?? "User")),
+            Center(child: Text(receiverName ?? "Unkown")),
             SizedBox(
               height: 10,
             ),
-           Padding(
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: TextField(
-                controller: _amountController,
-                textAlign: TextAlign.center,
-                keyboardType: TextInputType.number,
-                decoration:CustomDeco.inputDecoration.copyWith(hintText: "Enter Amount")
-              ),
+                  controller: _amountController,
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.number,
+                  decoration: CustomDeco.inputDecoration
+                      .copyWith(hintText: "Enter Amount")),
             ),
             SizedBox(
               height: 20,
             ),
-             Row(
+            Row(
               children: [
                 Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 40),
-                      child:InkWell(onTap: () async {
-                          final result = await Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) => Account()));
-                          setState(
-                            () {
-                              accountName = result[0];
-                              accountId = result[1];
-                            },
-                          );
-                        },child: Container(
-                          decoration: BoxDecoration(color: MyColors.darkBorder.withOpacity(0.2),borderRadius: BorderRadius.circular(10)),
-                          padding: EdgeInsets.all(8.0),
-                          child:Column(
-                            children: [
-                              Text(
-                                "Account".tr,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: InkWell(
+                      onTap: () async {
+                        final result = await Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => Account()));
+                        setState(
+                          () {
+                            accountName = result[0];
+                            accountId = result[1];
+                          },
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: MyColors.darkBorder.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(10)),
+                        padding: EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              "Account".tr,
+                            ),
+                            Text(
+                              accountName,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
                               ),
-                              Text(
-                                accountName,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
+                ),
               ],
             ),
             Padding(
@@ -286,7 +293,6 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
                     Tab(child: Text("Paycheck".tr)),
                   ]),
             ),
-            
             SizedBox(
               height: 10,
             ),
@@ -298,14 +304,20 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
                 child: ElevatedButton(
                   onPressed: () {
                     TransactionsService.createTransaction(
-                        myUid, receiverUid, double.parse(_amountController.text));
+                        myName,
+                        myUid,
+                        receiverUid,
+                        receiverName,
+                        double.parse(_amountController.text),
+                        selectedStatus);
                     //resume camera
                     _scannerController.start();
                     Navigator.pop(context);
                   },
                   child: Text("Confirm".tr),
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(MyColors.purpule),
+                    backgroundColor:
+                        MaterialStateProperty.all(MyColors.purpule),
                     shape: MaterialStateProperty.all(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
@@ -347,10 +359,9 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
                   onDetect: (qrcode) async {
                     String receiverUid =
                         qrcode.barcodes.first.rawValue.toString();
-                    String myUid = userData['id'];
                     //pause the camera
                     _scannerController.stop();
-                    _showSheet(myUid, receiverUid, context);
+                    _showSheet(receiverUid, context);
                   },
                 ),
                 Positioned.fill(
@@ -370,11 +381,10 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
               ],
             ),
           ),
-          ElevatedButton(
-              onPressed: () async {
-                String myUid = userData['id'];
-                _showSheet(myUid, "SOwyUaG8WZXmMCHtAuM3I0qpYX73", context);
+          TextButton(
+              onPressed: () {
                 _scannerController.stop();
+                _showSheet("fqHcoIpuAsgb7ZOWk7eEKLkNUOG2", context);
               },
               child: Text("click")),
           Container(

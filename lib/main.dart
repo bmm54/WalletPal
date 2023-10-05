@@ -10,6 +10,7 @@ import 'package:bstable/ui/themes/dark.dart';
 import 'package:bstable/ui/themes/light.dart';
 import 'package:bstable/services/theme_service.dart';
 import 'package:bstable/wrapper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,21 +20,22 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  ); 
+  );
   await GetStorage.init();
- runApp(new HotRestartController(
-    child: new MyApp()
-  ));
+  runApp(new HotRestartController(child: new MyApp()));
 }
 
 class MyApp extends StatelessWidget {
-   final CurrencyController currencyController = Get.put(CurrencyController());
+  final CurrencyController currencyController = Get.put(CurrencyController());
   @override
   Widget build(BuildContext context) {
     //SQLHelper.deleteAllActivities();
     //SQLHelper.deleteAllAccount();
-  final userData = AuthData().getUserData;
-    TransactionsService.startListeningForTransactions(userData['id']);
+    //if authenticated start listening
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if ( currentUser!= null) {
+      TransactionsService.startListeningForTransactions(currentUser.uid);
+    }
     return SafeArea(
       child: GetMaterialApp(
         translations: LocalTranslation(),
