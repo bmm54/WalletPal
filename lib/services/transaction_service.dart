@@ -1,3 +1,6 @@
+// ignore_for_file: iterable_contains_unrelated_type
+
+import 'package:bstable/models/expense_model.dart';
 import 'package:bstable/services/auth_data.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,6 +13,7 @@ class TransactionModel {
   final double amount;
   final String time;
   final String status;
+  final String? SenderImageUrl;
 
   TransactionModel({
     required this.senderName,
@@ -18,6 +22,7 @@ class TransactionModel {
     required this.amount,
     required this.time,
     required this.status,
+    this.SenderImageUrl,
   });
 
   // Convert Firestore snapshot to TransactionModel
@@ -29,13 +34,40 @@ class TransactionModel {
       amount: snapshot['amount'],
       time: snapshot['time'],
       status: snapshot['status'],
+      SenderImageUrl: snapshot['image_url'],
     );
   }
 }
 
 class TransactionsService {
-  static void createTransaction(String senderName, String senderId,
-      String receiverId, String receiverName, double amount,String status) async {
+  bool contatExist(String uid) {
+    List<Map<String, dynamic>> persons = [];
+    SQLHelper.getTransactionContact(uid).then((value) {
+      persons = value;
+    });
+    return persons.isEmpty;
+  }
+
+  updateTransactionsInfos(uid, name, amount, status, imageUrl, category) async {
+    if (contatExist(uid)) {
+      await SQLHelper.updateTransactionContact(amount, category, status, uid);
+    } else {
+      await SQLHelper.createTransactionContact(uid, name, imageUrl)
+          .then((value) async {
+        await SQLHelper.updateTransactionContact(amount, category, status, uid);
+      });
+    }
+  }
+
+  Future<void> createTransaction(
+      String senderName,
+      String senderId,
+      String receiverId,
+      String receiverName,
+      double amount,
+      String status,
+      String? imageUrl,
+      receiverImage) async {
     try {
       CollectionReference transactionsRef =
           FirebaseFirestore.instance.collection('transactions');
@@ -46,20 +78,24 @@ class TransactionsService {
         'time': DateTime.now().toString(),
         'amount': amount,
         'status': status,
+        'image_url': imageUrl
       });
 
       String transactionId = docRef.id;
       print('Transaction document created with ID: $transactionId');
       docRef.isBlank!
           ? null
-          : await SQLHelper.insertActivity(receiverName, "Sent", amount,status);
+          : await SQLHelper.insertTransaction(receiverName, "Sent", amount,
+              status, DateTime.now().toString(), receiverImage);
+      await updateTransactionsInfos( receiverId, receiverName, amount,
+              status, receiverImage, "Sent");
     } catch (e) {
       print(e);
     }
   }
 
   // Receiver listens for changes from Firestore
-  static void startListeningForTransactions(receiverId) {
+  void startListeningForTransactions(receiverId) {
     FirebaseFirestore.instance
         .collection('transactions')
         .where('receiverId', isEqualTo: receiverId)
@@ -72,8 +108,21 @@ class TransactionsService {
         print("transaction received");
         print(transactions.toString());
         for (final transaction in transactions) {
-          await SQLHelper.insertActivity(
-              transaction.senderName, "Received", transaction.amount,transaction.status,transaction.time);
+          await SQLHelper.insertTransaction(
+              transaction.senderName,
+              "Received",
+              transaction.amount,
+              transaction.status,
+              transaction.time,
+              transaction.SenderImageUrl);
+          await updateTransactionsInfos(
+              transaction.senderId,
+              transaction.senderName,
+              transaction.amount,
+              transaction.status,
+              transaction.SenderImageUrl,
+              "Received");
+
           break;
         }
         for (final doc in snapshot.docs) {

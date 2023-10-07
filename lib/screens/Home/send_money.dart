@@ -151,11 +151,12 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
     var selectedStatus = "Loan";
     String myUid = userData['id'];
     String myName = userData['name'] ?? "Unknown";
+    String myPhoto = userData['image'];
     String receiverName;
     String? receiverPhoto;
     final value = await getUserData(receiverUid, context);
     receiverName = value!['name'] ?? "Unknown";
-    receiverPhoto = value['photo_url'];
+    receiverPhoto = value['image'];
     return showModalBottomSheet(
       enableDrag: false,
       isDismissible: false,
@@ -302,17 +303,36 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
                 width: Get.width,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {
-                    TransactionsService.createTransaction(
-                        myName,
-                        myUid,
-                        receiverUid,
-                        receiverName,
-                        double.parse(_amountController.text),
-                        selectedStatus);
-                    //resume camera
+                  onPressed: () async {
+                    final amount = double.parse(_amountController.text);
+                    if (amount>0)
+                   { try {
+                      await TransactionsService().createTransaction(
+                          myName,
+                          myUid,
+                          receiverUid,
+                          receiverName,
+                          amount,
+                          selectedStatus,
+                          myPhoto,
+                          receiverPhoto);
+                      await SQLHelper.updateBalance(
+                          amount, "expense", accountId);
+                      //resume camera
                     _scannerController.start();
                     Navigator.pop(context);
+                    } catch (e) {
+                      print(e);
+                      Get.snackbar("Error".tr, "Something went wrong".tr,
+                          colorText:
+                              Theme.of(context).textTheme.displaySmall!.color,
+                          icon: Icon(Icons.error));
+                    }}
+                    Get.snackbar("Error".tr, "amount can't negative".tr,
+                          colorText:
+                              Theme.of(context).textTheme.displaySmall!.color,
+                          icon: Icon(Icons.error));
+                    
                   },
                   child: Text("Confirm".tr),
                   style: ButtonStyle(

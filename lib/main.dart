@@ -30,11 +30,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //SQLHelper.deleteAllActivities();
+    //SQLHelper.deleteAllTransactionsContacts();
     //SQLHelper.deleteAllAccount();
     //if authenticated start listening
     final currentUser = FirebaseAuth.instance.currentUser;
     if ( currentUser!= null) {
-      TransactionsService.startListeningForTransactions(currentUser.uid);
+      TransactionsService().startListeningForTransactions(currentUser.uid);
     }
     return SafeArea(
       child: GetMaterialApp(

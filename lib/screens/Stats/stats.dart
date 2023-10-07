@@ -3,8 +3,6 @@ import 'package:bstable/sql/sql_helper.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-
 import '../../ui/components/appBar.dart';
 import '../../ui/styles/colors.dart';
 import '../../ui/styles/iconlist.dart';
@@ -495,6 +493,9 @@ class _StatsState extends State<Stats> {
                       }),
 
                   ///////////////////////////////
+                  SizedBox(
+                    height: 20,
+                  ),
                   Text(
                     "Incomes".tr,
                     style: TextStyle(
@@ -569,6 +570,7 @@ class _StatsState extends State<Stats> {
                               '$currency ${separatedIncomes[index]['amount']}'),
                         );
                       }),
+                      SizedBox(height: 20,),
                 ],
               ),
             ],

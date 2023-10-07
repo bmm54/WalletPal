@@ -1,6 +1,8 @@
+import 'package:bstable/services/currency.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/ui/components/activity.dart';
 import 'package:bstable/ui/components/appBar.dart';
+import 'package:bstable/ui/components/image.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -35,6 +37,8 @@ class _TransactionsState extends State<Transactions> {
 
   @override
   Widget build(BuildContext context) {
+    CurrencyController currencyController = Get.find();
+    final currency = currencyController.getSelectedCurrency();
     return ListView(
       children: [
         MyAppBar(name: "Transactions", back: false),
@@ -47,29 +51,20 @@ class _TransactionsState extends State<Transactions> {
             itemCount: persons.length,
             itemBuilder: (context, index) {
               return ListTile(
-                leading:Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: Image.asset(
-                                              "lib/assets/images/profile.png")
-                                          .image,
-                                  fit: BoxFit.cover,
-                                ),
-                                color: Theme.of(context).primaryColor,
-                                borderRadius: BorderRadius.circular(15.0),
-                                border: Border.all(
-                                    color:
-                                        Theme.of(context).secondaryHeaderColor,
-                                    width: 3.0),
-                              ),
-                            ),
-                title: Text(persons[index]['title'],style: TextStyle(
+                leading:CustomCachedImage(imageUrl: persons[index]['image_url']),
+                title: Text(persons[index]['name'],style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).textTheme.displayMedium!.color),),
-                trailing: Text(persons[index]['total'].toString(),style: TextStyle(
-                  fontWeight: FontWeight.bold,),),
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(currency+' '+persons[index]['owe'].toString(),style: TextStyle(color: MyColors.green,
+                      fontWeight: FontWeight.bold,),),
+                      Text(currency+' '+persons[index]['owe_to'].toString(),style: TextStyle(color: MyColors.red,
+                      fontWeight: FontWeight.bold,),),
+                  ],
+                ),
 
               );
             },
@@ -101,7 +96,7 @@ class _TransactionsState extends State<Transactions> {
                       records[index]['category'] == "Received")
                   ? Activity(
                       title: records[index]['title'],
-                      image: Image.asset("lib/assets/images/profile.png"),
+                      image: records[index]['image_url'],
                       amount: records[index]['amount'],
                       category: records[index]['category'],
                       date: DateFormat('dd.MM.yyyy | HH:mm')

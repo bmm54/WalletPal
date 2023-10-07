@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:bstable/services/currency.dart';
+import 'package:bstable/ui/components/image.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,7 +9,7 @@ import 'package:get/get.dart';
 class Activity extends StatefulWidget {
   final String title;
   final IconData? icon;
-  final Image? image;
+  final String? image;
   final Color? color;
   final String date;
   final double amount;
@@ -88,15 +89,7 @@ class _ActivityState extends State<Activity> {
                     )));
           },
           leading: widget.option != null
-              ? Container(
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(image: widget.image!.image),
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                )
+              ? CustomCachedImage(imageUrl: widget.image??"",isRounded:true)
               : Container(
                   height: 50,
                   width: 50,

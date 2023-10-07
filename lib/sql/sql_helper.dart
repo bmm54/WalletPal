@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 
 class SQLHelper {
@@ -10,8 +9,7 @@ class SQLHelper {
       category TEXT,
       amount REAL,
       status TEXT,
-      image_url TEXT,
-      account_id INTEGER
+      image_url TEXT
       )''');
     await database.execute('''CREATE TABLE accounts (
       id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -26,6 +24,14 @@ class SQLHelper {
       icon_name TEXT,
       color TEXT)''');
     print(".......table created........");
+    await database.execute('''CREATE TABLE Transactions (
+      uid TEXT PRIMARY KEY NOT NULL,
+      name TEXT NOT NULL,
+      owe REAL default 0.0,
+      owe_to REAL default 0.0,
+      image_url TEXT
+      )''');
+    print(".......table created........");
   }
 
   static Future<sql.Database> db() async {
@@ -37,14 +43,13 @@ class SQLHelper {
   }
 
   static Future<int> insertActivity(
-      String title, String category, double amount,[String? status,String? time]) async {
+      String title, String category, double amount) async {
     final db = await SQLHelper.db();
     final data = {
       'title': title,
-      'time': time??DateTime.now().toString(),
+      'time':DateTime.now().toString(),
       'category': category,
       'amount': amount,
-      'status': status,
     };
     final id = await db.insert(
         'activities', //table name
@@ -53,6 +58,29 @@ class SQLHelper {
             sql.ConflictAlgorithm.replace //if it already exist replace it
         );
     print("activity created");
+    return id;
+  }
+
+
+  static Future<int> insertTransaction(
+      String title, String category, double amount,
+      String status, String time,imageUrl) async {
+    final db = await SQLHelper.db();
+    final data = {
+      'title': title,
+      'time': time,
+      'category': category,
+      'amount': amount,
+      'status': status,
+      'image_url':imageUrl
+    };
+    final id = await db.insert(
+        'activities', //table name
+        data, //data
+        conflictAlgorithm:
+            sql.ConflictAlgorithm.replace //if it already exist replace it
+        );
+    print("transaction created");
     return id;
   }
 
@@ -70,35 +98,57 @@ class SQLHelper {
     return id;
   }
 
+  static Future<int> createTransactionContact(String uid,
+      String name,String? imageUrl) async {
+    final db = await SQLHelper.db();
+    final data = {'uid': uid, 'name': name,'image_url':imageUrl};
+    final id = await db.insert(
+        'transactions', //table name
+        data, //data
+        conflictAlgorithm:
+            sql.ConflictAlgorithm.replace //if it already exist replace it
+        );
+    print("transaction contact created");
+    return id;
+  }
+
+  
+
   static Future<void> createGoal(
       String name, double amount, double goal, String color) async {
     final db = await SQLHelper.db();
 
     final data = {'name': name, 'amount': amount, 'goal': goal, 'color': color};
-      await db.insert(
-          'goals', //table name
-          data, //data
-          conflictAlgorithm:
-              sql.ConflictAlgorithm.replace //if it already exist replace it
-          );
-      print("goal created");
+    await db.insert(
+        'goals', //table name
+        data, //data
+        conflictAlgorithm:
+            sql.ConflictAlgorithm.replace //if it already exist replace it
+        );
+    print("goal created");
   }
 
-    static Future<void> addToGoal(double amount,int id) async {
+  static Future<void> addToGoal(double amount, int id) async {
     final db = await SQLHelper.db();
-    db.rawUpdate(
-            "UPDATE goals SET amount=amount+$amount WHERE id=$id");
-            }
+    db.rawUpdate("UPDATE goals SET amount=amount+$amount WHERE id=$id");
+  }
 
   static Future<List<Map<String, dynamic>>> getAllActivities() async {
     final db = await SQLHelper.db();
     return db.rawQuery("SELECT * from activities order by time desc");
   }
 
-    static Future<List<Map<String, dynamic>>> getPersonsTransactions() async {
+  static Future<List<Map<String, dynamic>>> getPersonsTransactions() async {
     final db = await SQLHelper.db();
-    return db.rawQuery("SELECT title,sum(amount) as total from activities where category='Sent' or category='Received' group by title order by total desc");
+    return db.rawQuery(
+        "SELECT * FROM Transactions");
   }
+
+    static Future<List<Map<String, dynamic>>> getTransactionContact(String uid) async {
+    final db = await SQLHelper.db();
+    return db.rawQuery( "SELECT * FROM Transactions WHERE uid = '$uid'");
+  }
+
   static Future<List<Map<String, dynamic>>> getGoals() async {
     final db = await SQLHelper.db();
     return db.rawQuery("SELECT * from goals order by id desc");
@@ -129,9 +179,21 @@ class SQLHelper {
     print(".....deleted......");
   }
 
+    static Future<void> deleteGoal(id) async {
+    final db = await SQLHelper.db();
+    db.rawDelete("DELETE FROM Goals WHERE id=$id");
+    print(".....deleted......");
+  }
+
   static Future<void> deleteAllActivities() async {
     final db = await SQLHelper.db();
     db.rawDelete("DELETE FROM activities");
+    print(".....deleted......");
+  }
+
+    static Future<void> deleteAllTransactionsContacts() async {
+    final db = await SQLHelper.db();
+    db.rawDelete("DELETE FROM Transactions");
     print(".....deleted......");
   }
 
@@ -144,7 +206,7 @@ class SQLHelper {
   static Future<List<Map<String, dynamic>>> getDebt() async {
     final db = await SQLHelper.db();
     return db.rawQuery(
-        "Select sum(amount) as total from activities where title='Loan' and category='expense'");
+        "Select sum(amount) as total from activities where (title='Loan' and category='income') or (status='Loan' and category='Received')");
   }
 
   static Future<List<Map<String, dynamic>>> getIcomes() async {
@@ -172,4 +234,40 @@ class SQLHelper {
             "UPDATE accounts SET balance=balance+$amount WHERE id=$id");
     print(".............balance updated............");
   }
+
+static Future<void> updateTransactionContact(double amount, String type, String status, String uid) async {
+  final db = await SQLHelper.db();
+
+  // Ensure that the amount is positive
+  if (amount <= 0) {
+    throw ArgumentError("Amount must be a positive value.");
+  }
+
+  if (type == "Sent") {
+    if (status == "Loan") {
+      //loan to
+      db.rawUpdate(
+          "UPDATE Transactions SET owe = CASE WHEN (owe + $amount) < 0 THEN 0 ELSE (owe + $amount) END WHERE uid = '$uid'");
+    } 
+    //paycheck
+    else {
+      db.rawUpdate(
+          "UPDATE Transactions SET owe_to = CASE WHEN (owe_to - $amount) < 0 THEN 0 ELSE (owe_to - $amount) END WHERE uid = '$uid'");
+    }
+    //received
+  } else {
+    //loan to you
+    if (status == "Loan") {
+      db.rawUpdate(
+          "UPDATE Transactions SET owe_to = CASE WHEN (owe_to + $amount) < 0 THEN 0 ELSE (owe_to + $amount) END WHERE uid = '$uid'");
+    } 
+    //paycheck
+    else {
+      db.rawUpdate(
+          "UPDATE Transactions SET owe = CASE WHEN (owe - $amount) < 0 THEN 0 ELSE (owe - $amount) END WHERE uid = '$uid'");
+    }
+  }
+}
+
+
 }

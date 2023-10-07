@@ -8,6 +8,7 @@ import 'package:bstable/services/currency.dart';
 import 'package:bstable/services/transaction_service.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/ui/components/activity.dart';
+import 'package:bstable/ui/components/image.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -82,40 +83,7 @@ class _HomeState extends State<Home> {
                                 Get.to(() => Profile());
                               }
                             },
-                            child: CachedNetworkImage(
-                              imageUrl: userData['image'],
-                              imageBuilder: (context, imageProvider) =>
-                                  Container(
-                                height: 60,
-                                width: 60,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColor,
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  border: Border.all(
-                                      color: Theme.of(context)
-                                          .secondaryHeaderColor,
-                                      width: 3.0),
-                                  image: DecorationImage(
-                                    image: imageProvider,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              placeholder: (context, url) => Container(
-                                height: 60,
-                                width: 60,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColor,
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  border: Border.all(
-                                      color: Theme.of(context)
-                                          .secondaryHeaderColor,
-                                      width: 3.0),
-                                ),
-                              ),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error,size: 30,),
-                            ),
+                            child: CustomCachedImage(imageUrl: userData['image']),
                           ),
                           Text(
                             "${DateFormat('dd MMM yyyy').format(DateTime.now())}",
@@ -365,8 +333,7 @@ class _HomeState extends State<Home> {
                                   records[index]['category'] == 'Received')
                               ? Activity(
                                   title: records[index]['title'],
-                                  image: Image.asset(
-                                      "lib/assets/images/profile.png"),
+                                  image: records[index]['image_url'],
                                   amount: records[index]['amount'],
                                   category: records[index]['category'],
                                   date: DateFormat('dd.MM.yyyy | HH:mm').format(

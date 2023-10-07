@@ -1,5 +1,3 @@
-import 'package:bstable/models/accounts_model.dart';
-import 'package:bstable/screens/Home/home.dart';
 import 'package:bstable/services/currency.dart';
 import 'package:bstable/ui/components/appBar.dart';
 import 'package:bstable/ui/styles/decoration.dart';
@@ -8,7 +6,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import '../../sql/sql_helper.dart';
 import '../../ui/styles/colors.dart';
-import '../../ui/styles/icons.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -21,7 +18,7 @@ class Wallet extends StatefulWidget {
 
 class _WalletState extends State<Wallet> {
   Color _accountColor = MyColors.purpule;
-  Color _goalColor = MyColors.lightPurpule;
+  Color _goalColor = MyColors.purpule;
   List<Map<String, dynamic>> accounts = [];
   List<Map<String, dynamic>> goals = [];
   final _accountName = TextEditingController();
@@ -355,6 +352,197 @@ class _WalletState extends State<Wallet> {
     );
   }
 
+  //a function to call a pop up to edit or delete goal
+
+  _editGoalPopUp(int id) {
+    return showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(20.0), // Customize the border radius
+        ),
+        builder: (BuildContext context) {
+          return Container(
+            height: 200,
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: Column(children: [
+              SizedBox(height: 20),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        backgroundColor:
+                            Theme.of(context).scaffoldBackgroundColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              10.0), // Customize the border radius
+                        ),
+                        title: Text(
+                          'Edit Goal'.tr,
+                          style: TextStyle(color: MyColors.iconColor),
+                        ),
+                        content: SingleChildScrollView(
+                          child: Column(children: [
+                            SizedBox(height: 10),
+                            TextField(
+                                controller: _goalName,
+                                decoration: CustomDeco.inputDecoration.copyWith(
+                                  hintText: 'Name'.tr,
+                                )),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            TextField(
+                                keyboardType: TextInputType.number,
+                                controller: _goalAmount,
+                                decoration: CustomDeco.inputDecoration.copyWith(
+                                  hintText: 'Initial amount'.tr,
+                                )),
+                            SizedBox(height: 10),
+                            TextField(
+                                keyboardType: TextInputType.number,
+                                controller: _goalTarget,
+                                decoration: CustomDeco.inputDecoration.copyWith(
+                                  hintText: 'Goal amount'.tr,
+                                )),
+                            SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                ColorPicker(
+                                  pickersEnabled: {
+                                    ColorPickerType.primary: false,
+                                    ColorPickerType.custom: true,
+                                    ColorPickerType.accent: false,
+                                  },
+                                  customColorSwatchesAndNames: {
+                                    ColorTools.createPrimarySwatch(
+                                        MyColors.purpule): "purple",
+                                    ColorTools.createPrimarySwatch(
+                                        MyColors.lightBlue): "blue",
+                                    ColorTools.createPrimarySwatch(
+                                        MyColors.orange): "orange",
+                                    ColorTools.createPrimarySwatch(
+                                        MyColors.green): "green",
+                                  },
+                                  enableOpacity: false,
+                                  color: _goalColor,
+                                  onColorChanged: (Color color) {
+                                    setState(() {
+                                      _goalColor = color;
+                                    });
+                                  },
+                                  enableShadesSelection: false,
+                                ),
+                              ],
+                            ),
+                          ]),
+                        ),
+                        actions: [
+                          ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.transparent),
+                              elevation: MaterialStateProperty.all(0.0),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text(
+                              'Cancel'.tr,
+                              style: TextStyle(color: MyColors.purpule),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  //border
+                  decoration: BoxDecoration(
+                    color: MyColors.blue,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  height: 60,
+                  width: Get.width * 0.9,
+                  child: Center(
+                    child: Stack(
+                      alignment: AlignmentDirectional.centerStart,
+                      children: [
+                        Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                        Align(
+                          child: Text(
+                            "Edit",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              GestureDetector(
+                onTap: () async{
+                  await SQLHelper.deleteGoal(id);
+                  _refrechPage();
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  //border
+                  decoration: BoxDecoration(
+                    color: MyColors.red,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  height: 60,
+                  width: Get.width * 0.9,
+                  child: Center(
+                    child: Stack(
+                      alignment: AlignmentDirectional.centerStart,
+                      children: [
+                        Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                        Align(
+                          child: Text(
+                            "Delete",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ]),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     CurrencyController currencyController = Get.find();
@@ -542,10 +730,8 @@ class _WalletState extends State<Wallet> {
                       )
                     : InkWell(
                         borderRadius: BorderRadius.circular(15),
-
-                        //onTap: () {},
                         onLongPress: () {
-                          print("hello");
+                          _editGoalPopUp(goals[index]['id']);
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(
