@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:bstable/screens/Home/home.dart';
+import 'package:bstable/screens/Home/settings/notifications.dart';
 import 'package:bstable/services/auth.dart';
 import 'package:bstable/services/currency.dart';
 import 'package:bstable/services/hot_restart.dart';
@@ -15,12 +16,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../sql/sql_helper.dart';
-import '../../ui/components/appBar.dart';
-import '../../ui/components/card.dart';
-import '../../ui/styles/colors.dart';
+import '../../../sql/sql_helper.dart';
+import '../../../ui/components/appBar.dart';
+import '../../../ui/components/card.dart';
+import '../../../ui/styles/colors.dart';
 
 class Settings extends StatefulWidget {
   Settings({super.key});
@@ -151,7 +153,10 @@ class _SettingsState extends State<Settings> {
                     TileButton(
                       name: "Notifications",
                       icon: Icons.notifications,
-                      ontap: () {},
+                      ontap: () {
+                        Get.to(() => NotificationsSettings());
+                      
+                      },
                     ),
                     const SizedBox(
                       height: 10,
@@ -189,7 +194,10 @@ class _SettingsState extends State<Settings> {
                     TileButton(
                       name: "About",
                       icon: Icons.info,
-                      ontap: () {},
+                      ontap: () async{
+                        final prefs = await SharedPreferences.getInstance();
+        prefs.setBool('showHome', false);
+                      },
                     ),
                     TileButton(
                       name: "Rate us",

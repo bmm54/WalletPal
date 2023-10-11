@@ -22,12 +22,12 @@ class _StatsState extends State<Stats> {
   List<Map<String, dynamic>> separatedIncomes = [];
   List<Map<String, dynamic>> chartResult = [];
   Map<String, double> totalAmountByTitle = {};
-  double debt = 0;
   String selectedFilter = 'This Week';
   double totalBalance = 0;
   List<FlSpot> chartData = [];
   int? expTouchedIndex;
   int? incTouchedIndex;
+  double expensesThisWeek=0;
 
   List<Map<String, dynamic>> _filterData(
       String selectedFilter, List<Map<String, dynamic>> dataList) {
@@ -89,16 +89,13 @@ class _StatsState extends State<Stats> {
 
   void _refreshData() async {
     final exp = await SQLHelper.getExpenses();
-    final chart = await SQLHelper.getAllActivities();
     final inc = await SQLHelper.getIcomes();
-    final debt = await SQLHelper.getDebt();
     final totalBalance = await SQLHelper.getTotalBalance();
 
     setState(() {
       this.expenses = exp;
       this.incomes = inc;
-      this.chartResult = chart;
-      this.debt = debt[0]['total'] ?? 0;
+      this.chartResult = exp;
       this.totalBalance = totalBalance[0]['total'] ?? 0;
       final now = DateTime.now();
       final filteredExpenses = _filterData(selectedFilter, expenses);
@@ -107,6 +104,7 @@ class _StatsState extends State<Stats> {
       this.separatedIncomes = _seperateByCategory(filteredIncomes);
       // Filter expenses based on the selected filter option
       chartResult = _filterData("This Week", chartResult);
+      expensesThisWeek= _filterData("This Week", expenses).fold(0.0, (sum, expense) => sum + expense['amount'].toDouble());
 
       chartData = List.generate(7, (index) {
         final dayOfWeek = now
@@ -143,47 +141,33 @@ class _StatsState extends State<Stats> {
               Column(
                 children: [
                   MyAppBar(name: "Statistics", back: false),
+                  SizedBox(
+                    height: 20,
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      children: [
-                        ListTile(
-                          title: Text(
-                            'Total Balance'.tr,
-                            style: TextStyle(
-                                color: MyColors.iconColor, fontSize: 16),
-                          ),
-                          trailing: Text(
-                            '$currency $totalBalance',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .displayLarge!
-                                    .color),
-                          ),
-                        ),
-                        ListTile(
-                          title: Text(
-                            'Total Debt'.tr,
-                            style: TextStyle(
-                                color: MyColors.iconColor, fontSize: 16),
-                          ),
-                          trailing: Text(
-                            '$currency $debt',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .displayLarge!
-                                    .color),
-                          ),
-                        ),
-                      ],
+                    child: ListTile(
+                      title: Text(
+                        'Total Balance'.tr,
+                        style:
+                            TextStyle(color: MyColors.iconColor, fontSize: 16),
+                      ),
+                      trailing: Text(
+                        '$currency $totalBalance',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context)
+                                .textTheme
+                                .displayLarge!
+                                .color),
+                      ),
                     ),
                   ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: Container(
@@ -208,55 +192,30 @@ class _StatsState extends State<Stats> {
                       ),
                     ),
                   ),
-                  /*Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor,
-                              border: Border.all(
-                                  width: 3,
-                                  color:
-                                      Theme.of(context).secondaryHeaderColor),
-                              borderRadius: BorderRadius.circular(15)),
-                          child: DropdownButton<String>(
-                            dropdownColor: Theme.of(context).primaryColor,
-                            borderRadius: BorderRadius.circular(10),
-                            underline: Container(
-                              height: 0,
-                            ),
-                            value: selectedFilter,
-                            style: TextStyle(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .displayLarge!
-                                    .color,
-                                fontWeight: FontWeight.bold),
-                            alignment: Alignment.center,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectedFilter = newValue!;
-                                _refreshData();
-                              });
-                            },
-                            items: <String>[
-                              'This Week',
-                              'This Month',
-                              'This Year'
-                            ].map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ],
+
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: ListTile(
+                      title: Text(
+                        'Expenses this Week'.tr,
+                        style:TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context)
+                                .textTheme
+                                .displayLarge!
+                                .color),
+                            
+                      ),
+                      subtitle: Text(
+                        '$currency ${expensesThisWeek.toStringAsFixed(2)}',
+                        style: TextStyle(color: MyColors.iconColor, fontSize: 16),
+                      ),
                     ),
-                  ),*/
+                  ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
                     child: SizedBox(
@@ -570,7 +529,9 @@ class _StatsState extends State<Stats> {
                               '$currency ${separatedIncomes[index]['amount']}'),
                         );
                       }),
-                      SizedBox(height: 20,),
+                  SizedBox(
+                    height: 20,
+                  ),
                 ],
               ),
             ],

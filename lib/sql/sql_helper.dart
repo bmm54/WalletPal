@@ -13,12 +13,12 @@ class SQLHelper {
       )''');
     await database.execute('''CREATE TABLE accounts (
       id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-      name TEXT UNIQUE NOT NULL,
+      name TEXT UNIQUE NOT NULL CHECK(name != ''),
       balance REAL default 0.0,
       color TEXT)''');
     await database.execute('''CREATE TABLE Goals (
       id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-      name TEXT NOT NULL,
+      name TEXT NOT NULL CHECK(name != ''),
       amount REAL default 0.0,
       goal REAL NOT NULL,
       icon_name TEXT,
@@ -47,7 +47,7 @@ class SQLHelper {
     final db = await SQLHelper.db();
     final data = {
       'title': title,
-      'time':DateTime.now().toString(),
+      'time': DateTime.now().toString(),
       'category': category,
       'amount': amount,
     };
@@ -61,10 +61,8 @@ class SQLHelper {
     return id;
   }
 
-
-  static Future<int> insertTransaction(
-      String title, String category, double amount,
-      String status, String time,imageUrl) async {
+  static Future<int> insertTransaction(String title, String category,
+      double amount, String status, String time, imageUrl) async {
     final db = await SQLHelper.db();
     final data = {
       'title': title,
@@ -72,7 +70,7 @@ class SQLHelper {
       'category': category,
       'amount': amount,
       'status': status,
-      'image_url':imageUrl
+      'image_url': imageUrl
     };
     final id = await db.insert(
         'activities', //table name
@@ -98,10 +96,10 @@ class SQLHelper {
     return id;
   }
 
-  static Future<int> createTransactionContact(String uid,
-      String name,String? imageUrl) async {
+  static Future<int> createTransactionContact(
+      String uid, String name, String? imageUrl) async {
     final db = await SQLHelper.db();
-    final data = {'uid': uid, 'name': name,'image_url':imageUrl};
+    final data = {'uid': uid, 'name': name, 'image_url': imageUrl};
     final id = await db.insert(
         'transactions', //table name
         data, //data
@@ -111,8 +109,6 @@ class SQLHelper {
     print("transaction contact created");
     return id;
   }
-
-  
 
   static Future<void> createGoal(
       String name, double amount, double goal, String color) async {
@@ -140,13 +136,13 @@ class SQLHelper {
 
   static Future<List<Map<String, dynamic>>> getPersonsTransactions() async {
     final db = await SQLHelper.db();
-    return db.rawQuery(
-        "SELECT * FROM Transactions");
+    return db.rawQuery("SELECT * FROM Transactions");
   }
 
-    static Future<List<Map<String, dynamic>>> getTransactionContact(String uid) async {
+  static Future<List<Map<String, dynamic>>> getTransactionContact(
+      String uid) async {
     final db = await SQLHelper.db();
-    return db.rawQuery( "SELECT * FROM Transactions WHERE uid = '$uid'");
+    return db.rawQuery("SELECT * FROM Transactions WHERE uid = '$uid'");
   }
 
   static Future<List<Map<String, dynamic>>> getGoals() async {
@@ -179,7 +175,7 @@ class SQLHelper {
     print(".....deleted......");
   }
 
-    static Future<void> deleteGoal(id) async {
+  static Future<void> deleteGoal(id) async {
     final db = await SQLHelper.db();
     db.rawDelete("DELETE FROM Goals WHERE id=$id");
     print(".....deleted......");
@@ -191,7 +187,7 @@ class SQLHelper {
     print(".....deleted......");
   }
 
-    static Future<void> deleteAllTransactionsContacts() async {
+  static Future<void> deleteAllTransactionsContacts() async {
     final db = await SQLHelper.db();
     db.rawDelete("DELETE FROM Transactions");
     print(".....deleted......");
@@ -201,12 +197,6 @@ class SQLHelper {
     final db = await SQLHelper.db();
     return db.rawQuery(
         "Select amount,title,time from activities where category='expense'");
-  }
-
-  static Future<List<Map<String, dynamic>>> getDebt() async {
-    final db = await SQLHelper.db();
-    return db.rawQuery(
-        "Select sum(amount) as total from activities where (title='Loan' and category='income') or (status='Loan' and category='Received')");
   }
 
   static Future<List<Map<String, dynamic>>> getIcomes() async {
@@ -235,39 +225,38 @@ class SQLHelper {
     print(".............balance updated............");
   }
 
-static Future<void> updateTransactionContact(double amount, String type, String status, String uid) async {
-  final db = await SQLHelper.db();
+  static Future<void> updateTransactionContact(
+      double amount, String type, String status, String uid) async {
+    final db = await SQLHelper.db();
 
-  // Ensure that the amount is positive
-  if (amount <= 0) {
-    throw ArgumentError("Amount must be a positive value.");
-  }
-
-  if (type == "Sent") {
-    if (status == "Loan") {
-      //loan to
-      db.rawUpdate(
-          "UPDATE Transactions SET owe = CASE WHEN (owe + $amount) < 0 THEN 0 ELSE (owe + $amount) END WHERE uid = '$uid'");
-    } 
-    //paycheck
-    else {
-      db.rawUpdate(
-          "UPDATE Transactions SET owe_to = CASE WHEN (owe_to - $amount) < 0 THEN 0 ELSE (owe_to - $amount) END WHERE uid = '$uid'");
+    // Ensure that the amount is positive
+    if (amount <= 0) {
+      throw ArgumentError("Amount must be a positive value.");
     }
-    //received
-  } else {
-    //loan to you
-    if (status == "Loan") {
-      db.rawUpdate(
-          "UPDATE Transactions SET owe_to = CASE WHEN (owe_to + $amount) < 0 THEN 0 ELSE (owe_to + $amount) END WHERE uid = '$uid'");
-    } 
-    //paycheck
-    else {
-      db.rawUpdate(
-          "UPDATE Transactions SET owe = CASE WHEN (owe - $amount) < 0 THEN 0 ELSE (owe - $amount) END WHERE uid = '$uid'");
+
+    if (type == "Sent") {
+      if (status == "Loan") {
+        //loan to
+        db.rawUpdate(
+            "UPDATE Transactions SET owe = CASE WHEN (owe + $amount) < 0 THEN 0 ELSE (owe + $amount) END WHERE uid = '$uid'");
+      }
+      //paycheck
+      else {
+        db.rawUpdate(
+            "UPDATE Transactions SET owe_to = CASE WHEN (owe_to - $amount) < 0 THEN 0 ELSE (owe_to - $amount) END WHERE uid = '$uid'");
+      }
+      //received
+    } else {
+      //loan to you
+      if (status == "Loan") {
+        db.rawUpdate(
+            "UPDATE Transactions SET owe_to = CASE WHEN (owe_to + $amount) < 0 THEN 0 ELSE (owe_to + $amount) END WHERE uid = '$uid'");
+      }
+      //paycheck
+      else {
+        db.rawUpdate(
+            "UPDATE Transactions SET owe = CASE WHEN (owe - $amount) < 0 THEN 0 ELSE (owe - $amount) END WHERE uid = '$uid'");
+      }
     }
   }
-}
-
-
 }

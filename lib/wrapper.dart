@@ -16,7 +16,7 @@ class Wrapper extends StatelessWidget {
     return StreamBuilder<User?>(
         stream: AuthService().authStateChanges(),
         builder: (buildContext, snapshot) {
-          if (snapshot.connectionState==ConnectionState.waiting){
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.connectionState == ConnectionState.active) {
@@ -44,60 +44,62 @@ class _ScreensState extends State<Screens> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final _controller = TabController(vsync: this, length: 4);
 
-    return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: TabBarView(
-                physics: const NeverScrollableScrollPhysics(),
-                controller: _controller,
-                children: [
-                  Home(),
-                  Wallet(),
-                  Stats(),
-                  Transactions(),
-                ]),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Container(
-              child: TabBar(
-                  splashBorderRadius: BorderRadius.circular(20.0),
-                  indicatorColor: Colors.transparent,
-                  labelColor: MyColors.blue,
-                  unselectedLabelColor: MyColors.iconGrey,
-                  labelStyle: TextStyle(fontWeight: FontWeight.bold),
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
+          children: [
+            Expanded(
+              child: TabBarView(
+                  physics: const NeverScrollableScrollPhysics(),
                   controller: _controller,
-                  tabs: [
-                    Tab(
-                      icon: Icon(MyIcons.home, size: 30),
-                      iconMargin: EdgeInsets.only(bottom: 5),
-                    ),
-                    Tab(
-                      icon: Icon(
-                        MyIcons.wallet,
-                        size: 30,
-                      ),
-                      iconMargin: EdgeInsets.only(bottom: 5),
-                    ),
-                    Tab(
-                      icon: Icon(
-                        MyIcons.stats,
-                        size: 30,
-                      ),
-                      iconMargin: EdgeInsets.only(bottom: 5),
-                    ),
-                    Tab(
-                      icon: Icon(
-                        Icons.swap_vert,
-                        size: 30,
-                      ),
-                      iconMargin: EdgeInsets.only(bottom: 5),
-                    ),
+                  children: [
+                    Home(),
+                    Wallet(),
+                    Stats(),
+                    Transactions(),
                   ]),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                child: TabBar(
+                    splashBorderRadius: BorderRadius.circular(20.0),
+                    indicatorColor: Colors.transparent,
+                    labelColor: MyColors.blue,
+                    unselectedLabelColor: MyColors.iconGrey,
+                    labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                    controller: _controller,
+                    tabs: [
+                      Tab(
+                        icon: Icon(MyIcons.home, size: 30),
+                        iconMargin: EdgeInsets.only(bottom: 5),
+                      ),
+                      Tab(
+                        icon: Icon(
+                          MyIcons.wallet,
+                          size: 30,
+                        ),
+                        iconMargin: EdgeInsets.only(bottom: 5),
+                      ),
+                      Tab(
+                        icon: Icon(
+                          MyIcons.stats,
+                          size: 30,
+                        ),
+                        iconMargin: EdgeInsets.only(bottom: 5),
+                      ),
+                      Tab(
+                        icon: Icon(
+                          Icons.swap_vert,
+                          size: 30,
+                        ),
+                        iconMargin: EdgeInsets.only(bottom: 5),
+                      ),
+                    ]),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

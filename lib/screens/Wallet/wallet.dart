@@ -1,3 +1,4 @@
+
 import 'package:bstable/services/currency.dart';
 import 'package:bstable/ui/components/appBar.dart';
 import 'package:bstable/ui/styles/decoration.dart';
@@ -154,7 +155,6 @@ class _WalletState extends State<Wallet> {
     ).then((color) {
       if (color != null) {
         // Handle the selected color
-        print('Selected Color: $color');
       }
     });
   }

@@ -1,7 +1,7 @@
 import 'package:bstable/screens/Home/add/add.dart';
 import 'package:bstable/screens/Home/receive_money.dart';
 import 'package:bstable/screens/Home/send_money.dart';
-import 'package:bstable/screens/Home/settings.dart';
+import 'package:bstable/screens/Home/settings/settings.dart';
 import 'package:bstable/screens/Home/profile.dart';
 import 'package:bstable/services/auth_data.dart';
 import 'package:bstable/services/currency.dart';
