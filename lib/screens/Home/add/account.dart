@@ -30,7 +30,7 @@ class _AccountState extends State<Account> {
   @override
   Widget build(BuildContext context) {
     CurrencyController currencyController = Get.find();
-    final currency = currencyController.getSelectedCurrency();
+    final currency = currencyController.getSelectedCurrency;
     return Scaffold(
       body: ListView(
         children: [

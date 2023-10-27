@@ -139,12 +139,20 @@ class _WalletState extends State<Wallet> {
                   ),
                 ),
                 onPressed: () async {
-                  await SQLHelper.createAccount(
+                  if (double.parse(_accountBalance.text)>=0)
+                  {await SQLHelper.createAccount(
                       _accountName.text,
                       double.parse(_accountBalance.text),
                       _accountColor.value.toString());
                   _refrechPage();
-                  Navigator.pop(context);
+                  Navigator.pop(context);}
+                  else{
+                      Get.snackbar("Error",
+                        "initial amount should be positif",
+                        colorText:
+                            Theme.of(context).textTheme.displaySmall!.color,
+                        icon: Icon(Icons.error));
+                  }
                 },
                 child: Text('Save'.tr),
               ),
@@ -218,10 +226,18 @@ class _WalletState extends State<Wallet> {
                     ),
                   ),
                   onPressed: () async {
-                    await SQLHelper.addToGoal(
+                    if(double.parse(_addToGoal.text)>0)
+                    {await SQLHelper.addToGoal(
                         double.parse(_addToGoal.text), id);
                     _refrechPage();
-                    Navigator.pop(context);
+                    Navigator.pop(context);}
+                    else{
+                      Get.snackbar("Error",
+                        "Added amount should be positif",
+                        colorText:
+                            Theme.of(context).textTheme.displaySmall!.color,
+                        icon: Icon(Icons.error));
+                    }
                   },
                   child: Text('Save'.tr),
                 ),
@@ -331,7 +347,7 @@ class _WalletState extends State<Wallet> {
                   final amount = double.parse(_goalAmount.text);
                   final goal = double.parse(_goalTarget.text);
                   final color = _goalColor.value.toString();
-                  if (amount < goal) {
+                  if (amount < goal && amount>=0 && goal>0) {
                     await SQLHelper.createGoal(name, amount, goal, color);
                     _refrechPage();
                     Navigator.pop(context);
@@ -352,9 +368,7 @@ class _WalletState extends State<Wallet> {
     );
   }
 
-  //a function to call a pop up to edit or delete goal
-
-  _editGoalPopUp(int id) {
+  _editGoalPopUp(int index) {
     return showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
@@ -363,7 +377,7 @@ class _WalletState extends State<Wallet> {
         ),
         builder: (BuildContext context) {
           return Container(
-            height: 200,
+            height: 260,
             decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.only(
@@ -371,174 +385,206 @@ class _WalletState extends State<Wallet> {
                 topRight: Radius.circular(20),
               ),
             ),
-            child: Column(children: [
-              SizedBox(height: 20),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        backgroundColor:
-                            Theme.of(context).scaffoldBackgroundColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              10.0), // Customize the border radius
-                        ),
-                        title: Text(
-                          'Edit Goal'.tr,
-                          style: TextStyle(color: MyColors.iconColor),
-                        ),
-                        content: SingleChildScrollView(
-                          child: Column(children: [
-                            SizedBox(height: 10),
-                            TextField(
-                                controller: _goalName,
-                                decoration: CustomDeco.inputDecoration.copyWith(
-                                  hintText: 'Name'.tr,
-                                )),
-                            SizedBox(
-                              height: 10,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(children: [
+                SizedBox(height: 20),
+                Container(
+                    padding: EdgeInsets.all(10),
+                    //border
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    height: 60,
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                              "Goal",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Theme.of(context).textTheme.displayMedium!.color,),
                             ),
-                            TextField(
-                                keyboardType: TextInputType.number,
-                                controller: _goalAmount,
-                                decoration: CustomDeco.inputDecoration.copyWith(
-                                  hintText: 'Initial amount'.tr,
-                                )),
-                            SizedBox(height: 10),
-                            TextField(
-                                keyboardType: TextInputType.number,
-                                controller: _goalTarget,
-                                decoration: CustomDeco.inputDecoration.copyWith(
-                                  hintText: 'Goal amount'.tr,
-                                )),
-                            SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                ColorPicker(
-                                  pickersEnabled: {
-                                    ColorPickerType.primary: false,
-                                    ColorPickerType.custom: true,
-                                    ColorPickerType.accent: false,
-                                  },
-                                  customColorSwatchesAndNames: {
-                                    ColorTools.createPrimarySwatch(
-                                        MyColors.purpule): "purple",
-                                    ColorTools.createPrimarySwatch(
-                                        MyColors.lightBlue): "blue",
-                                    ColorTools.createPrimarySwatch(
-                                        MyColors.orange): "orange",
-                                    ColorTools.createPrimarySwatch(
-                                        MyColors.green): "green",
-                                  },
-                                  enableOpacity: false,
-                                  color: _goalColor,
-                                  onColorChanged: (Color color) {
-                                    setState(() {
-                                      _goalColor = color;
-                                    });
-                                  },
-                                  enableShadesSelection: false,
-                                ),
-                              ],
+                          Text(
+                              "${goals[index]['goal']}",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Theme.of(context).textTheme.displayMedium!.color,),
                             ),
-                          ]),
-                        ),
-                        actions: [
-                          ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.transparent),
-                              elevation: MaterialStateProperty.all(0.0),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor:
+                              Theme.of(context).scaffoldBackgroundColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                10.0), // Customize the border radius
+                          ),
+                          title: Text(
+                            'Edit Goal'.tr,
+                            style: TextStyle(color: MyColors.iconColor),
+                          ),
+                          content: SingleChildScrollView(
+                            child: Column(children: [
+                              SizedBox(height: 10),
+                              TextField(
+                                  controller: _goalName,
+                                  decoration: CustomDeco.inputDecoration.copyWith(
+                                    hintText: 'Name'.tr,
+                                  )),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              TextField(
+                                  keyboardType: TextInputType.number,
+                                  controller: _goalAmount,
+                                  decoration: CustomDeco.inputDecoration.copyWith(
+                                    hintText: 'Initial amount'.tr,
+                                  )),
+                              SizedBox(height: 10),
+                              TextField(
+                                  keyboardType: TextInputType.number,
+                                  controller: _goalTarget,
+                                  decoration: CustomDeco.inputDecoration.copyWith(
+                                    hintText: 'Goal amount'.tr,
+                                  )),
+                              SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  ColorPicker(
+                                    pickersEnabled: {
+                                      ColorPickerType.primary: false,
+                                      ColorPickerType.custom: true,
+                                      ColorPickerType.accent: false,
+                                    },
+                                    customColorSwatchesAndNames: {
+                                      ColorTools.createPrimarySwatch(
+                                          MyColors.purpule): "purple",
+                                      ColorTools.createPrimarySwatch(
+                                          MyColors.lightBlue): "blue",
+                                      ColorTools.createPrimarySwatch(
+                                          MyColors.orange): "orange",
+                                      ColorTools.createPrimarySwatch(
+                                          MyColors.green): "green",
+                                    },
+                                    enableOpacity: false,
+                                    color: _goalColor,
+                                    onColorChanged: (Color color) {
+                                      setState(() {
+                                        _goalColor = color;
+                                      });
+                                    },
+                                    enableShadesSelection: false,
+                                  ),
+                                ],
+                              ),
+                            ]),
+                          ),
+                          actions: [
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all(Colors.transparent),
+                                elevation: MaterialStateProperty.all(0.0),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                'Cancel'.tr,
+                                style: TextStyle(color: MyColors.purpule),
+                              ),
                             ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    //border
+                    decoration: BoxDecoration(
+                      color: MyColors.blue,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    height: 60,
+                    child: Center(
+                      child: Stack(
+                        alignment: AlignmentDirectional.centerStart,
+                        children: [
+                          Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                          Align(
                             child: Text(
-                              'Cancel'.tr,
-                              style: TextStyle(color: MyColors.purpule),
+                              "Edit",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.white),
                             ),
                           ),
                         ],
-                      );
-                    },
-                  );
-                },
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  //border
-                  decoration: BoxDecoration(
-                    color: MyColors.blue,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  height: 60,
-                  width: Get.width * 0.9,
-                  child: Center(
-                    child: Stack(
-                      alignment: AlignmentDirectional.centerStart,
-                      children: [
-                        Icon(
-                          Icons.edit,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                        Align(
-                          child: Text(
-                            "Edit",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: Colors.white),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 20),
-              GestureDetector(
-                onTap: () async{
-                  await SQLHelper.deleteGoal(id);
-                  _refrechPage();
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  //border
-                  decoration: BoxDecoration(
-                    color: MyColors.red,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  height: 60,
-                  width: Get.width * 0.9,
-                  child: Center(
-                    child: Stack(
-                      alignment: AlignmentDirectional.centerStart,
-                      children: [
-                        Icon(
-                          Icons.delete,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                        Align(
-                          child: Text(
-                            "Delete",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: Colors.white),
+                SizedBox(height: 20),
+                GestureDetector(
+                  onTap: () async{
+                    await SQLHelper.deleteGoal(goals[index]['id']);
+                    _refrechPage();
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    //border
+                    decoration: BoxDecoration(
+                      color: MyColors.red,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    height: 60,
+                    child: Center(
+                      child: Stack(
+                        alignment: AlignmentDirectional.centerStart,
+                        children: [
+                          Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                            size: 30,
                           ),
-                        ),
-                      ],
+                          Align(
+                            child: Text(
+                              "Delete",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ]),
+              ]),
+            ),
           );
         });
   }
@@ -546,7 +592,7 @@ class _WalletState extends State<Wallet> {
   @override
   Widget build(BuildContext context) {
     CurrencyController currencyController = Get.find();
-    final currency = currencyController.getSelectedCurrency();
+    final currency = currencyController.getSelectedCurrency;
     return Scaffold(
       body: ListView(
         children: [
@@ -731,7 +777,7 @@ class _WalletState extends State<Wallet> {
                     : InkWell(
                         borderRadius: BorderRadius.circular(15),
                         onLongPress: () {
-                          _editGoalPopUp(goals[index]['id']);
+                          _editGoalPopUp(index);
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(

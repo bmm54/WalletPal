@@ -26,8 +26,8 @@ class CurrencyController extends GetxController {
     'TND': 'TND', // Tunisian Dinar
   };
 
-  getSelectedCurrency() {
-    return currency_symbol[selectedCurrency];
+  String get getSelectedCurrency {
+    return currency_symbol[selectedCurrency]??"USD";
   }
 
   void changeCurrency(String newCurrency) {

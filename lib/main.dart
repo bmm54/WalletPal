@@ -38,7 +38,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  bool showHome;
+  final bool showHome;
   MyApp({super.key, required this.showHome});
   final CurrencyController currencyController = Get.put(CurrencyController());
   @override

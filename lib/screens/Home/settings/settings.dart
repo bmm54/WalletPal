@@ -77,55 +77,8 @@ class _SettingsState extends State<Settings> {
                       },
                     ),
                     TileButton(
-                      name: "Currency",
-                      icon: Icons.attach_money,
-                      ontap: () {},
-                      option: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor,
-                            border: Border.all(
-                                width: 3,
-                                color: Theme.of(context).secondaryHeaderColor),
-                            borderRadius: BorderRadius.circular(15)),
-                        child: DropdownButton<String>(
-                          dropdownColor: Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                          underline: Container(
-                            height: 0,
-                          ),
-                          style: TextStyle(
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .displayMedium!
-                                  .color,
-                              fontWeight: FontWeight.bold),
-                          alignment: Alignment.center,
-                          value: currencyController.selectedCurrency.value,
-                          onChanged: (String? newValue) {
-                            if (newValue != null) {
-                              setState(() {
-                                currencyController.changeCurrency(newValue);
-                              });
-                              HotRestartController.performHotRestart(context);
-                            }
-                          },
-                          items: CurrencyController.currency_symbol.keys
-                              .map<DropdownMenuItem<String>>(
-                            (String currency) {
-                              return DropdownMenuItem<String>(
-                                value: currency,
-                                child: Text(CurrencyController.currency_symbol[currency]!),
-                              );
-                            },
-                          ).toList(),
-                        ),
-                      ),
-                    ),
-                    TileButton(
                       name: "Theme",
                       icon: Icons.color_lens,
-                      ontap: () {},
                       option: InkWell(
                         onTap: () {
                           ThemeService().changeThemeMode();
@@ -155,7 +108,6 @@ class _SettingsState extends State<Settings> {
                       icon: Icons.notifications,
                       ontap: () {
                         Get.to(() => NotificationsSettings());
-                      
                       },
                     ),
                     const SizedBox(
@@ -194,9 +146,9 @@ class _SettingsState extends State<Settings> {
                     TileButton(
                       name: "About",
                       icon: Icons.info,
-                      ontap: () async{
+                      ontap: () async {
                         final prefs = await SharedPreferences.getInstance();
-        prefs.setBool('showHome', false);
+                        prefs.setBool('showHome', false);
                       },
                     ),
                     TileButton(
@@ -254,45 +206,47 @@ class _LanguageState extends State<Language> {
       "语言": "zh"
     };
     return Scaffold(
-        body: Column(
-      children: [
-        MyAppBar(name: "Language", back: true),
-        SizedBox(
-          height: 40,
-        ),
-        Container(
-          padding: EdgeInsets.all(10),
-          width: Get.width * 0.9,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Theme.of(context).primaryColor),
-          child: ListView.builder(
-            shrinkWrap: true,
-            primary: false,
-            itemCount: languages.length,
-            itemBuilder: (context, index) {
-              var values = languages.values.toList();
-              var names = languages.keys.toList();
-              return RadioListTile(
-                activeColor: MyColors.blue,
-                selected: _selectedLanguage == values[index],
-                value: values[index],
-                groupValue: _selectedLanguage,
-                onChanged: (value) {
-                  var locale = Locale(value!);
-                  Get.updateLocale(locale);
-                  LanguageService().saveLanguage(value);
-                  print(value);
-                  setState(() {
-                    _selectedLanguage = value;
-                  });
-                },
-                title: Text(names[index]),
-              );
-            },
+        body: SafeArea(
+          child: Column(
+              children: [
+          MyAppBar(name: "Language", back: true),
+          SizedBox(
+            height: 40,
           ),
-        ),
-      ],
-    ));
+          Container(
+            padding: EdgeInsets.all(10),
+            width: Get.width * 0.9,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Theme.of(context).primaryColor),
+            child: ListView.builder(
+              shrinkWrap: true,
+              primary: false,
+              itemCount: languages.length,
+              itemBuilder: (context, index) {
+                var values = languages.values.toList();
+                var names = languages.keys.toList();
+                return RadioListTile(
+                  activeColor: MyColors.blue,
+                  selected: _selectedLanguage == values[index],
+                  value: values[index],
+                  groupValue: _selectedLanguage,
+                  onChanged: (value) {
+                    var locale = Locale(value!);
+                    Get.updateLocale(locale);
+                    LanguageService().saveLanguage(value);
+                    print(value);
+                    setState(() {
+                      _selectedLanguage = value;
+                    });
+                  },
+                  title: Text(names[index]),
+                );
+              },
+            ),
+          ),
+              ],
+            ),
+        ));
   }
 }

@@ -28,7 +28,7 @@ class OnBoardingPageState extends State<OnBoardingPage>
   Color _accountColor = MyColors.purpule;
   final _accountName = TextEditingController();
   final _accountBalance = TextEditingController();
-  String selectedCurrency = CurrencyController().getSelectedCurrency();
+  String selectedCurrency = CurrencyController().getSelectedCurrency;
   String _selectedLanguage = LanguageService().getLanguage();
   final List currencies = CurrencyController.currency_symbol.keys.toList();
   Map<String, String> languages = {
@@ -50,11 +50,14 @@ class OnBoardingPageState extends State<OnBoardingPage>
 
   void _onIntroEnd(context) async {
     await _gettingStarted();
-    Get.to(() => Wrapper(),transition: Transition.circularReveal);
+    Get.to(() => Wrapper(), transition: Transition.circularReveal);
   }
 
   Widget _buildGettingStartedPage() {
-    final _tabController = TabController(length: 4, vsync: this);
+    final _tabController = TabController(
+        length: 4,
+        vsync: this,
+        initialIndex: currencies.indexOf(selectedCurrency));
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
@@ -167,43 +170,46 @@ class OnBoardingPageState extends State<OnBoardingPage>
                   SizedBox(
                     height: 20,
                   ),
-                  //Text(
-                  //  "Select your preffered Language",
-                  //  style: TextStyle(
-                  //      fontSize: 18,
-                  //      fontFamily: GoogleFonts.almarai().fontFamily,
-                  //      color: MyColors.iconColor),
-                  //),
-                  //SizedBox(height: 10),
-                  //Container(
-                  //  padding: EdgeInsets.all(10),
-                  //  width: Get.width * 0.9,
-                  //  decoration: BoxDecoration(
-                  //      borderRadius: BorderRadius.circular(20),
-                  //      color: Theme.of(context).primaryColor),
-                  //  child: ListView.builder(
-                  //    shrinkWrap: true,
-                  //    primary: false,
-                  //    itemCount: languages.length,
-                  //    itemBuilder: (context, index) {
-                  //      var values = languages.values.toList();
-                  //      var names = languages.keys.toList();
-                  //      return RadioListTile(
-                  //        activeColor: MyColors.blue,
-                  //        selected: _selectedLanguage == values[index],
-                  //        value: values[index],
-                  //        groupValue: _selectedLanguage,
-                  //        onChanged: (value) {
-                  //          //var locale = Locale(value!);
-                  //          //Get.updateLocale(locale);
-                  //          //LanguageService().saveLanguage(value);
-                  //          _selectedLanguage = value!;
-                  //        },
-                  //        title: Text(names[index]),
-                  //      );
-                  //    },
-                  //  ),
-                  //),
+                  Text(
+                    "Select your preffered Language",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: GoogleFonts.almarai().fontFamily,
+                        color: MyColors.iconColor),
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    width: Get.width * 0.9,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Theme.of(context).primaryColor),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      primary: false,
+                      itemCount: languages.length,
+                      itemBuilder: (context, index) {
+                        var values = languages.values.toList();
+                        var names = languages.keys.toList();
+                        return RadioListTile(
+                          activeColor: MyColors.blue,
+                          selected: _selectedLanguage == values[index],
+                          value: values[index],
+                          groupValue: _selectedLanguage,
+                          onChanged: (value) {
+                            var locale = Locale(value!);
+                            Get.updateLocale(locale);
+                            LanguageService().saveLanguage(value);
+                            setState(() {
+                              _selectedLanguage = value!;
+                            });
+                            
+                          },
+                          title: Text(names[index]),
+                        );
+                      },
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -352,12 +358,6 @@ class OnBoardingPageState extends State<OnBoardingPage>
           borderRadius: BorderRadius.all(Radius.circular(25.0)),
         ),
       ),
-      //dotsContainerDecorator: const ShapeDecoration(
-      //  color: Colors.black87,
-      //  shape: RoundedRectangleBorder(
-      //    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-      //  ),
-      //),
     );
   }
 }

@@ -56,7 +56,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       } else if (buttonText == 'C') {
         _output = '';
         _input = '';
-      } else if (buttonText == 'Confirm'.tr) {
+      } else if (buttonText == 'Confirm'.tr && double.parse(_output)>=0) {
         SQLHelper.insertActivity(
             widget.category, widget.type, double.parse(getOutput()));
         SQLHelper.updateBalance(

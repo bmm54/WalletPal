@@ -130,7 +130,7 @@ class _StatsState extends State<Stats> {
   @override
   Widget build(BuildContext context) {
     CurrencyController currencyController = Get.find();
-    final currency = currencyController.getSelectedCurrency();
+    final currency = currencyController.getSelectedCurrency;
     return !ready
         ? Center(
             child: CircularProgressIndicator(

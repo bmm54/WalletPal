@@ -184,6 +184,7 @@ class SQLHelper {
   static Future<void> deleteAllActivities() async {
     final db = await SQLHelper.db();
     db.rawDelete("DELETE FROM activities");
+    db.rawDelete("DELETE FROM goals");
     print(".....deleted......");
   }
 

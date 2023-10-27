@@ -13,7 +13,7 @@ class TileButton extends StatelessWidget {
       {super.key,
       required this.icon,
       required this.name,
-      required this.ontap,
+      this.ontap,
       this.color,
       this.option});
 

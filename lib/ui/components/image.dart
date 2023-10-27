@@ -12,7 +12,7 @@ class CustomCachedImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return isRounded
         ? CachedNetworkImage(
-            imageUrl: imageUrl!,
+            imageUrl: imageUrl??"",
             imageBuilder: (context, imageProvider) => Container(
               height: 50,
               width: 50,
@@ -40,7 +40,7 @@ class CustomCachedImage extends StatelessWidget {
             ),
           )
         : CachedNetworkImage(
-            imageUrl: imageUrl!,
+            imageUrl: imageUrl??"",
             imageBuilder: (context, imageProvider) => Container(
               height: 60,
               width: 60,
@@ -65,10 +65,20 @@ class CustomCachedImage extends StatelessWidget {
                     color: Theme.of(context).secondaryHeaderColor, width: 3.0),
               ),
             ),
-            errorWidget: (context, url, error) => CircleAvatar(
-              backgroundImage: Image.asset(
+            errorWidget: (context, url, error) => Container(
+              height: 60,
+              width: 60,
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                borderRadius: BorderRadius.circular(15.0),
+                border: Border.all(
+                    color: Theme.of(context).secondaryHeaderColor, width: 3.0),
+                image: DecorationImage(
+                  image:Image.asset(
                                       "lib/assets/images/profile.png").image,
-              radius: 25,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           );
   }

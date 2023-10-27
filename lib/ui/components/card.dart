@@ -17,7 +17,7 @@ class MyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     CurrencyController currencyController = Get.find();
-    final currency = currencyController.getSelectedCurrency();
+    final currency = currencyController.getSelectedCurrency;
     final Map<Color, Color> lightColor = {
       MyColors.lightBlue:MyColors.lightestBlue,
       MyColors.orange:MyColors.lightOrange,

@@ -34,7 +34,7 @@ class _ActivityState extends State<Activity> {
   @override
   Widget build(BuildContext context) {
     CurrencyController currencyController = Get.find();
-    final currency = currencyController.getSelectedCurrency();
+    final currency = currencyController.getSelectedCurrency;
     return Padding(
         padding: const EdgeInsets.only(bottom: 8),
         child: ListTile(

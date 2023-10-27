@@ -44,9 +44,9 @@ class _ScreensState extends State<Screens> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final _controller = TabController(vsync: this, length: 4);
 
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
           children: [
             Expanded(
               child: TabBarView(
