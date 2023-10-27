@@ -66,6 +66,7 @@ dependencies:
   flutter_datetime_picker: ^1.5.1
   introduction_screen: ^3.1.12
   shared_preferences: ^2.2.1
+  url_launcher: ^6.1.11
 
 dev_dependencies:
   flutter_test:

@@ -40,16 +40,8 @@ class TransactionModel {
 }
 
 class TransactionsService {
-  bool contatExist(String uid) {
-    List<Map<String, dynamic>> persons = [];
-    SQLHelper.getTransactionContact(uid).then((value) {
-      persons = value;
-    });
-    return persons.isEmpty;
-  }
-
   updateTransactionsInfos(uid, name, amount, status, imageUrl, category) async {
-    if (contatExist(uid)) {
+    if (await SQLHelper.contactExists(uid)) {
       await SQLHelper.updateTransactionContact(amount, category, status, uid);
     } else {
       await SQLHelper.createTransactionContact(uid, name, imageUrl)

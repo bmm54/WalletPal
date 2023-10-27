@@ -328,11 +328,12 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
                               Theme.of(context).textTheme.displaySmall!.color,
                           icon: Icon(Icons.error));
                     }}
-                    Get.snackbar("Error".tr, "amount can't negative".tr,
+                    else{
+                      Get.snackbar("Error".tr, "Amount must be greater than 0".tr,
                           colorText:
                               Theme.of(context).textTheme.displaySmall!.color,
                           icon: Icon(Icons.error));
-                    
+                    }   
                   },
                   child: Text("Confirm".tr),
                   style: ButtonStyle(

@@ -18,6 +18,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../sql/sql_helper.dart';
 import '../../../ui/components/appBar.dart';
@@ -147,8 +148,9 @@ class _SettingsState extends State<Settings> {
                       name: "About",
                       icon: Icons.info,
                       ontap: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        prefs.setBool('showHome', false);
+                        //final prefs = await SharedPreferences.getInstance();
+                        //prefs.setBool('showHome', false);
+                        Get.to(() => About());
                       },
                     ),
                     TileButton(
@@ -207,8 +209,8 @@ class _LanguageState extends State<Language> {
     };
     return Scaffold(
         body: SafeArea(
-          child: Column(
-              children: [
+      child: Column(
+        children: [
           MyAppBar(name: "Language", back: true),
           SizedBox(
             height: 40,
@@ -245,8 +247,66 @@ class _LanguageState extends State<Language> {
               },
             ),
           ),
-              ],
-            ),
-        ));
+        ],
+      ),
+    ));
+  }
+}
+
+class About extends StatelessWidget {
+  const About({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(children: [
+        MyAppBar(name: "About", back: true),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 40,
+              ),
+              Text("WalletPall",
+                  style: TextStyle(
+                      fontSize: 30,
+                      color: Theme.of(context).textTheme.displayMedium!.color,
+                      fontWeight: FontWeight.bold)),
+              SizedBox(
+                height: 20,
+              ),
+              Text("Version 1.0.0", style: TextStyle(fontSize: 16)),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                  "WalletPall is a simple and easy to use app that helps you manage your money and track your expenses.\n\nFor more info visit :",
+                  style: TextStyle(fontSize: 20)),
+              SizedBox(
+                height: 20,
+              ),
+              InkWell(
+                  onTap: () async {
+                    //open browser for the link
+                    final Uri url = Uri.parse('https://dev.bembamahmouden.com');
+                    if (!await launchUrl(url)) {
+                      throw Exception('Could not launch $url');
+                    }
+                  },
+                  child: Text(
+                    "dev.bembamahmouden.com",
+                    style: TextStyle(
+                        color: MyColors.blue,
+                        fontSize: 20,
+                        decoration: TextDecoration.underline),
+                  )),
+            ],
+          ),
+        ),
+      ]),
+    );
   }
 }

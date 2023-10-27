@@ -145,6 +145,13 @@ class SQLHelper {
     return db.rawQuery("SELECT * FROM Transactions WHERE uid = '$uid'");
   }
 
+  static Future<bool> contactExists(String uid) async {
+    final db = await SQLHelper.db();
+    final result =
+        await db.rawQuery("SELECT * FROM transactions WHERE uid = ?", [uid]);
+    return result.isNotEmpty;
+  }
+
   static Future<List<Map<String, dynamic>>> getGoals() async {
     final db = await SQLHelper.db();
     return db.rawQuery("SELECT * from goals order by id desc");
