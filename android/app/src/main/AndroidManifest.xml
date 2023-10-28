@@ -1,12 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <queries>
     <intent>
         <action android:name="android.support.customtabs.action.CustomTabsService" />
       </intent>
     </queries>
-    <uses-permission
-     android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
      <uses-permission android:name="android.permission.READ_CONTACTS"/>
+     <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <application
         android:label="WalletPal"
         android:name="${applicationName}"

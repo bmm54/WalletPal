@@ -161,7 +161,10 @@ class _SettingsState extends State<Settings> {
                     TileButton(
                       name: "Bug report",
                       icon: Icons.bug_report,
-                      ontap: () {},
+                      ontap: () {
+                        Get.to(() => ReportBug());
+                      
+                      },
                     ),
                     TileButton(
                       name: "Contact us",
@@ -307,6 +310,28 @@ class About extends StatelessWidget {
           ),
         ),
       ]),
+    );
+  }
+}
+
+class ReportBug extends StatelessWidget {
+  const ReportBug({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          MyAppBar(name: "Bug report", back: true),
+              //align this text to center of the column
+              SizedBox(height: 100,),
+              Text("Just imagine it's a feature\n\nbe positive :) 🧡",textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Theme.of(context).textTheme.displayMedium!.color,
+                      fontWeight: FontWeight.bold)),
+        ],
+      ),
     );
   }
 }
