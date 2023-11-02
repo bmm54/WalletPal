@@ -52,9 +52,7 @@ class _ContactsListState extends State<ContactsList> {
     if (searchController.text.isNotEmpty) {
       _tempContacts.retainWhere((contact) {
         String _searchTerm = searchController.text.toLowerCase();
-        print("term: $_searchTerm");
         String _contactName = contact.displayName.toString().toLowerCase();
-        print("name: $_contactName");
         return _contactName.contains(_searchTerm);
       });
       setState(() {
@@ -105,7 +103,6 @@ class _ContactsListState extends State<ContactsList> {
                           Contact contact = isSearching == true
                               ? filteredContacts[index]
                               : contacts[index];
-                          print(isSearching);
                           if (contact.displayName.toString() != "null") {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),

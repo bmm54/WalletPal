@@ -1,5 +1,4 @@
 import 'package:bstable/screens/Home/home.dart';
-import 'package:bstable/screens/Home/profile.dart';
 import 'package:bstable/screens/Stats/stats.dart';
 import 'package:bstable/screens/Wallet/wallet.dart';
 import 'package:bstable/screens/authentification/authenticate.dart';
@@ -90,7 +89,7 @@ class _ScreensState extends State<Screens> with TickerProviderStateMixin {
                       ),
                       Tab(
                         icon: Icon(
-                          Icons.swap_vert,
+                          MyIcons.trans,
                           size: 30,
                         ),
                         iconMargin: EdgeInsets.only(bottom: 5),

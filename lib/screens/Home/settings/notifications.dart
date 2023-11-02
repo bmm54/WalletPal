@@ -11,6 +11,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 
+//this page is included in the next update
+
 class NotificationsSettings extends StatefulWidget {
   const NotificationsSettings({Key? key}) : super(key: key);
 
@@ -73,8 +75,8 @@ TimeOfDay? eventTime;
                         final now = DateTime(date.year, date.month, date.day,
                             eventTime!.hour, eventTime!.minute);
                         NotificationsService.showNotification(
-                          title: "title",
-                          body: "body",
+                          title: "Wallet Pal",
+                          body: "Don't forget to record your expenses",
                           payload: {"navigate": "true"},
                           notificationLayout: NotificationLayout.Inbox,
                           scheduled: true,

@@ -31,7 +31,7 @@ class AuthService {
       }
       return user;
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
       return null;
     }
   }
@@ -80,7 +80,7 @@ class AuthService {
     try {
       return await _auth.signOut();
     } catch (e) {
-      print('error signing out');
+      debugPrint('error signing out');
       return null;
     }
   }

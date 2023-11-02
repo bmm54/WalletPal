@@ -83,7 +83,7 @@ class _HomeState extends State<Home> {
                                 Get.to(() => Profile());
                               }
                             },
-                            child: CustomCachedImage(imageUrl: userData['image']),
+                            child: CustomCachedImage(imageUrl: userData['image'],size: 60,),
                           ),
                           Text(
                             "${DateFormat('dd MMM yyyy').format(DateTime.now())}",

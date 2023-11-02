@@ -65,12 +65,16 @@ class _AccountState extends State<Account> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                accounts[index]['name'],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: Colors.grey[300]),
+                              Expanded(
+                                child: Text(
+                                  accounts[index]['name'],
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.grey[300]),
+                                ),
                               ),
                               Text(
                                   '$currency ${accounts[index]['balance']}',

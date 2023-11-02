@@ -38,56 +38,50 @@ class _ActivityState extends State<Activity> {
     return Padding(
         padding: const EdgeInsets.only(bottom: 8),
         child: ListTile(
-          onLongPress: () {
-            showModalBottomSheet(
-                backgroundColor: Theme.of(context).primaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      20.0), // Customize the border radius
-                ),
-                isScrollControlled: true,
-                context: context,
-                builder: (_) => Container(
-                    padding: EdgeInsets.only(
-                      left: 10,
-                      right: 10,
-                      top: 10,
-                      bottom: 20,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          height: 10,
-                          width: 100,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: Colors.grey),
-                        ),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor,
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          child: Icon(
-                            widget.icon,
-                            color: widget.color,
-                          ),
-                        ),
-                        Text(
-                          widget.title,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .displayMedium!
-                                  .color),
-                        ),
-                      ],
-                    )));
-          },
+          //onLongPress: () {
+          //  showModalBottomSheet(
+          //    showDragHandle: true,
+          //      backgroundColor: Theme.of(context).primaryColor,
+          //      shape: RoundedRectangleBorder(
+          //        borderRadius: BorderRadius.circular(
+          //            20.0), // Customize the border radius
+          //      ),
+          //      isScrollControlled: true,
+          //      context: context,
+          //      builder: (_) => Container(
+          //          padding: EdgeInsets.only(
+          //            left: 10,
+          //            right: 10,
+          //            top: 0,
+          //            bottom: 20,
+          //          ),
+          //          child: Column(
+          //            mainAxisSize: MainAxisSize.min,
+          //            children: [
+          //              Container(
+          //                height: 50,
+          //                width: 50,
+          //                decoration: BoxDecoration(
+          //                  color: Theme.of(context).primaryColor,
+          //                  borderRadius: BorderRadius.circular(15.0),
+          //                ),
+          //                child: Icon(
+          //                  widget.icon,
+          //                  color: widget.color,
+          //                ),
+          //              ),
+          //              Text(
+          //                widget.title,
+          //                style: TextStyle(
+          //                    fontWeight: FontWeight.bold,
+          //                    color: Theme.of(context)
+          //                        .textTheme
+          //                        .displayMedium!
+          //                        .color),
+          //              ),
+          //            ],
+          //          )));
+          //},
           leading: widget.option != null
               ? CustomCachedImage(imageUrl: widget.image??"",isRounded:true)
               : Container(

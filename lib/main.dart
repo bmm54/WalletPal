@@ -1,11 +1,7 @@
 import 'package:bstable/firebase_options.dart';
 import 'package:bstable/onboarding.dart';
-import 'package:bstable/services/auth_data.dart';
 import 'package:bstable/services/currency.dart';
-import 'package:bstable/services/hot_restart.dart';
-import 'package:bstable/services/notifications_service.dart';
 import 'package:bstable/services/transaction_service.dart';
-import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/services/language_service.dart';
 import 'package:bstable/translation/local.dart';
 import 'package:bstable/ui/themes/dark.dart';
@@ -22,8 +18,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //NotificationService().initNotification();
-  //tz.initializeTimeZones();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -34,7 +28,7 @@ void main() async {
   if (currentUser != null) {
     TransactionsService().startListeningForTransactions(currentUser.uid);
   }
-  runApp(new HotRestartController(child: new MyApp(showHome: showHome)));
+  runApp(MyApp(showHome: showHome));
 }
 
 class MyApp extends StatelessWidget {
@@ -43,10 +37,6 @@ class MyApp extends StatelessWidget {
   final CurrencyController currencyController = Get.put(CurrencyController());
   @override
   Widget build(BuildContext context) {
-    //SQLHelper.deleteAllActivities();
-    //SQLHelper.deleteAllTransactionsContacts();
-    //SQLHelper.deleteAllAccount();
-    //if authenticated start listening
     return GetMaterialApp(
         translations: LocalTranslation(),
         locale: Locale(LanguageService().getLanguage()),

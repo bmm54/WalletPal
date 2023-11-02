@@ -30,7 +30,6 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
     });
     accountsNames.clear();
     for (var i = 0; i < accounts.length; i++) {
-      print(accounts[i]['name']);
       accountsNames.add(DropdownMenuItem<String>(
         value: accounts[i]['id'].toString(),
         child: Text(accounts[i]['name']),
@@ -278,7 +277,6 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
                     index == 0
                         ? selectedStatus = "Loan"
                         : selectedStatus = "Paycheck";
-                    print(selectedStatus);
                   },
                   indicator: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -322,7 +320,7 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
                     _scannerController.start();
                     Navigator.pop(context);
                     } catch (e) {
-                      print(e);
+                      debugPrint(e.toString());
                       Get.snackbar("Error".tr, "Something went wrong".tr,
                           colorText:
                               Theme.of(context).textTheme.displaySmall!.color,
@@ -402,12 +400,6 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
               ],
             ),
           ),
-          TextButton(
-              onPressed: () {
-                _scannerController.stop();
-                _showSheet("fqHcoIpuAsgb7ZOWk7eEKLkNUOG2", context);
-              },
-              child: Text("click")),
           Container(
               padding: EdgeInsets.all(8),
               child: Text(
@@ -426,7 +418,13 @@ class _SendMoneyState extends State<SendMoney> with TickerProviderStateMixin {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: ElevatedButton(
-                  onPressed: () => {Get.to(() => ContactsList())},
+                  onPressed: () => {
+                    //Get.to(() => ContactsList())
+                    Get.snackbar("Sorry".tr, "This feature is not available yet".tr,
+                          colorText:
+                              Theme.of(context).textTheme.displaySmall!.color,
+                          icon: Icon(Icons.error))
+                    },
                   child: Container(
                     height: 50,
                     width: Get.width * 0.8,

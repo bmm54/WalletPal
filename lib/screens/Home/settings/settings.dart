@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:bstable/screens/Home/home.dart';
+import 'package:bstable/screens/Home/settings/backup.dart';
 import 'package:bstable/screens/Home/settings/notifications.dart';
 import 'package:bstable/services/auth.dart';
 import 'package:bstable/services/currency.dart';
@@ -104,35 +105,37 @@ class _SettingsState extends State<Settings> {
                         ),
                       ),
                     ),
-                    TileButton(
-                      name: "Notifications",
-                      icon: Icons.notifications,
-                      ontap: () {
-                        Get.to(() => NotificationsSettings());
-                      },
-                    ),
+                    //TileButton(
+                    //  name: "Notifications",
+                    //  icon: Icons.notifications,
+                    //  ontap: () {
+                    //    Get.to(() => NotificationsSettings());
+                    //  },
+                    //),
                     const SizedBox(
                       height: 10,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Text("Account & Informations".tr,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .displayMedium!
-                                  .color,
-                              fontSize: 16)),
-                    ),
-                    TileButton(
-                      name: "BackUp & Restore",
-                      icon: Icons.backup,
-                      ontap: () {},
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    //Padding(
+                    //  padding: const EdgeInsets.only(left: 10),
+                    //  child: Text("Account & Informations".tr,
+                    //      style: TextStyle(
+                    //          fontWeight: FontWeight.bold,
+                    //          color: Theme.of(context)
+                    //              .textTheme
+                    //              .displayMedium!
+                    //              .color,
+                    //          fontSize: 16)),
+                    //),
+                    //TileButton(
+                    //  name: "BackUp & Restore",
+                    //  icon: Icons.backup,
+                    //  ontap: () {
+                    //    Get.to(() => BackupPage());
+                    //  },
+                    //),
+                    //const SizedBox(
+                    //  height: 10,
+                    //),
                     Padding(
                       padding: const EdgeInsets.only(left: 10),
                       child: Text("About".tr,
@@ -153,11 +156,11 @@ class _SettingsState extends State<Settings> {
                         Get.to(() => About());
                       },
                     ),
-                    TileButton(
-                      name: "Rate us",
-                      icon: Icons.star,
-                      ontap: () {},
-                    ),
+                    //TileButton(
+                    //  name: "Rate us",
+                    //  icon: Icons.star,
+                    //  ontap: () {},
+                    //),
                     TileButton(
                       name: "Bug report",
                       icon: Icons.bug_report,
@@ -166,11 +169,11 @@ class _SettingsState extends State<Settings> {
                       
                       },
                     ),
-                    TileButton(
-                      name: "Contact us",
-                      icon: Icons.contact_mail,
-                      ontap: () {},
-                    ),
+                    //TileButton(
+                    //  name: "Contact us",
+                    //  icon: Icons.contact_mail,
+                    //  ontap: () {},
+                    //),
                     SizedBox(
                       height: 20,
                     ),
@@ -240,7 +243,6 @@ class _LanguageState extends State<Language> {
                     var locale = Locale(value!);
                     Get.updateLocale(locale);
                     LanguageService().saveLanguage(value);
-                    print(value);
                     setState(() {
                       _selectedLanguage = value;
                     });
@@ -273,6 +275,14 @@ class About extends StatelessWidget {
               SizedBox(
                 height: 40,
               ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Image.asset(
+                  width:80,
+                  height:80,
+                  "lib/assets/images/app_logo.png"),
+              ),
+              SizedBox(height: 10,),
               Text("WalletPall",
                   style: TextStyle(
                       fontSize: 30,

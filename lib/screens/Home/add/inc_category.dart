@@ -16,7 +16,8 @@ class IncomeCategory extends StatefulWidget {
 class _IncomeCategoryState extends State<IncomeCategory> {
   List<String> titles = [
     "Loan",
-    "Salary"
+    "Salary",
+    "Income"
   ];
   @override
   Widget build(BuildContext context) {
@@ -45,10 +46,10 @@ class _IncomeCategoryState extends State<IncomeCategory> {
                       padding: const EdgeInsets.symmetric(vertical: 5),
                       child: ListTile(
                         onTap: () {
-                          final result = data[0];
+                          final result = data[0].toString();
                           Navigator.pop(context, result);
                         },
-                        title: Text(titles[index].tr,style: TextStyle(fontWeight: FontWeight.bold),),
+                        title: Text(titles[index]=="Income"?"Other":titles[index].tr,style: TextStyle(fontWeight: FontWeight.bold),),
                         leading: Container(
                           height: 50,
                           width: 50,
@@ -56,7 +57,7 @@ class _IncomeCategoryState extends State<IncomeCategory> {
                             color: Theme.of(context).primaryColor,
                             borderRadius: BorderRadius.circular(15.0),
                           ),
-                          child: Icon(data[1], color: data[2]),
+                          child: Icon(data[1], color:titles[index]=="Income"?MyColors.iconColor: data[2]),
                         ),
                       ),
                     );

@@ -1,9 +1,6 @@
-// ignore_for_file: iterable_contains_unrelated_type
-
-import 'package:bstable/models/expense_model.dart';
-import 'package:bstable/services/auth_data.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class TransactionModel {
@@ -73,8 +70,7 @@ class TransactionsService {
         'image_url': imageUrl
       });
 
-      String transactionId = docRef.id;
-      print('Transaction document created with ID: $transactionId');
+      //String transactionId = docRef.id;
       docRef.isBlank!
           ? null
           : await SQLHelper.insertTransaction(receiverName, "Sent", amount,
@@ -82,7 +78,7 @@ class TransactionsService {
       await updateTransactionsInfos( receiverId, receiverName, amount,
               status, receiverImage, "Sent");
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
   }
 
@@ -97,8 +93,8 @@ class TransactionsService {
           .map((DocumentSnapshot doc) => TransactionModel.fromSnapshot(doc))
           .toList();
       if (transactions.isNotEmpty) {
-        print("transaction received");
-        print(transactions.toString());
+        debugPrint("transaction received");
+        debugPrint(transactions.toString());
         for (final transaction in transactions) {
           await SQLHelper.insertTransaction(
               transaction.senderName,
@@ -119,10 +115,9 @@ class TransactionsService {
         }
         for (final doc in snapshot.docs) {
           await doc.reference.delete();
-          print("Deleted..........");
         }
       } else {
-        print("there is no transactions");
+        debugPrint("there is no transactions");
       }
     });
   }

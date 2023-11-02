@@ -1,4 +1,5 @@
 import 'package:bstable/services/auth_data.dart';
+import 'package:bstable/ui/components/image.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:bstable/ui/styles/icons.dart';
 import 'package:flutter/material.dart';
@@ -23,25 +24,9 @@ class _ProfileState extends State<Profile> {
           Column(
             children: [
               MyAppBar(name: "Profile",back:true),
-              Container(
-                height: Get.width * 0.3,
-                width: Get.width * 0.3,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image:  (userData['image']==null)
-                                    ? Image.asset(
-                                            "lib/assets/images/profile.png")
-                                        .image
-                                  :Image.network(userData['image']).image,
-                    fit: BoxFit.cover,
-                  ),
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15.0),
-                  border: Border.all(color: MyColors.borderColor, width: 3.0),
-                ),
-              ),
+              CustomCachedImage(imageUrl: userData['image'],size: 100,),
               SizedBox(
-                height: 10.0,
+                height: 20.0,
               ),
               Text(
                 userData['name'] ?? "",

@@ -82,7 +82,13 @@ class _ReceiveMoneyState extends State<ReceiveMoney> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: ElevatedButton(
-                        onPressed: () => {Get.to(() => ContactsList())},
+                        onPressed: () => {
+                          //Get.to(() => ContactsList())
+                          Get.snackbar("Sorry".tr, "This feature is not available yet".tr,
+                          colorText:
+                              Theme.of(context).textTheme.displaySmall!.color,
+                          icon: Icon(Icons.error))
+                          },
                         child: Container(
                           height: 50,
                           width: screenWidth * 0.8,

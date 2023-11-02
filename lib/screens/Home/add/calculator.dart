@@ -1,4 +1,3 @@
-import 'package:bstable/models/accounts_model.dart';
 import 'package:bstable/screens/Home/add/account.dart';
 import 'package:bstable/screens/Home/add/exp_category.dart';
 import 'package:bstable/screens/Home/add/inc_category.dart';

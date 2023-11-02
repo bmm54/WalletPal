@@ -7,8 +7,7 @@ import 'package:get/get.dart';
 class NotificationsService {
   static Future<void> initializeNotification() async {
     await AwesomeNotifications().initialize(
-      'resource://drawable/app_logo',
-      
+      'asset://assets/images/app_logo.png',
       [
         NotificationChannel(
           channelKey: 'high_importance_channel',
@@ -94,7 +93,6 @@ class NotificationsService {
 
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
-        icon: "resource://drawable/app_logo",
         id: -1,
         channelKey: 'high_importance_channel',
         title: title,

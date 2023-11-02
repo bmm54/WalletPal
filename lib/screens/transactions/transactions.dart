@@ -85,7 +85,13 @@ class _TransactionsState extends State<Transactions> {
           ),
         ),
         //List of Activities
-        Padding(
+        records.isEmpty?Padding(
+          padding: const EdgeInsets.only(top: 40),
+          child: Center(child:Text("No transactions yet",style: TextStyle(
+            color: MyColors.iconColor,
+            fontWeight: FontWeight.bold,
+          ),)),
+        ):Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: ListView.builder(
             shrinkWrap: true,

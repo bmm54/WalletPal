@@ -39,4 +39,7 @@ class MyIcons {
   static const IconData home = IconData(0xe80f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData profile = IconData(0xe810, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData wallet = IconData(0xe811, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData gamepad = IconData(0xe812, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData trans = IconData(0xe814, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData bag = IconData(0xe815, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

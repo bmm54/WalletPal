@@ -23,7 +23,6 @@ class SQLHelper {
       goal REAL NOT NULL,
       icon_name TEXT,
       color TEXT)''');
-    print(".......table created........");
     await database.execute('''CREATE TABLE Transactions (
       uid TEXT PRIMARY KEY NOT NULL,
       name TEXT NOT NULL,
@@ -31,11 +30,9 @@ class SQLHelper {
       owe_to REAL default 0.0,
       image_url TEXT
       )''');
-    print(".......table created........");
   }
 
   static Future<sql.Database> db() async {
-    print(".....database instance.............");
     return sql.openDatabase('database.db', version: 1,
         onCreate: (sql.Database database, int version) async {
       await createTables(database);
@@ -57,7 +54,6 @@ class SQLHelper {
         conflictAlgorithm:
             sql.ConflictAlgorithm.replace //if it already exist replace it
         );
-    print("activity created");
     return id;
   }
 
@@ -78,7 +74,6 @@ class SQLHelper {
         conflictAlgorithm:
             sql.ConflictAlgorithm.replace //if it already exist replace it
         );
-    print("transaction created");
     return id;
   }
 
@@ -92,7 +87,6 @@ class SQLHelper {
         conflictAlgorithm:
             sql.ConflictAlgorithm.replace //if it already exist replace it
         );
-    print("account created");
     return id;
   }
 
@@ -106,7 +100,6 @@ class SQLHelper {
         conflictAlgorithm:
             sql.ConflictAlgorithm.replace //if it already exist replace it
         );
-    print("transaction contact created");
     return id;
   }
 
@@ -121,7 +114,6 @@ class SQLHelper {
         conflictAlgorithm:
             sql.ConflictAlgorithm.replace //if it already exist replace it
         );
-    print("goal created");
   }
 
   static Future<void> addToGoal(double amount, int id) async {
@@ -167,38 +159,32 @@ class SQLHelper {
   static Future<void> dropTable(String tablename) async {
     final db = await SQLHelper.db();
     db.rawQuery("DROP TABLE $tablename");
-    print("........table droped.......");
   }
 
   static Future<void> deleteAllAccount() async {
     final db = await SQLHelper.db();
     db.rawDelete("DELETE FROM accounts");
-    print(".....deleted......");
   }
 
   static Future<void> deleteAccount(id) async {
     final db = await SQLHelper.db();
     db.rawDelete("DELETE FROM accounts WHERE id=$id");
-    print(".....deleted......");
   }
 
   static Future<void> deleteGoal(id) async {
     final db = await SQLHelper.db();
     db.rawDelete("DELETE FROM Goals WHERE id=$id");
-    print(".....deleted......");
   }
 
   static Future<void> deleteAllActivities() async {
     final db = await SQLHelper.db();
     db.rawDelete("DELETE FROM activities");
     db.rawDelete("DELETE FROM goals");
-    print(".....deleted......");
   }
 
   static Future<void> deleteAllTransactionsContacts() async {
     final db = await SQLHelper.db();
     db.rawDelete("DELETE FROM Transactions");
-    print(".....deleted......");
   }
 
   static Future<List<Map<String, dynamic>>> getExpenses() async {
@@ -230,9 +216,23 @@ class SQLHelper {
             "UPDATE accounts SET balance=balance-$amount WHERE id=$id")
         : db.rawUpdate(
             "UPDATE accounts SET balance=balance+$amount WHERE id=$id");
-    print(".............balance updated............");
   }
 
+  static Future<void> updateGoal(
+      int id, String name, double amount, double goal, String color) async {
+    final db = await SQLHelper.db();
+    await db.rawUpdate(
+        "UPDATE goals SET name=?, amount=?, goal=?, color=? WHERE id=?",
+        [name, amount, goal, color, id]);
+  }
+
+  static Future<void> updateAccount(
+      int id, String name, double balance, String color) async {
+    final db = await SQLHelper.db();
+    await db.rawUpdate(
+        "UPDATE accounts SET name=?, balance=?, color=? WHERE id=?",
+        [name, balance,color, id]);
+  }
   static Future<void> updateTransactionContact(
       double amount, String type, String status, String uid) async {
     final db = await SQLHelper.db();

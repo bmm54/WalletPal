@@ -1,6 +1,6 @@
 import 'package:bstable/services/currency.dart';
-import 'package:bstable/services/hot_restart.dart';
 import 'package:bstable/services/language_service.dart';
+import 'package:bstable/services/theme_service.dart';
 import 'package:bstable/sql/sql_helper.dart';
 import 'package:bstable/ui/styles/colors.dart';
 import 'package:bstable/ui/styles/decoration.dart';
@@ -45,7 +45,6 @@ class OnBoardingPageState extends State<OnBoardingPage>
     await SQLHelper.createAccount(_accountName.text,
         double.parse(_accountBalance.text), _accountColor.value.toString());
     CurrencyController().changeCurrency(selectedCurrency);
-    HotRestartController.performHotRestart(context);
   }
 
   void _onIntroEnd(context) async {
@@ -57,9 +56,9 @@ class OnBoardingPageState extends State<OnBoardingPage>
     final _tabController = TabController(
         length: 4,
         vsync: this,
-        initialIndex: currencies.indexOf(selectedCurrency));
+        );
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         child: SafeArea(
@@ -70,13 +69,41 @@ class OnBoardingPageState extends State<OnBoardingPage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(
-                    "Getting started",
-                    style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: GoogleFonts.almarai().fontFamily,
-                        color: MyColors.iconColor),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Getting started",
+                        style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: GoogleFonts.almarai().fontFamily,
+                            color: MyColors.iconColor),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          ThemeService().changeThemeMode();
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 50,
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              border: Border.all(
+                                  width: 3,
+                                  color:
+                                      Theme.of(context).secondaryHeaderColor),
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Icon(
+                            Get.isDarkMode
+                                ? Icons.wb_sunny
+                                : Icons.brightness_2_rounded,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: 20,
@@ -153,10 +180,10 @@ class OnBoardingPageState extends State<OnBoardingPage>
                     },
                     indicator: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
-                        color: Colors.white,
+                        color: Theme.of(context).scaffoldBackgroundColor,
                         border: Border.all(color: MyColors.purpule, width: 2)),
                     labelColor: MyColors.purpule,
-                    unselectedLabelColor: MyColors.iconColor,
+                    unselectedLabelColor: Theme.of(context).textTheme.displayMedium!.color,
                     labelStyle: const TextStyle(
                         fontSize: 15, fontWeight: FontWeight.bold),
                     controller: _tabController,
